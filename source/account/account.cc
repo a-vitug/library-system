@@ -6,21 +6,19 @@ using namespace std;
 
 int main() {
 
-    string member{"john doe"},
-        userId,
-        password,
-        yn{""};
+    string userId, password, yn;
 
     cout << "\t--------------       Welcome to the Library!       --------------\n";
     cout << "\t               Do you have an account with us?(y/n) ";
     cin >> yn;
-    cout << "\n";
+
+    cin.ignore();
     
     if (yn == "n" || yn == "N") {
         create_account();
     }
     else {
-        cout << "Welcome " << member << "! ";
+        login();
     }
 
     return 0;
