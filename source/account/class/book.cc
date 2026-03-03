@@ -198,9 +198,10 @@ bool User::login() {
 
                 ifstream read("employee.txt");
                 if(read) {
-                    //read name, employee id, email, password
+                    //read name, employee id, email, phone, password
                     while(getline(read, nameId, '|') &&
                         getline(read, email, '|') &&
+                        getline(read, phoneNum, '|') &&
                         getline(read, password, '|') &&
                         getline(read, empId, '|')) {
                             empId = emp;
