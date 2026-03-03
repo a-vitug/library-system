@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "functions.h"
-#include "/class/book.cc"
+#include "class/book.h"
 
 using namespace std;
 
