@@ -6,7 +6,6 @@
 #include <vector>
 
 using namespace std;
-
 // ------------------------------ INDEPENDENT CLASS  ------------------------------
 class Book {
     public:
@@ -22,28 +21,28 @@ class Book {
 // ------------------------------ PARENT CLASS  ------------------------------
 class User {
     public:
-        User()  : userId(-1), role(-1) {};
-        User(int newUserId) : userId(newUserId), role(0) {};
+        User()  : role(-1) {};
+        User(const string& newId) : id(newId), role(-1) {};
 
+        void setName(const string& newName) { name = newName; };
+        string getName() const { return name; };
 
-        void setName(string newName) { name = newName; };
-        string getName() { return name; };
+        void setEmail(const string& newEmail) { email = newEmail; };
+        string getEmail() const { return email; };
 
-
-        void setEmail(string newEmail) { email = newEmail; };
-        string getEmail() { return email; };
-
-
-        void setPassword(string newPass) { password = newPass; };
-        string getPassword() { return password; };
-
+        void setPassword(const string& newPass) { password = newPass; };
+        string getPassword() const { return password; };
 
         void setRole(int newRole) { role = newRole; };
         int getRole() { return role; };
 
+        void setId(const string& newId) { id = newId; };
+        string getId() const { return id; };
 
-        bool login();
+        void setPhone(const string& newPhone) { phone = newPhone; };
+        string getPhone() const { return phone; };
 
+        virtual bool login() { return true; };
 
         /*
             void updateProfile();
@@ -55,44 +54,60 @@ class User {
         string name;
         string email;
         string password;
+        string id;
+        string phone;
         int role;
-        int userId;
 };
 
 // ------------------------------ CHILDREN CLASS  ------------------------------
 
 class Manager : public User {
-   public:
-       Manager() : employeeId(9) { int role = 1; };
-       void create_employee();
-       
-   protected:
-       int employeeId;
-       int sales() { return 0; };
+    public:
+        Manager() : managerId("MGR-1") { role = 1; };
+
+        string getManagerId() const { return managerId; };
+        void setManagerId(const string& newManagerId) { managerId = newManagerId; };
+
+        void create_employee();
+        void create_manager();
+        void access_manager(const string name, const string managerId);
+    private:
+        string managerId;
+        /*
+            Sales();
+            void addBook(int bookId) {};
+            int getBook() const { return bookId; };
+            void setBook(int newBookId) { bookId = newBookId; };
+        */
 };
 
 class Librarian : public User {
     public:
-        Librarian() : employeeId(0) { role = 2;};
-        void setLibrarianId(int newEmployeeId) { employeeId = newEmployeeId; };
-        int getLibrarianId() const { return employeeId; };
+        Librarian() : employeeId("EMP-2") { role = 2; };
+
+        void setEmployeeId(const string& newEmployeeId) { employeeId = newEmployeeId; };
+        string getEmployeeId() const { return employeeId; };
+
+        void access_librarian(const string& name, const string& employeeId);
 
     private:
-        int employeeId;
+        string employeeId;
 };
 
 class Member : public User {
     public:
-        int phone;
-        vector<string> favorites;
         Member() { role = 3; };
+
         void create_account();
+        void access_member();
+
+        void setBalance(double newBalance) { balance = newBalance; };
+        double getBalance() { return balance; };
+
+        vector<string> favorites;
 
     private:
         double balance;
-        
-        void setBalance(int newBalance) { balance = newBalance; };
-        double getBalance() { return balance; };
 
         //void setBooksCurrCheckedOut(int newBooks) {}
         /*

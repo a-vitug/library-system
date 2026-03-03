@@ -5,28 +5,17 @@
 using namespace std;
 
 int main() {
-    /*
-        User users;
-        users.setName("John Doe");
-        cout << "Hello, " << users.getName() << "!\n";
-
-        users.setRole(3);
-        cout << users.getRole();
-    */
-   
     string userId, password;
-    int choice;
+    int choice, choice2;
     Member m;
     Librarian l;
     Manager o;
+    User u;
 
     cout << "\t--------------       Welcome to the Library!       --------------\n";
     cout << "\t               1. Register as Member:\n";
-    cout << "\t               2. Login as Member:\n";
-    cout << "\t               3. Login as Employee:\n";
-    cout << "\t               4. Create Employee Profile:\n";
-    cout << "\t               5. Exit:\n";
-
+    cout << "\t               2. Login:\n";
+    cout << "\t               4. Exit:\n";
     cout << "\t         Enter: ";
     cin >> choice;
     cin.ignore();
@@ -39,19 +28,25 @@ int main() {
         break;
 
     case 2:
-        m.login();
-        break;
+        u.login();
 
-    case 3:
-        l.login();
-        break;
+        if(u.getRole() == 1) {
+            cout << "Accessing manager page...\n";
+            o.access_manager();
+            break;
+        }
+        else if(u.getRole() == 2) {
+            //l.access_librarian();
+            break;
+        }
+        else if(u.getRole() == 3) {
+            cout << "Access denied. Exiting...\n";
+            break;
+        }
+        else
+            break;
 
     case 4:
-        // needs manager id to access
-        o.create_employee();
-        break;
-
-    case 5:
         cout << "Exiting...\n";
         break;
 
