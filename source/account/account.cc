@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include "functions.h"
 #include "class/book.h"
 
 using namespace std;
@@ -19,15 +18,19 @@ int main() {
     int choice;
     Member m;
     Librarian l;
+    Manager o;
 
     cout << "\t--------------       Welcome to the Library!       --------------\n";
     cout << "\t               1. Register as Member:\n";
     cout << "\t               2. Login as Member:\n";
     cout << "\t               3. Login as Employee:\n";
-    cout << "\t               4. Exit:\n";
+    cout << "\t               4. Create Employee Profile:\n";
+    cout << "\t               5. Exit:\n";
 
+    cout << "\t         Enter: ";
     cin >> choice;
     cin.ignore();
+    cout << "\n";
 
     switch (choice)
     {
@@ -44,6 +47,11 @@ int main() {
         break;
 
     case 4:
+        // needs manager id to access
+        o.create_employee();
+        break;
+
+    case 5:
         cout << "Exiting...\n";
         break;
 

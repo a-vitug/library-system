@@ -61,16 +61,15 @@ class User {
 
 // ------------------------------ CHILDREN CLASS  ------------------------------
 
-/*
 class Manager : public User {
    public:
-       Manager() { int role = 1; };
-
+       Manager() : employeeId(9) { int role = 1; };
+       void create_employee();
+       
    protected:
        int employeeId;
        int sales() { return 0; };
 };
-*/
 
 class Librarian : public User {
     public:

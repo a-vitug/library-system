@@ -61,9 +61,7 @@ void Member::create_account() {
     if(write){
         write << name << "|" << userId << "|" << email << "|" << phone << "|" << password << endl;   
 
-
         cout << "Account created successfully!\n";
-
 
         read.close();
         write.close();
@@ -71,6 +69,69 @@ void Member::create_account() {
     }
    //access member page or go to login page
 };
+
+void Manager::create_employee() {
+    string name, email, employeeId, phone, password;
+    string nameId, emailId, id, phoneNum, pass;
+    bool exists = false;
+
+    cout << "\t               REGISTER EMPLOYEE ACCOUNT\n";
+
+    cout << "Enter employee's name: ";
+    getline(cin, name);
+
+    cout << "Enter employee's email: ";
+    cin >> email;
+
+    cout << "Enter employee's ID: ";
+    cin >> employeeId;
+
+    while(true) {
+        cout << "Enter your employee's phone number: ";
+        cin >> phone;
+        
+        if(phone.length() == 10) break;
+        
+        cout << "Phone number must be 10 digits long. Try again!\n";
+    }
+
+    cout << "Enter employee's password: ";
+    cin >> password;
+  
+    ifstream read("employee.txt");
+    if(read) {
+        while(read >> nameId >> id >> emailId >> phoneNum >> pass) {
+            if (employeeId == id) {
+                exists = true;
+                cout << "Employee ID already exists!\n";
+                return;
+            }
+            else if (email == emailId) {
+                exists = true;
+                cout << "Email already exists!\n";
+                return;
+            }
+            else if (phone == phoneNum) {
+                exists = true;
+                cout << "Phone number already exists!\n";
+                return;
+            }
+        }
+        read.close();
+    } 
+
+    ofstream write("employee.txt", ios::app);
+    if(write) {
+        write << name << "|" << employeeId << "|" << email << "|" << phone << "|" << password << endl;   
+
+        cout << "Account created successfully!\n";
+
+        read.close();
+        write.close();
+        login();   
+    }
+   //access employee page or go to login page
+}
 
 bool User::login() {
     string name, email, userId, phone, password, emp;
@@ -95,7 +156,6 @@ bool User::login() {
                 cout << "Enter your password: ";
                 cin >> password;
 
-
                 ifstream read("members.txt");
                 if(read) {
                     while(getline(read, nameId, '|') &&
@@ -113,7 +173,6 @@ bool User::login() {
                     }
                 }
                 read.close();
-
 
                 if(found) break;
                 else {
@@ -137,12 +196,10 @@ bool User::login() {
                 cout << "Enter your password: ";
                 cin >> password;
 
-
                 ifstream read("employee.txt");
                 if(read) {
-                    //read name, email, password, employee id
+                    //read name, employee id, email, password
                     while(getline(read, nameId, '|') &&
-                        getline(read, emp, '|') &&
                         getline(read, email, '|') &&
                         getline(read, password, '|') &&
                         getline(read, empId, '|')) {
@@ -150,7 +207,7 @@ bool User::login() {
                             pass = password;
                             if(empId == emp && password == pass){
                                 found = true;
-                                cout << "Welcome back " << nameId << "!\n";
+                                cout << "Welcome back " << nameId << "! Employee ID: " << empId << "\n";
                                 break;
                             }
                     }
