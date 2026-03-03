@@ -73,6 +73,10 @@ void Member::create_account() {
     }
 };
 
+//void Member::access_member() {};
+
+//void Librarian::access_librarian(const string& name, const string& empId) {};
+
 void Manager::create_employee() {
     //main
     string name, email, emp, phone, password;
@@ -141,7 +145,7 @@ void Manager::create_employee() {
 
 void Manager::create_manager() {
     string name, email, mgr, phone, password;
-    string nameId, emailId, mgrIdd, phoneId, passId;
+    string nameId, emailId, mgrId, phoneId, passId;
 
     cout << "\t--------------       REGISTER MANAGER ACCOUNT       --------------\n";
 
@@ -202,10 +206,10 @@ void Manager::create_manager() {
     }
 }
 
-void Manager::access_manager(const string& name, const string& mgr) {
+void Manager::access_manager(const string& name, const string& mgrId) {
     int choice;
 
-    cout << "\t--------------       WELCOME BACK " << name << "! Manager ID: " << mgr << "      --------------\n";
+    cout << "\t--------------       WELCOME BACK " << name << "! Manager ID: " << mgrId << "      --------------\n";
 
     do {
         cout << "\t               1. Create Employee Profile:\n";
@@ -264,27 +268,24 @@ bool User::login() {
         case 1: //manager
             setRole(1);
 
-            Manager o;
-
             for(int i = 5; i > 0; i--){
                 cout << "Enter your manager ID: ";
                 cin >> mgrId;
                 
                 cout << "Enter your password: ";
                 cin >> passId;
+                cin.ignore();
 
                 ifstream read("manager.txt");
                 if(read) {
                     //read name, manager id, email, phone number, password
                     while(getline(read, name, '|') &&
-                        getline(read, mgr, '|') &&
-                        getline(read, email, '|') &&
-                        getline(read, phone, '|') &&
-                        getline(read, password)) {
+                          getline(read, mgr, '|') &&
+                          getline(read, email, '|') &&
+                          getline(read, phone, '|') &&
+                          getline(read, password)) {
                             if(mgrId == mgr && passId == password){
                                 found = true;
-                                //cout << "\n\nWelcome back " << name << "! Manager ID: " << mgrId << "\n\n";
-                                o.access_manager(name, mgr);
                                 break;
                             }
                     }
@@ -308,8 +309,6 @@ bool User::login() {
         case 2: //employee
             setRole(2);
 
-            Employee e;
-
             for(int i = 5; i > 0; i--){
                 cout << "Enter your employee ID: ";
                 cin >> empId;
@@ -327,8 +326,6 @@ bool User::login() {
                         getline(read, password)) {
                             if(empId == emp && password == passId){
                                 found = true;
-                                //cout << "\n\nWelcome back " << name << "! Employee ID: " << emp << "\n\n";
-                                e.access_librarian(name, emp);
                                 break;
                             }
                     }
@@ -352,8 +349,6 @@ bool User::login() {
         case 3: //member
             setRole(3);
 
-            Member m;
-
             for(int i = 5; i > 0; i--){
                 cout << "Enter your username: ";
                 cin >> userId;
@@ -370,8 +365,6 @@ bool User::login() {
                         getline(read, password)) {
                             if(user == userId && password == passId){
                                 found = true;
-                                cout << "Welcome back " << name << "!\n";
-                                m.access_member();
                                 break;
                             }
                     }

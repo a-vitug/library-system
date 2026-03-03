@@ -42,7 +42,7 @@ class User {
         void setPhone(const string& newPhone) { phone = newPhone; };
         string getPhone() const { return phone; };
 
-        virtual bool login() { return true; };
+        virtual bool login();
 
         /*
             void updateProfile();
@@ -51,11 +51,7 @@ class User {
         */
   
     protected:
-        string name;
-        string email;
-        string password;
-        string id;
-        string phone;
+        string name, email, password, id, phone;
         int role;
 };
 
@@ -70,7 +66,7 @@ class Manager : public User {
 
         void create_employee();
         void create_manager();
-        void access_manager(const string name, const string managerId);
+        void access_manager(const string& name, const string& managerId);
     private:
         string managerId;
         /*
@@ -107,7 +103,7 @@ class Member : public User {
         vector<string> favorites;
 
     private:
-        double balance;
+        double balance{0.0};
 
         //void setBooksCurrCheckedOut(int newBooks) {}
         /*
