@@ -6,13 +6,15 @@
 using namespace std;
 
 int main() {
-    User users;
-    users.setName("John Doe");
-    cout << "Hello, " << users.getName() << "!\n";
+    /*
+        User users;
+        users.setName("John Doe");
+        cout << "Hello, " << users.getName() << "!\n";
 
-    users.setRole(3);
-    cout << users.getRole();
-
+        users.setRole(3);
+        cout << users.getRole();
+    */
+   
     string userId, password;
     int choice;
     Member m;
