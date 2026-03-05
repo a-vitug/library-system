@@ -16,6 +16,7 @@ int main() {
         cout << "\t--------------       Welcome to the Library!       --------------\n";
         cout << "\t               1. Register as Member:\n";
         cout << "\t               2. Login:\n";
+        //cout << "\t               3. Logout:\n";
         cout << "\t               4. Exit:\n";
         cout << "\t         Enter: ";
         cin >> choice;
@@ -33,16 +34,22 @@ int main() {
                     string name{u.getName()};
                     string id{u.getId()};
 
-                    if(role == 1) {
-                        o.setManagerId(id);
+                    if(u.getRole() == 1) {
+                        //o.setName(name);
+                        //o.setManagerId(id);
                         o.access_manager(name, id);
+                        break;
                     } else if(role == 2) {
-                        l.setEmployeeId(id);
-                        //l.access_librarian(name, id);
+                        //l.setName(name);
+                        //l.setEmployeeId(id);
+                        l.access_librarian(name, id);
+                        break;
                     } else if(role == 3) {
-                        //m.access_member();
+                        //m.setName(name);
+                        //m.setMemberId(id);
+                        m.access_member(name, id);
+                        break;
                     }
-
                     break;
                 } else {
                     cout << "Login failed! Try again.\n";
@@ -54,7 +61,7 @@ int main() {
                 break;
 
             default:
-                cout << "Error! Try again.\n";
+                cout << "Error! Try again.\n\n";
                 break;
         }
     } while(choice != 4);
