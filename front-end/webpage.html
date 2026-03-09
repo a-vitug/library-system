@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Page</title>
 
     <style>
         body {
@@ -11,7 +10,7 @@
             margin: 0;
         }
 
-         select{
+        select{
             list-style-type: none;
             margin: 0;
             padding: 0; 
@@ -26,7 +25,6 @@
             gap: 60px;
             padding: 20px;
             margin: 0;
-
         }
 
         li {
@@ -39,12 +37,34 @@
             align-items: center;
         }
 
-        nav{
-            background-color: lightgray;
-            height: 100px;
+        nav {
+        background-color: lightgray;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 60px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-right a {
+            text-decoration: none;
+            color: black;
+            font-size: 30px;
             display: flex;
             align-items: center;
-            padding-left: center;
+            gap: 10px;
+        }
+
+        .nav-right a:hover {
+            color: #74e907;
         }
 
         a {
@@ -56,7 +76,7 @@
 </head>
 <body>
     <nav>
-        <ul>
+        <ul class="nav-left">
             <li><a href="index.html">Home</a></li>
             <li>
                 <select name="genres" id="genres">
@@ -68,8 +88,15 @@
                 </select>
             </li>
         </ul>
+        <div class="nav-right">
+            <a href="log-in.html" class="create-account">
+                <i class="user"></i> Log In
+            </a>
+        </div>
     </nav>
     <h1></h1>
     <p></p>
 </body>
 </html>
+
+
