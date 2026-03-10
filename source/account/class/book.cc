@@ -491,3 +491,34 @@ bool User::login() {
 
    return found;
 }
+
+bool User::web_login(int role, string inputId, string inputPass) {
+    string name, id, email, phone, pass;
+    string filename;
+
+    if (role == 1) filename = "manager.txt";
+    else if (role == 2) filename = "employee.txt";
+    else filename = "members.txt";
+
+    ifstream read(filename);
+    if (!read) {
+        std::cout << "DEBUG: Could not open file " << filename << std::endl;
+        return false;
+    }
+
+    while (getline(read, name, '|') &&
+           getline(read, id, '|') &&
+           getline(read, email, '|') &&
+           getline(read, phone, '|') &&
+           getline(read, pass)) {
+        
+        if (id == inputId && pass == inputPass) {
+            this->setId(id);
+            this->setRole(role);
+            read.close();
+            return true;
+        }
+    }
+    read.close();
+    return false;
+}

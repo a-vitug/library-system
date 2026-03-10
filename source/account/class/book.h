@@ -21,8 +21,8 @@ class Book {
 // ------------------------------ PARENT CLASS  ------------------------------
 class User {
     public:
-        User()  : role(-1) {};
-        User(const string& newId) : id(newId), role(-1) {};
+        User()  : role(-1) {}
+        User(const string& newId) : id(newId), role(-1) {}
 
         void setName(const string& newName) { name = newName; };
         string getName() const { return name; };
@@ -43,7 +43,9 @@ class User {
         string getPhone() const { return phone; };
 
         virtual bool login();
+        virtual bool web_login(int role, string inputId, string inputPass);
 
+        virtual ~User() = default;
         /*
             void updateProfile();
             bool login();
