@@ -2,32 +2,48 @@
 #include "crow.h"
 #include "routes.h"
 #include <iostream>
+#include <string>
+
+using namespace std;
 
 int main() {
     crow::SimpleApp app;
 
-    // 1. Set the base to the root of your project folder
     crow::mustache::set_base("."); 
 
-    CROW_ROUTE(app, "/")([](const crow::request& req){
-        // 1. Manually read the file from disk using standard C++
-        std::ifstream file("front-end/templates/log-in.html");
+    // 1. Main Home Page
+    CROW_ROUTE(app, "/home")([](){
+        ifstream file("front-end/templates/webpage.html");
         if(!file.is_open()) {
-            return crow::response(500, "C++ cannot find the file at front-end/templates/log-in.html");
+            return crow::response(500, "Webpage not found");
         }
-
-        std::stringstream buffer;
+        stringstream buffer;
         buffer << file.rdbuf();
-        std::string html_content = buffer.str();
+        return crow::response(buffer.str());
+    });
 
-        // 2. Feed that string into the Mustache engine manually
-        auto page = crow::mustache::compile(html_content);
-        
+    // 2. Carousel Page
+    CROW_ROUTE(app, "/books-carousel.html")([](){
+        ifstream file("front-end/templates/books-carousel.html");
+        if(!file.is_open()) {
+            return crow::response(500, "Carousel file not found");
+        }
+        stringstream buffer;
+        buffer << file.rdbuf();
+        return crow::response(buffer.str());
+    });
+
+    // 3. Login Page
+    CROW_ROUTE(app, "/log-in")([](const crow::request& req){
+        ifstream file("front-end/templates/log-in.html");
+        // ... rest of mustache logic for error handling ...
+        stringstream buffer;
+        buffer << file.rdbuf();
+        auto page = crow::mustache::compile(buffer.str());
         crow::mustache::context ctx;
         bool failed = (req.url_params.get("failed") != nullptr);
         ctx["error"] = failed;
         ctx["error_text"] = failed ? "Invalid ID or Password." : "";
-
         return crow::response(page.render(ctx));
     });
     
