@@ -107,7 +107,8 @@ class Member : public User {
             id = "username";
         };
 
-        void create_account();
+        //void create_account();
+        int create_account(string name, string user, string email, string phone, string password);
         void access_member(const string& name, const string& memberId);
         void checkout_book();
         void return_book();

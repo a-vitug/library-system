@@ -1,30 +1,97 @@
 #include "crow.h"
-#include "class/book.h" // Ensure this is included to use the User class
+#include "class/book.h"
 #include "routes.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+using namespace std;
 
 void setup_routes(crow::SimpleApp& app) {
-    
-    // This MUST match the action="/login" in your HTML
+
+    // GET home page
+    CROW_ROUTE(app, "/home")([](){
+        ifstream file("front-end/templates/webpage.html");
+        if(!file.is_open()) return crow::response(500, "webpage.html not found");
+        stringstream buffer;
+        buffer << file.rdbuf();
+        return crow::response(buffer.str());
+    });
+
+    // GET create account
+    CROW_ROUTE(app, "/create-account")([](){
+        ifstream file("front-end/templates/create-account.html");
+        if(!file.is_open()) return crow::response(500, "create-account.html not found");
+        stringstream buffer;
+        buffer << file.rdbuf();
+        return crow::response(buffer.str());
+    });
+
+    // POST create account
+    CROW_ROUTE(app, "/create-account").methods(crow::HTTPMethod::Post)([](const crow::request& req){
+        auto params = req.get_body_params();
+
+        string name = params.get("name");
+        string user = params.get("username");
+        string email = params.get("email");
+        string phone = params.get("phone");
+        string password = params.get("password");
+
+        Member m;
+        int status = m.create_account(name, user, email, phone, password);
+        
+        crow::response res;
+        if(status == 0) {
+            cout << "Account successfully created for: " << name << " (" << user << ")" << endl;
+            res.redirect("/log-in?signup=success");             
+        } else {
+            res.redirect("/create-account?error=" + to_string(status));
+        }
+
+        return res;
+    });
+
+    // GET login page
+    CROW_ROUTE(app, "/log-in")([](const crow::request& req){
+        ifstream file("front-end/templates/log-in.html");
+        if(!file.is_open()) return crow::response(500, "log-in.html not found");
+
+        stringstream buffer;
+        buffer << file.rdbuf();
+        auto page = crow::mustache::compile(buffer.str());
+        
+        crow::mustache::context ctx;
+        bool failed = (req.url_params.get("failed") != nullptr);
+        ctx["error"] = failed;
+        ctx["error_text"] = failed ? "Invalid ID or Password." : "";
+
+        return crow::response(page.render(ctx));
+    });
+
+    // POST login page
     CROW_ROUTE(app, "/login").methods(crow::HTTPMethod::Post)([](const crow::request& req) {
         auto params = req.get_body_params();
-        
-        // These strings must match the 'name' attribute in your HTML <input> tags
-        std::string role_str = params.get("role");
-        std::string user_id = params.get("username");
-        std::string password = params.get("password");
+        string role_str = params.get("role");
+        string user_id = params.get("username");
+        string password = params.get("password");
 
-        int role = std::stoi(role_str);
+        User currentUser; 
+        if (currentUser.web_login(stoi(role_str), user_id, password)) {
+            crow::response res;
+            res.redirect("/home"); 
+            return res;
+        } else {
+            crow::response res;
+            res.redirect("/log-in?failed=true");
+            return res;
+        }
+    });
 
-        // Create your User object and call the logic we fixed earlier
-        User currentUser;
-// Inside your /login POST route in routes.cc
-if (currentUser.web_login(role, user_id, password)) {
-    return crow::response(200, "Success!");
-} else {
-    // This sends them back to the login page and triggers the red box
-    crow::response res;
-    res.redirect("/?failed=true");
-    return res;
-}
+    // carousel
+    CROW_ROUTE(app, "/books-carousel.html")([](){
+        ifstream file("front-end/templates/books-carousel.html");
+        stringstream buffer;
+        buffer << file.rdbuf();
+        return crow::response(buffer.str());
     });
 }

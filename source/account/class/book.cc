@@ -12,36 +12,10 @@ void Member::genMemberId() {
     cout << "Generate Member ID\n";
 };
 
-void Member::create_account() {
-    //main
-    string name, email, user, phone, password;
+int Member::create_account(string name, string user, string email, string phone, string password) {
     //getting ids
     string nameId, emailId, userId, phoneId, passId;
 
-    cout << "\t--------------       REGISTER ACCOUNT       --------------\n";
-
-    cout << "Enter your name: ";
-    getline(cin, name);
-
-    cout << "Enter your email: ";
-    cin >> email;
-
-    cout << "Enter your username: ";
-    cin >> user;
-
-    while(true) {
-        cout << "Enter your phone number: ";
-        cin >> phone;
-        
-        if(phone.length() == 10) break;
-        
-        cout << "Phone number must be 10 digits long. Try again!\n";
-    }
-
-    cout << "Enter your password: ";
-    cin >> password;
-    cin.ignore();
-  
     ifstream read("members.txt");
 
     if(read) {
@@ -52,30 +26,27 @@ void Member::create_account() {
               getline(read, phoneId, '|') &&
               getline(read, passId)) {
                 if (userId == user) {
-                    cout << "Username already exists!\n";
-                    return;
+                    return 1;
                 }
                 else if (emailId == email) {
-                    cout << "Email already exists!\n";
-                    return;
+                    return 2;
                 }
                 else if (phoneId == phone) {
-                    cout << "Phone number already exists!\n";
-                    return;
+                    return 3;
                 }
         }
         read.close();
     } 
 
     ofstream write("members.txt", ios::app);
+
     if(write) {
-        write << name << "|" << user << "|" << email << "|" << phone << "|" << password << endl;   
-
-        cout << "Account created successfully!\n";
-
+        write << name << "|" << user << "|" << email << "|" << phone << "|" << password << endl;
         write.close();
-        login();   
+        return 0; 
     }
+
+    return -1;
 };
 
 void Member::access_member(const string& name, const string& memberId) {

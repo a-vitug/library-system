@@ -24,6 +24,11 @@
         <div>
             <a href="/create-account">Create an Account here</a>
         </div>
+        <div id="success-msg" style="color: green; text-align: center;"></div>
     </div>
+
+    <script>
+        if (window.location.search.includes('signup=success')) document.getElementById('success-msg').innerText = "Account created! Please login.";
+    </script>
 </body>
 </html>

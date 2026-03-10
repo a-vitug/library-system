@@ -13,13 +13,24 @@
     </style>
 </head>
 <body>
-    <form action="/register" method="POST">
+    <form action="/create-account" method="POST">
         <div class="container">
             <h1>Sign Up</h1>
+            <label for="name"><b>Name</b></label>
+            <input type="text" name="name" placeholder="Name" required>
+
+            <label for="username"><b>Username</b>></label>
+            <input type="text" name="username" placeholder="Username" required>
+
             <label for="email"><b>Email</b></label>
             <input type="text" placeholder ="Email" name="email" required>
+
+            <label for="phone"><b>Phone number</b></label>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+
             <label for="password"><b>Password</b></label>
-            <input type="text" placeholder ="Password" name="password" required>
+            <input type="text" name="password" placeholder ="Password" required>
+
             <div class="button">
                 <button type="submit" class="signupbutton">Sign Up</button>
             </div>
@@ -28,5 +39,14 @@
             </div>
         </div>
     </form>
+
+    <script>
+        const urlStatus = new URLSearchParams(window.location.search);
+        const error = urlStatus.get("error");
+        const container = document.getElementById("error-container");
+        if (error === '1') container.innerText = "Error: Username already exists.";
+        if (error === '2') container.innerText = "Error: Email already exists.";
+        if (error === '3') container.innerText = "Error: Phone number already exists.";
+    </script>
 </body>
 </html>
