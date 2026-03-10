@@ -4,6 +4,7 @@ library_server
 Crow/
 build/
 build.sh
+CMakeFiles/
 
 *.txt
 *.log
