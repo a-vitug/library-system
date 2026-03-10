@@ -59,18 +59,84 @@
             color: black;
             font-size: 30px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            background-color: rgb(148, 150, 255);
+            padding: 0 50px;
+        }
+        .dropDown {
+            position: relative; 
+            display: inline-block;
         }
 
-        .nav-right a:hover {
-            color: #74e907;
+      
+        .dropDownGenre {
+            display: none; 
+            position: absolute; 
+            background-color: #bd1717;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            top: 100%;
         }
 
+        .dropDownGenre a {
+            color: rgb(0, 0, 0);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropDownGenre a:hover {
+            background-color: #707070;
+        }
+   
+        .dropDown:hover .dropDownGenre {
+            display: block;
+        }
+
+        .dropDown:hover .dropDownGenre {
+            background-color: #616161;
+        }
+
+        .navRight {
+            text-decoration: none;
+            font-size: 30px;
+            display: right;
+            margin: 20;
+            padding: 20;
+        }
+
+        .navRight a:hover {
+            color: #29cdff;
+            display: right;
+            gap: 60px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .carousel-frame {
+            width: 100%;
+            height: 600px;
+            margin: 20px 0;
+        }
         a {
             text-decoration: none;
             color:black;
             font-size: 50px;
+        }
+
+        html, body {
+        width: 100%;
+        height: 100%; 
+        margin: 0;
+        padding: 0;
+    }
+
+        body {
+            overflow: auto; 
+          
         }
     </style>
 </head>
@@ -94,9 +160,13 @@
             </a>
         </div>
     </nav>
+
+    <section class="featured-carousel">
+        <iframe src="books-carousel.html" class="carousel-frame"></iframe>
+    </section>
     <h1></h1>
     <p></p>
+
+    
 </body>
 </html>
-
-
