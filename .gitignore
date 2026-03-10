@@ -7,8 +7,15 @@ build.sh
 
 *.txt
 *.log
+*.exe
+*.pdb
+*.obj
+
+vcpkg_installed/
 
 .vscode/
 .idea/
+.vs/
+out/
 
 .env
