@@ -7,6 +7,11 @@
 
 using namespace std;
 
+//todo
+void Member::genMemberId() {
+    cout << "Generate Member ID\n";
+};
+
 void Member::create_account() {
     //main
     string name, email, user, phone, password;
@@ -73,9 +78,104 @@ void Member::create_account() {
     }
 };
 
-//void Member::access_member() {};
+void Member::access_member(const string& name, const string& memberId) {
+    int choice;
 
-//void Librarian::access_librarian(const string& name, const string& empId) {};
+    //cout << "\t--------------       WELCOME BACK " << name << "! MEMBER ID: " << memberId << "      --------------\n";
+
+    do {
+        cout << "\t               1. Loaned Books:\n";
+        cout << "\t               2. Favorites:\n";
+        cout << "\t               3. Check out book(s):\n";
+        cout << "\t               4. Return book(s):\n";
+        cout << "\t               5. Exit:\n";
+        cout << "\t         Enter: ";
+        cin >> choice;
+        cin.ignore();
+        cout << "\n";
+
+        switch (choice) {
+            case 1:
+                cout << "Get loaned books\n";
+                //getLoanedBook();
+                break;
+            case 2:
+                //favorites[];
+                cout << "Show Member's Favorite Books\n";
+                break;
+            case 3:
+                checkout_book();
+                break;
+            case 4:
+                return_book();
+                break;
+            case 5:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Error! Try again.\n";
+                break;
+        }        
+    } while(choice != 5);
+};
+
+//todo
+void Member::checkout_book() {
+    cout << "Check out a book\n";
+};
+//todo
+void Member::return_book() {
+    cout << "Return a book\n";
+};
+
+void Librarian::access_librarian(const string& name, const string& empId) {
+    int choice;
+
+    //cout << "\t--------------       WELCOME BACK " << name << "! EMPLOYEE ID: " << empId << "      --------------\n";
+
+    do {
+        cout << "\t               1. TODO:\n";
+        cout << "\t               2. TODO:\n";
+        cout << "\t               3. Process Checking Out:\n";
+        cout << "\t               4. Returning a Book:\n";
+        cout << "\t               5. Exit:\n";
+        cout << "\t         Enter: ";
+        cin >> choice;
+        cin.ignore();
+        cout << "\n";
+
+        switch (choice) {
+            case 1:
+                cout << "TODO";
+                break;
+            case 2:
+                cout << "TODO";
+                break;
+            case 3:
+                pCheckout_book();
+                break;
+            case 4:
+                pReturn_book();
+                break;
+            case 5:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Error! Try again.\n";
+                break;
+        }        
+    } while(choice != 5);
+};
+
+//todo
+void Librarian::pCheckout_book() {
+    cout << "Processing checking out a book\n";
+};
+//todo
+void Librarian::pReturn_book() {
+    cout << "Processing returning a book\n";
+};
+
 
 void Manager::create_employee() {
     //main
@@ -209,8 +309,6 @@ void Manager::create_manager() {
 void Manager::access_manager(const string& name, const string& mgrId) {
     int choice;
 
-    cout << "\t--------------       WELCOME BACK " << name << "! Manager ID: " << mgrId << "      --------------\n";
-
     do {
         cout << "\t               1. Create Employee Profile:\n";
         cout << "\t               2. Sales Report:\n";
@@ -286,6 +384,7 @@ bool User::login() {
                           getline(read, password)) {
                             if(mgrId == mgr && passId == password){
                                 found = true;
+                                cout << "\t--------------       WELCOME BACK " << name << "! MANAGER ID: " << mgrId << "      --------------\n";
                                 break;
                             }
                     }
@@ -326,6 +425,7 @@ bool User::login() {
                         getline(read, password)) {
                             if(empId == emp && password == passId){
                                 found = true;
+                                cout << "\t--------------       WELCOME BACK " << name << "! EMPLOYEE ID: " << empId << "      --------------\n";
                                 break;
                             }
                     }
@@ -365,6 +465,7 @@ bool User::login() {
                         getline(read, password)) {
                             if(user == userId && password == passId){
                                 found = true;
+                                cout << "\t--------------       WELCOME BACK " << name << "! MEMBER ID: " << user << "      --------------\n";
                                 break;
                             }
                     }
@@ -389,4 +490,35 @@ bool User::login() {
     }
 
    return found;
+}
+
+bool User::web_login(int role, string inputId, string inputPass) {
+    string name, id, email, phone, pass;
+    string filename;
+
+    if (role == 1) filename = "manager.txt";
+    else if (role == 2) filename = "employee.txt";
+    else filename = "members.txt";
+
+    ifstream read(filename);
+    if (!read) {
+        std::cout << "DEBUG: Could not open file " << filename << std::endl;
+        return false;
+    }
+
+    while (getline(read, name, '|') &&
+           getline(read, id, '|') &&
+           getline(read, email, '|') &&
+           getline(read, phone, '|') &&
+           getline(read, pass)) {
+        
+        if (id == inputId && pass == inputPass) {
+            this->setId(id);
+            this->setRole(role);
+            read.close();
+            return true;
+        }
+    }
+    read.close();
+    return false;
 }

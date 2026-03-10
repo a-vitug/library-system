@@ -1,0 +1,13 @@
+library_server
+*.o
+
+Crow/
+build/
+
+*.txt
+*.log
+
+.vscode/
+.idea/
+
+.env

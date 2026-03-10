@@ -21,8 +21,8 @@ class Book {
 // ------------------------------ PARENT CLASS  ------------------------------
 class User {
     public:
-        User()  : role(-1) {};
-        User(const string& newId) : id(newId), role(-1) {};
+        User()  : role(-1) {}
+        User(const string& newId) : id(newId), role(-1) {}
 
         void setName(const string& newName) { name = newName; };
         string getName() const { return name; };
@@ -43,7 +43,9 @@ class User {
         string getPhone() const { return phone; };
 
         virtual bool login();
+        virtual bool web_login(int role, string inputId, string inputPass);
 
+        virtual ~User() = default;
         /*
             void updateProfile();
             bool login();
@@ -59,7 +61,10 @@ class User {
 
 class Manager : public User {
     public:
-        Manager() : managerId("MGR-1") { role = 1; };
+        Manager() { 
+            role = 1;
+            id = "MGR0000";
+        };
 
         string getManagerId() const { return managerId; };
         void setManagerId(const string& newManagerId) { managerId = newManagerId; };
@@ -79,12 +84,17 @@ class Manager : public User {
 
 class Librarian : public User {
     public:
-        Librarian() : employeeId("EMP-2") { role = 2; };
+        Librarian() { 
+            role = 2;
+            id = "EMP0000";
+        };
 
         void setEmployeeId(const string& newEmployeeId) { employeeId = newEmployeeId; };
         string getEmployeeId() const { return employeeId; };
 
         void access_librarian(const string& name, const string& employeeId);
+        void pCheckout_book();
+        void pReturn_book();
 
     private:
         string employeeId;
@@ -92,15 +102,29 @@ class Librarian : public User {
 
 class Member : public User {
     public:
-        Member() { role = 3; };
+        Member() { 
+            role = 3; 
+            id = "username";
+        };
 
         void create_account();
-        void access_member();
+        void access_member(const string& name, const string& memberId);
+        void checkout_book();
+        void return_book();
+
+        void setLoanedBook(string newLoanedBook) { loanedBooks = newLoanedBook; };
+        string getLoanedBook() const { return loanedBooks; };
 
         void setBalance(double newBalance) { balance = newBalance; };
         double getBalance() { return balance; };
 
+        void setMemberId(const string& newMemberId) { memberId = newMemberId; };
+        string getMemberId() const { return memberId; };
+
+        void genMemberId();
+
         vector<string> favorites;
+        string loanedBooks, memberId;
 
     private:
         double balance{0.0};
