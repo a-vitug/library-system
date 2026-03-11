@@ -69,7 +69,7 @@ void setup_routes(crow::SimpleApp& app) {
     });
 
     // POST login page
-    CROW_ROUTE(app, "/login").methods(crow::HTTPMethod::Post)([](const crow::request& req) {
+    CROW_ROUTE(app, "/log-in").methods(crow::HTTPMethod::Post)([](const crow::request& req) {
         auto params = req.get_body_params();
         string role_str = params.get("role");
         string user_id = params.get("username");

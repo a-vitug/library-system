@@ -5,7 +5,6 @@ Crow/
 build/
 build.sh
 
-*.txt
 *.log
 *.exe
 *.pdb
