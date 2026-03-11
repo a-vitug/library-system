@@ -5,6 +5,8 @@ Crow/
 build/
 build.sh
 
+CMakeLists.txt
+
 *.log
 *.exe
 *.pdb
