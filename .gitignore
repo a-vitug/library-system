@@ -6,6 +6,8 @@ build/
 build.sh
 CMakeFiles/
 
+CMakeLists.txt
+
 *.log
 *.exe
 *.pdb
