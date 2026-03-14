@@ -3,158 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css"> 
+    <!-- remove the two dots if its in .exe file -->
 
-    <style>
-        body {
-            font-size: 16px;
-            margin: 0;
-        }
-
-        select{
-            list-style-type: none;
-            margin: 0;
-            padding: 0; 
-            overflow: hidden;
-            background-color: #74e907;
-            gap: 40px;
-        }
-
-        ul {
-            display: flex;
-            list-style: none;
-            gap: 60px;
-            padding: 20px;
-            margin: 0;
-        }
-
-        li {
-            font-size: 50px;
-            align-items: center;
-        }
-
-        select {
-            font-size: 40px;
-            align-items: center;
-        }
-
-        nav {
-        background-color: lightgray;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        }
-
-        .nav-left {
-            display: flex;
-            gap: 60px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-right a {
-            text-decoration: none;
-            color: black;
-            font-size: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgb(148, 150, 255);
-            padding: 0 50px;
-        }
-        .dropDown {
-            position: relative; 
-            display: inline-block;
-        }
-
-      
-        .dropDownGenre {
-            display: none; 
-            position: absolute; 
-            background-color: #bd1717;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            top: 100%;
-        }
-
-        .dropDownGenre a {
-            color: rgb(0, 0, 0);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropDownGenre a:hover {
-            background-color: #707070;
-        }
-   
-        .dropDown:hover .dropDownGenre {
-            display: block;
-        }
-
-        .dropDown:hover .dropDownGenre {
-            background-color: #616161;
-        }
-
-        .navRight {
-            text-decoration: none;
-            font-size: 30px;
-            display: right;
-            margin: 20;
-            padding: 20;
-        }
-
-        .navRight a:hover {
-            color: #29cdff;
-            display: right;
-            gap: 60px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .carousel-frame {
-            width: 100%;
-            height: 600px;
-            margin: 20px 0;
-        }
-        a {
-            text-decoration: none;
-            color:black;
-            font-size: 50px;
-        }
-
-        html, body {
-        width: 100%;
-        height: 100%; 
-        margin: 0;
-        padding: 0;
-    }
-
-        body {
-            overflow: auto; 
-          
-        }
-    </style>
 </head>
+
 <body>
     <nav>
-        <ul class="nav-left">
+        <ul class="navLeft">
             <li><a href="/home">Home</a></li>
-            <li>
-                <select name="genres" id="genres">
-                    <option value="Blank"></option>
-                    <option value="Action">Action</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Fiction">Fiction</option>
-                    <option value="Non-fiction">Non-fiction</option>
-                </select>
+            <li class="dropDown">
+                <a href="#">Genres</a>
+                <div class="dropDownGenre">
+                    <a href="/action">Action</a>
+                    <a href="/romance">Romance</a>
+                    <a href="/fiction">Fiction</a>
+                    <a href="/nonfiction">Non-fiction</a>
+                </div>
             </li>
         </ul>
-        <div class="nav-right">
+        
+        <div class="navRight">
             <a href="/log-in" class="create-account">
                 <i class="user"></i> Log In
             </a>
@@ -162,9 +31,58 @@
     </nav>
 
     <section class="featured-carousel">
-        <a href="/carousel">
-            <iframe src="books-carousel.html" class="carousel-frame"></iframe>
-        </a>
+        <div class="header">
+            <h1>📚 Books of the Week </h1>
+        </div>
+    </section>
+
+    <section class="book-carousel">
+        <h2>Featured Books</h2>
+        <div class="carousel-container">
+            <div class="carousel-slide active">
+                <h3>1984</h3>
+                <p>George Orwell</p>
+            </div>
+        <div class="carousel-slide">
+            <h3>Dune</h3>
+            <p>Frank Herbert</p>
+        </div>
+        <div class="carousel-slide">
+            <h3>Foundation</h3>
+            <p>Isaac Asimov</p>
+        </div>
+        <div class="carousel-slide">
+            <h3>The Hobbit</h3>
+            <p>J.R.R. Tolkien</p>
+        </div>
+        </div>
+        <button class="prev-btn">&lt;</button>
+        <button class="next-btn">&gt;</button>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const slides = document.querySelectorAll('.carousel-slide');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            showSlide(currentIndex);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % slides.length;
+            showSlide(currentIndex);
+        });
+        });
+    </script>
     </section>
     <h1></h1>
     <p></p>

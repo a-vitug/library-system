@@ -13,6 +13,7 @@ CMakeLists.txt
 *.obj
 
 vcpkg_installed/
+vcpkg/
 
 .vscode/
 .idea/
