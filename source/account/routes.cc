@@ -95,14 +95,18 @@ void setup_routes(crow::SimpleApp& app) {
         return crow::response(buffer.str());
     });
 
-    CROW_ROUTE(app, "/<string>")
+    CROW_ROUTE(app, "genre/<string>")
     ([](std::string name){
         std::string path = "front-end/templates/genre/" + name + ".html";
         std::ifstream file(path);
-        if(!file.is_open()) return crow::response(404, "Genre not found");
+        if(!file.is_open()) {
+        
+        CROW_LOG_ERROR << "Failed to open file: " << path;
+        return crow::response(404, "Genre file not found");
+    }
         
         std::stringstream buffer;
-    buffer << file.rdbuf();
+        buffer << file.rdbuf();
     
     crow::response res(buffer.str());
     res.set_header("Content-Type", "text/html");
