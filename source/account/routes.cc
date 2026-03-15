@@ -113,5 +113,13 @@ void setup_routes(crow::SimpleApp& app) {
     return res;
 });
 
+     CROW_ROUTE(app, "/navbar")([](){
+        ifstream file("front-end/templates/navbar.html");
+        if(!file.is_open()) return crow::response(500, "navbar.html not found");
+        stringstream buffer;
+        buffer << file.rdbuf();
+        return crow::response(buffer.str());
+    });
+
    
 }

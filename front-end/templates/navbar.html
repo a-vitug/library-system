@@ -1,27 +1,7 @@
 <!DOCTYPE html>
-<html>
 <head>
-    <title>Action</title>
     <style>
-        .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-
-        section {
-            padding: 60px 10%; 
-        }
-
-
-        .book-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-         html, body {
+        html, body {
         width: 100%;
         height: 100%; 
         margin: 0px;
@@ -65,16 +45,10 @@
         border-radius: 15px;
         padding: 20px 50px;
         font-size: 30px;
-        color: #ffffff;
-        display: inline-block;
-        transition: all 0.3s ease; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
     .navRight:hover a{
         color: #ffffff;
-        transform: translateX(-5px); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
     }
 
     /* When hovers on genres */
@@ -119,74 +93,32 @@
         padding: 10px 15px;
         text-decoration: none;
     }
-
-    /*highlighted over a specific genre */
-    .dropDownGenre a:hover {
-        background-color: #7e7e7e7e; 
-    }
-
-    .featured-carousel {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-
-    }
-
-    .carousel-frame {
-        width: 1000px;
-        height: 500px; 
-        display: flex;
-        border: none;
-        border-radius: 10px;
-
-    }
-
-        </style>
+    </style>
 </head>
+
 <body>
     <nav>
-        <ul class="navLeft">
+     <ul class="navLeft">
             <li><a href="/home">Home</a></li>
-                <li class="dropDown">
-                    <a href="/genre/allgenres">Genres</a>
-                    <div class="dropDownGenre">
-                        <a href="/genre/allgenres">All Genres</a>
-                        <a href="/genre/action">Action</a>
-                        <a href="/genre/thriller">Thriller</a>
-                        <a href="/genre/mystery">Mystery</a>
-                        <a href="/genre/romance">Romance</a>
-                        <a href="/genre/fiction">Fiction</a>
-                        <a href="/genre/non-fiction">Non-fiction</a>
-                    </div>
-                </li>
+            <li class="dropDown">
+                <a href="/genre/allgenres">Genres</a>
+                <div class="dropDownGenre">
+                    <a href="/genre/allgenres">All Genres</a>
+                    <a href="/genre/action">Action</a>
+                    <a href="/genre/thriller">Thriller</a>
+                    <a href="/genre/mystery">Mystery</a>
+                    <a href="/genre/romance">Romance</a>
+                    <a href="/genre/fiction">Fiction</a>
+                    <a href="/genre/non-fiction">Non-fiction</a>
+                </div>
+            </li>
             <li><a href="/about">About</a></li>
         </ul>
+        
         <div class="navRight">
             <a href="/log-in" class="create-account">
                 <i class="user"></i> Log In
             </a>
         </div>
     </nav>
-
-    <section class="search">
-        <form class="search-container" action="/search" method="GET">
-            <input type="text" name="q" placeholder="Book Title" aria-label="Search">
-            <button type="submit">Search</button>
-        </form>
-    </section>
-
-    <section class="leftSide">
-        <div class="filter">
-            <button online="filterItems('all')">All</button>
-        </div>
-    </section>
-    <section class="all-books">
-        <h2>Browse Our Collection</h2>
-        <div class="book-grid">
-            </div>
-    </section>
-
 </body>
-
-</html>
