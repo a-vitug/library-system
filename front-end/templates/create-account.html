@@ -3,23 +3,125 @@
 <head>
     <title>Account</title>
     <style>
-        .button{
-            color: black;
-            padding: 10px;
-            margin: 10px;
-            cursor: pointer;
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
+        .container {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            flex-direction: column;
+            align-items: center;
+            text-align: right;
+            gap: 15px;
+        }
+
+        .full-width {
+            grid-column: span 2;   
+            display: flex;
+            flex-direction: column; 
+            align-items: center;    
+            gap: 12px;              
+            margin-top: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .error-box {
+            background: #ffe6e6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: left;
+            
+        }
+
+        .links a {
+            font-size: 0.85rem;
+            color: #246a99;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <form action="/create-account" method="POST">
         <div class="container">
+            
             <h1>Sign Up</h1>
+            <div id="error-container" style="color: red; margin-bottom: 10px"></div>
+            
+        <form action="/create-account" method="POST">
+            
             <label for="name"><b>Name</b></label>
             <input type="text" name="name" placeholder="Name" required>
 
-            <label for="username"><b>Username</b>></label>
+            <label for="username"><b>Username</b></label>
             <input type="text" name="username" placeholder="Username" required>
 
             <label for="email"><b>Email</b></label>
@@ -31,11 +133,13 @@
             <label for="password"><b>Password</b></label>
             <input type="text" name="password" placeholder ="Password" required>
 
-            <div class="button">
+            <div class="full-width">
                 <button type="submit" class="signupbutton">Sign Up</button>
-            </div>
-            <div>
                 <a href="/log-in">Login here</a>
+                
+            </div>
+            <div class="links">
+                <a href="/home">< Go back</a>
             </div>
         </div>
     </form>
