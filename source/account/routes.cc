@@ -121,5 +121,4 @@ void setup_routes(crow::SimpleApp& app) {
         return crow::response(buffer.str());
     });
 
-   
 }

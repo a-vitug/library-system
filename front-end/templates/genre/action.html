@@ -1,192 +1,169 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Action</title>
+    <link rel="stylesheet" href="/front-end/static/style.css">
+    
     <style>
-        .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-
-        section {
-            padding: 60px 10%; 
-        }
-
-
-        .book-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-         html, body {
-        width: 100%;
-        height: 100%; 
-        margin: 0px;
-        padding: 0px;
-        font-size: 16px;
-    }
-
-    nav {
-        background-color: #9696ff;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0px 20px;
-    }
-
-    /* text color */
-    a {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        text-decoration: none;
-        color: rgb(0, 0, 0);
-        font-size: 40px;
-    }
-
-    .navLeft {
-        display: flex;
-        gap: 60px;
-        margin: 30px;
-        list-style: none;
-    }
-
-    .navRight {
-        margin: 20px;
+    .container {
+        display: flex;             
+        justify-content: space-between; 
+        align-items: flex-start;      
         padding: 20px;
     }
 
-    /* navRight button */
-    .navRight a {
-        text-decoration: none;
-        background-color: #3498db;
-        border-radius: 15px;
-        padding: 20px 50px;
-        font-size: 30px;
-        color: #ffffff;
-        display: inline-block;
-        transition: all 0.3s ease; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    .search {
+        width: 100%;
     }
 
-    .navRight:hover a{
-        color: #ffffff;
-        transform: translateX(-5px); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
-    }
-
-    /* When hovers on genres */
-    .dropDown {
-        position: relative;
-        display: inline-block;
-    }
-
-    /* default dropdown */
-    .dropDownGenre {
-        display: block;
-        opacity: 0;
-        visibility: hidden;
-        position: absolute;
-        top: 100%;
-        min-width: 160px;
-        transform: translateY(10px); /* Starts slightly lower */
-        transition: all 0.4s ease; /* The speed of the animation */
-        background-color: rgb(255, 255, 255);
-        box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-        z-index: 1;
-    }
-
-    /* Hover state */
-    .dropDown:hover .dropDownGenre {
-        display: block;
-        box-shadow: 0px 10px 20px rgba(0,0,0,0);
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-        transition-delay: 0.2s;
-        border-radius: 15px;
-    }
-
-    /*text color for genres dropdown */
-    .dropDownGenre a {
-        color: rgb(0, 0, 0);
-        padding: 16px 16px;
-        display: block;
-        font-size: 25px; 
-        display: block;
-        padding: 10px 15px;
-        text-decoration: none;
-    }
-
-    /*highlighted over a specific genre */
-    .dropDownGenre a:hover {
-        background-color: #7e7e7e7e; 
-    }
-
-    .featured-carousel {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-
-    }
-
-    .carousel-frame {
-        width: 1000px;
-        height: 500px; 
+    .search-container {
         display: flex;
-        border: none;
-        border-radius: 10px;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .right {
+        flex: 1;
+        column-count: 1;  
+        text-align: center;   
+        justify-content: top;      
+        flex: 1;
+        flex-direction: column; 
+    }
+
+    .filter {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 200px;
 
     }
 
-        </style>
+    .filter button {
+        padding: 10px;
+        cursor: pointer;
+        text-align: left;     
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .filter button:hover {
+        background: #e2e6ea;
+    }
+
+    .bookContainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 30px;           
+        padding: 20px;
+        width: 100%;         
+        }
+
+    book-card {
+        width: 180px;            
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        text-align: left;
+}
+
+/* Hover effect to make it interactive */
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.book-cover img {
+    width: 100%;             /* Fits the container width */
+    height: 250px;           /* Standard book ratio */
+    object-fit: cover;       /* Prevents image stretching */
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.book-title {
+    font-size: 16px;
+    margin: 0;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-author {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 0 0;
+}
+
+.book-grid {
+    display: flex;
+    flex-wrap: wrap;   
+    gap: 20px;         
+    padding: 20px;
+}
+    </style>
 </head>
 <body>
-    <nav>
-        <ul class="navLeft">
-            <li><a href="/home">Home</a></li>
-                <li class="dropDown">
-                    <a href="/genre/allgenres">Genres</a>
-                    <div class="dropDownGenre">
-                        <a href="/genre/allgenres">All Genres</a>
-                        <a href="/genre/action">Action</a>
-                        <a href="/genre/thriller">Thriller</a>
-                        <a href="/genre/mystery">Mystery</a>
-                        <a href="/genre/romance">Romance</a>
-                        <a href="/genre/fiction">Fiction</a>
-                        <a href="/genre/non-fiction">Non-fiction</a>
-                    </div>
-                </li>
-            <li><a href="/about">About</a></li>
-        </ul>
-        <div class="navRight">
-            <a href="/log-in" class="create-account">
-                <i class="user"></i> Log In
-            </a>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
 
-    <section class="search">
-        <form class="search-container" action="/search" method="GET">
-            <input type="text" name="q" placeholder="Book Title" aria-label="Search">
-            <button type="submit">Search</button>
-        </form>
-    </section>
-
-    <section class="leftSide">
-        <div class="filter">
-            <button online="filterItems('all')">All</button>
-        </div>
-    </section>
-    <section class="all-books">
-        <h2>Browse Our Collection</h2>
-        <div class="book-grid">
+    <div class="container">
+    <div class="left">
+        <section class="leftSide">
+            <div class="filter">
+                <button online="filterItems('all')">All</button>
+                <button online="filterItems('all')">Action</button>
+                <button online="filterItems('all')">Thriller</button>
+                <button online="filterItems('all')">Mystery</button>
+                <button online="filterItems('all')">Romance</button>
+                <button online="filterItems('all')">Fiction</button>
+                <button online="filterItems('all')">Non-fiction</button>
             </div>
-    </section>
+        </section>
+    </div>
 
+    <div class="right">
+        <section class="search">
+            <form class="search-container" action="/search" method="GET">
+                <input type="text" name="q" placeholder="Book Title" aria-label="Search">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <div class="bookContainer">
+            <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title 1</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+        </div>
+     </div>
+</div>
+    <script>
+        fetch('../../static/navbarloggedin.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('nav-placeholder').innerHTML = data;
+        });
+    </script>
 </body>
-
+ 
 </html>
