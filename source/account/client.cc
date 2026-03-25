@@ -5,7 +5,7 @@
 int main() {
     crow::SimpleApp app;
     crow::mustache::set_base("."); 
-
+    
     // Call the function from routes.cc to load all URL paths and connects the login, home, and registration logic
     setup_routes(app);
 
