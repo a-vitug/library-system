@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/front-end/static/style.css">
+    
+    <style>
+    .container {
+        display: flex;             
+        justify-content: space-between; 
+        align-items: flex-start;      
+        padding: 20px;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .search-container {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .right {
+        flex: 1;
+        column-count: 1;  
+        text-align: center;   
+        justify-content: top;      
+        flex: 1;
+        flex-direction: column; 
+    }
+
+    .filter {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 200px;
+
+    }
+
+    .filter button {
+        padding: 10px;
+        cursor: pointer;
+        text-align: left;     
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .filter button:hover {
+        background: #e2e6ea;
+    }
+
+    .bookContainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 30px;           
+        padding: 20px;
+        width: 100%;         
+        }
+
+    book-card {
+        width: 180px;            
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        text-align: left;
+}
+
+/* Hover effect to make it interactive */
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.book-cover img {
+    width: 100%;             /* Fits the container width */
+    height: 250px;           /* Standard book ratio */
+    object-fit: cover;       /* Prevents image stretching */
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.book-title {
+    font-size: 16px;
+    margin: 0;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-author {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 0 0;
+}
+
+.book-grid {
+    display: flex;
+    flex-wrap: wrap;   
+    gap: 20px;         
+    padding: 20px;
+}
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+    <div class="left">
+        <section class="leftSide">
+            <div class="filter">
+                <button online="filterItems('all')">All</button>
+                <button online="filterItems('all')">Action</button>
+                <button online="filterItems('all')">Thriller</button>
+                <button online="filterItems('all')">Mystery</button>
+                <button online="filterItems('all')">Romance</button>
+                <button online="filterItems('all')">Fiction</button>
+                <button online="filterItems('all')">Non-fiction</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="right">
+        <section class="search">
+            <form class="search-container" action="/search" method="GET">
+                <input type="text" name="q" placeholder="Book Title" aria-label="Search">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <div class="bookContainer">
+            <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title 1</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+    <div class="book-card">
+        <img src="" alt="Cover">
+        <h3>Book Title</h3>
+        <p>Author Name</p>
+    </div>
+        </div>
+     </div>
+</div>
+    <script>
+        fetch('../../static/navbarloggedin.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('nav-placeholder').innerHTML = data;
+        });
+    </script>
+</body>
+ 
+</html>

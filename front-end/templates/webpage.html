@@ -3,24 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style.css"> 
+    <link rel="stylesheet" href="front-end/static/style.css"> 
     <!-- remove the two dots if its in .exe file -->
+    
+    <style>
+        body {
+    margin: 0;
+    padding: 0;
+    overflow-y: auto; /* Explicitly allow vertical scrolling */
+    min-height: 100vh;
+    font-family: sans-serif;
+    }
+    section {
+        padding: 80px 20px; /* Adds breathing room between sections */
+        min-height: 600px;  /* Forces the page to be longer than the screen */
+        width: 100%;
+        display: block;     /* Ensures they stack on top of each other */
+    }
+    html {
+        width: 100%;
+        height: 100%; 
+        margin: 0px;
+        padding: 0px;
+        font-size: 16px;
+    }
+
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: #9696ff;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0px 20px;
+    }
+
+    /* text color */
+    a {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-decoration: none;
+        color: rgb(0, 0, 0);
+        font-size: 40px;
+    }
+
+    .navLeft {
+        display: flex;
+        gap: 60px;
+        margin: 30px;
+        list-style: none;
+    }
+
+    .navRight {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    /* navRight button */
+    .navRight a {
+        text-decoration: none;
+        background-color: #24a0ed;
+        border-radius: 15px;
+        padding: 15px 50px;
+        font-size: 30px;
+    }
+
+    .navRight a:hover {
+        background-color: #2980b9;
+        color: #ffffff;
+        transform: translateY(-3px); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        transition: all 0.3s ease; 
+    }
+
+    .navRight a:active {
+        transform: translateY(1px); 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        background-color: #1c598a; 
+    }
+
+
+    /* When hovers on genres */
+    .dropDown {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* default dropdown */
+    .dropDownGenre {
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        top: 100%;
+        min-width: 160px;
+        transform: translateY(10px); /* Starts slightly lower */
+        transition: all 0.4s ease; /* The speed of the animation */
+        background-color: rgb(255, 255, 255);
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+        z-index: 1;
+    }
+
+    /* Hover state */
+    .dropDown:hover .dropDownGenre {
+        display: block;
+        box-shadow: 0px 10px 20px rgba(0,0,0,0);
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition-delay: 0.2s;
+        border-radius: 15px;
+    }
+
+    /*text color for genres dropdown */
+    .dropDownGenre a {
+        color: rgb(0, 0, 0);
+        padding: 16px 16px;
+        display: block;
+        font-size: 25px; 
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    /*highlighted over a specific genre */
+    .dropDownGenre a:hover {
+        background-color: #7e7e7e7e; 
+    }
+
+    .featured-carousel {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+
+    }
+
+    .carousel-frame {
+        width: 1000px;
+        height: 500px; 
+        display: flex;
+        border: none;
+        border-radius: 10px;
+
+    }
+
+    /* carousel style */
+    body { 
+        font-family: Arial, sans-serif; 
+        margin: 0; 
+        background: #f4f4f4; 
+    }
+
+        .header { 
+            text-align: center; 
+            padding: 20px; 
+            background: #333; 
+            color: white; 
+        }
+
+        .book-carousel { 
+            max-width: 800px; 
+            margin: 20px auto; 
+            text-align: center; 
+        }
+        .carousel-container { 
+            position: relative; 
+            height: 300px; 
+            overflow: hidden; 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+        .carousel-slide { 
+            position: absolute; 
+            width: 100%; height: 100%; 
+            opacity: 0; 
+            transition: opacity 0.5s; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+        
+        .carousel-slide.active { 
+            opacity: 1; 
+        }
+
+        .carousel-slide h3 { 
+            margin: 0 0 10px 0; 
+            color: #333; 
+        }
+        .carousel-slide p { 
+            margin: 0; 
+            color: #666; 
+            font-size: 18px; 
+        }
+        .prev-btn, .next-btn { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: rgba(0,0,0,0.7); 
+            color: white; 
+            border: none; 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            font-size: 24px; 
+            border-radius: 50%; 
+            transition: background 0.3s; 
+        }
+
+        .prev-btn:hover, .next-btn:hover { 
+            background: rgba(0,0,0,0.9); 
+        }
+        .prev-btn { 
+            left: 10px; 
+        } 
+
+        .next-btn { 
+            right: 10px; 
+        }
+
+        .home-link { 
+            display: inline-block; 
+            margin-top: 20px; 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+        }
+    </style>
 
 </head>
 
 <body>
-    <nav>
+    <div id="nav-placeholder"></div>
+
+    <!-- <script>
+    fetch('navbar.html')
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById('nav-placeholder').innerHTML = data;
+    });
+    </script> -->
+     <nav>
         <ul class="navLeft">
             <li><a href="/home">Home</a></li>
             <li class="dropDown">
-                <a href="#">Genres</a>
+                <a href="/genre/allgenres">Genres</a>
                 <div class="dropDownGenre">
-                    <a href="/action">Action</a>
-                    <a href="/romance">Romance</a>
-                    <a href="/fiction">Fiction</a>
-                    <a href="/nonfiction">Non-fiction</a>
+                    <a href="/genre/allgenres">All Genres</a>
+                    <a href="/genre/action">Action</a>
+                    <a href="/genre/thriller">Thriller</a>
+                    <a href="/genre/mystery">Mystery</a>
+                    <a href="/genre/romance">Romance</a>
+                    <a href="/genre/fiction">Fiction</a>
+                    <a href="/genre/non-fiction">Non-fiction</a>
                 </div>
             </li>
+            <li><a href="/about">About</a></li>
         </ul>
         
         <div class="navRight">
@@ -30,13 +275,13 @@
         </div>
     </nav>
 
-    <section class="featured-carousel">
+    <div class="featured-carousel">
         <div class="header">
             <h1>📚 Books of the Week </h1>
         </div>
-    </section>
+    </div>
 
-    <section class="book-carousel">
+    <div class="book-carousel">
         <h2>Featured Books</h2>
         <div class="carousel-container">
             <div class="carousel-slide active">
@@ -58,7 +303,7 @@
         </div>
         <button class="prev-btn">&lt;</button>
         <button class="next-btn">&gt;</button>
-    </section>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
