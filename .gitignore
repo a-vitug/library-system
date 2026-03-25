@@ -1,24 +1,5 @@
-library_server
-*.o
 
-Crow/
-build/
-build.sh
-CMakeFiles/
+node_modules/
 
-CMakeLists.txt
-
-*.log
-*.exe
-*.pdb
-*.obj
-
-vcpkg_installed/
-vcpkg/
-
-.vscode/
-.idea/
-.vs/
-out/
 
 .env
