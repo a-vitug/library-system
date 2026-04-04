@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const bcrypt = require('bcrypt');
 //mongodb+srv://jdoe_db-user:<db_password>@library-system.0gaiagw.mongodb.net/?appName=library-system
 //09VpQyVTPxS4KoK1
 
