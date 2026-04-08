@@ -8,12 +8,12 @@ const user = {
 
 // Home
 router.get('/home', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'front-end/pages/home.html'));
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
 });
 
 // Login
 router.get('/log-in', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'front-end/pages/authentication/log-in.html'));
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/authentication/log-in.html'));
 });
 
 router.post("/log-in", (req, res) => {
@@ -28,12 +28,12 @@ router.post("/log-in", (req, res) => {
 
 // Create account
 router.get('/create-account', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'front-end/pages/authentication/create-account.html'));
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/authentication/create-account.html'));
 });
 
 // Genres
 router.get('/genre/:name', (req, res) => {
-  const filePath = path.join(process.cwd(), `front-end/pages/genres/${req.params.name}.html`);
+  const filePath = path.join(process.cwd(), `../../front-end/pages/genres/${req.params.name}.html`);
   res.sendFile(filePath, (err) => {
     if (err) res.status(404).send('Genre not found');
   });

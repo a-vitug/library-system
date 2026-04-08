@@ -17,10 +17,10 @@ db.on("error", (err) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/pages', express.static(path.join(process.cwd(), 'front-end/pages')));
+app.use('/pages', express.static(path.join(process.cwd(), '../../front-end/pages')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'front-end/pages/home.html'));
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
 });
 
 const user = {
@@ -121,4 +121,4 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-app.use(express.static(path.join(process.cwd(), 'front-end')));
+app.use(express.static(path.join(process.cwd(), '../../front-end')));
