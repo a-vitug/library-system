@@ -1,28 +1,32 @@
 const path = require('path');
 const express = require('express');
 const router = express.Router();
-const user = {
-  username: "jdoe",
-  password: "test"
-};
-
-// Home
-router.get('/home', (req, res) => {
-  res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
-});
+const User = require('./models/User');
 
 // Login
 router.get('/log-in', (req, res) => {
   res.sendFile(path.join(process.cwd(), '../../front-end/pages/authentication/log-in.html'));
 });
 
-router.post("/log-in", (req, res) => {
+router.post("/log-in", async (req, res) => {
   const { username, password } = req.body;
 
-  if (username === user.username && password === user.password) {
+  try {
+    const user = await User.findOne({ username }).select('+password');
+
+    if (!user) {
+      return res.status(401).send("Invalid credentials");
+    }
+
+    const validPassword = await user.isCorrectPassword(password);
+
+    if (!validPassword) {
+      return res.status(401).send("Invalid credentials");
+    }
+
     res.send("Login successful!");
-  } else {
-    res.status(401).send("Invalid credentials");
+  } catch (err) {
+    res.status(500).send("Server error");
   }
 });
 
