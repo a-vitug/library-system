@@ -1,4 +1,5 @@
 const express = require("express");
+const routes = require('./routes');
 const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -6,40 +7,37 @@ const User = require("./models/User");
 const axios = require("axios");
 const db = require("./config/connection");
 
+require('dotenv').config();
+
 const app = express();
 const PORT = 3000;
 
-db.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
+const authRoute = require('./routes/auth');
+const bookRoute = require('./routes/book');
+const managerRoute = require('./routes/manager');
+
+db.once("open", () => {
+  console.error("MongoDB connection");
 });
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static(path.join(__dirname, '../../front-end/static')));
+
+app.use('/', authRoute);
+app.use('/books', bookRoute);
+app.use('/manager', managerRoute);
+app.use(express.static(path.join(__dirname, '../../front-end')));
+app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../front-end/templates/webpage.html'));
+  res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
 });
 
 const user = {
   username: "jdoe",
   password: "test"
 };
-
-app.get('/log-in', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../front-end/templates/log-in.html'));
-});
-
-app.post("/log-in", (req, res) => {
-  const { username, password } = req.body;
-
-  if (username === user.username && password === user.password) {
-    res.send("Login successful!");
-  } else {
-    res.status(401).send("Invalid credentials");
-  }
-});
 
 app.get('/api/users', async (req, res) => {
   try {
@@ -127,6 +125,7 @@ app.get('/api/google-books/search', async (req, res) => {
     return res.status(status && Number.isInteger(status) ? status : 500).json({ error: message });
   }
 });
+app.use('/', routes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
