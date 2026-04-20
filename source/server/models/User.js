@@ -3,37 +3,56 @@ const bcrypt = require('bcrypt');
 //mongodb+srv://jdoe_db-user:<db_password>@library-system.0gaiagw.mongodb.net/?appName=library-system
 //09VpQyVTPxS4KoK1
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     username: {
         type: String,
         required: true,
         unique: true,
         trim: true,
+        lowercase: true,
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        match: [/.+@.+\..+/, 'Must match an email address!'],
+        lowercase: true,
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Must match a valid email address!'],
     },
     password: {
         type: String,
         required: true,
         minlength: 8,
+        select: false,
     },
-});
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+      transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+      },
+    },
+  }
+);
 
 userSchema.pre('save', async function (next) {
-    if (this.isNew || this.isModified('password')) {
-        const saltRounds = 10;
-        this. password = await bcrypt.hash(this.password, saltRounds);
-    }
+  if (!this.isModified('password')) return next();
 
+  try {
+    const saltRounds = 10;
+    this.password = await bcrypt.hash(this.password, saltRounds);
     next();
-})
+  } catch (err) {
+    next(err);
+  }
+});
 
-userSchema.methods.isCorrectPassword = async function (password) {
-    return bcrypt.compare(password, this.password);
+userSchema.methods.isCorrectPassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = model('User', userSchema);

@@ -6,28 +6,30 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const axios = require("axios");
 const db = require("./config/connection");
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
 
-db.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
+db.once("open", () => {
+  console.error("MongoDB connection");
 });
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/pages', express.static(path.join(process.cwd(), 'front-end/pages')));
+
+app.use(express.static(path.join(__dirname, '../../front-end')));
+app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'front-end/pages/home.html'));
+  res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
 });
 
 const user = {
   username: "jdoe",
   password: "test"
 };
-
 
 app.get('/api/users', async (req, res) => {
   try {
@@ -120,5 +122,3 @@ app.use('/', routes);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
-app.use(express.static(path.join(process.cwd(), 'front-end')));
