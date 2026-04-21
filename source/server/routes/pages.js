@@ -14,19 +14,31 @@ router.get('/home', (req, res) => {
 
 // Home for logged in users
 router.get('/user', requireAuth, async (req, res) => {
-    try {
-        res.json({
-            id: req.user.id,
-            role: req.user.role
-        });
-    } catch (err) {
-        res.status(500).send("Server error");
-    }
+  try {
+    const user = await User.findById(req.user.id);
+
+    res.json({
+      id: user._id,
+      role: user.role,
+      name: user.name
+    });
+
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
 });
 
 // Role check
 router.get('/admin', requireAuth, requireRole('manager'), (req, res) => {
   res.sendFile(path.join(PAGES_DIR, 'manager-portal.html'));
+});
+
+router.get('/librarian', requireAuth, requireRole('librarian'), (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, 'librarian-portal.html'));
+});
+
+router.get('/member', requireAuth, requireRole('member'), (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, 'member-portal.html'));
 });
 
 // Genres

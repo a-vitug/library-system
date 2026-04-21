@@ -1,5 +1,4 @@
 const express = require("express");
-const routes = require('./routes');
 const path = require("path");
 const cors = require("cors");
 const mongodb = require("mongodb").MongoClient;
@@ -13,9 +12,7 @@ require('dotenv').config();
 const app = express();
 const PORT = 3000;
 
-const authRoute = require('./routes/auth');
-const bookRoute = require('./routes/book');
-const managerRoute = require('./routes/manager');
+const routes = require('./routes');
 
 db.once("open", () => {
   console.error("MongoDB connection");
@@ -25,20 +22,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', authRoute);
-app.use('/books', bookRoute);
-app.use('/manager', managerRoute);
+app.use('/', routes);
 app.use(express.static(path.join(__dirname, '../../front-end')));
 app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
 });
-
-const user = {
-  username: "jdoe",
-  password: "test"
-};
 
 app.get('/api/users', async (req, res) => {
   try {

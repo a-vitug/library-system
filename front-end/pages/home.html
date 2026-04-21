@@ -27,12 +27,14 @@
             <li><a href="/about">About</a></li>
         </ul>
         
-        <div class="navRight">
-            <a href="../pages/authentication/log-in.html" class="create-account">
+        <div class="navRight" id="authArea"></div>
+            <!-- <a href="../pages/authentication/log-in.html" class="create-account">
                 <i class="user"></i> Log In
-            </a>
-        </div>
+            </a> -->
+        
     </nav>
+
+    <div id="authArea"></div>
 
     <div class="featured-carousel">
         <div class="header">
@@ -64,8 +66,34 @@
         <button class="next-btn">&gt;</button>
     </div>
 
-    </section>
-    <h1></h1>
-    <p></p>
+    <script>
+        const token = localStorage.getItem('token');
+        const authArea = document.getElementById('authArea');
+
+        if (token) {
+            fetch('/user', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Not logged in");
+            return res.json();
+        })
+        .then(user => {
+            authArea.innerHTML = `
+                <span>Welcome, ${user.name}</span>
+                <button onclick="logout()">Logout</button>
+            `;
+        });
+        } else {
+            authArea.innerHTML = `<a href="/log-in">Log In</a>`;
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            location.reload();
+        }
+    </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
     <div class="container">
          <h1>Library Login</h1>
 
-        <form action="/log-in" method="POST">
+        <form id="loginForm">
             <select name="role">
                 <option value="manager">Manager</option>
                 <option value="employee">Employee</option>
@@ -16,7 +16,7 @@
             </select>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Sign In</button>
+            <button type="button" id="loginBtn">Sign In</button>
 
              
         </form>
@@ -31,7 +31,29 @@
     </div>
 
     <script>
-        if (window.location.search.includes('signup=success')) document.getElementById('success-msg').innerText = "Account created! Please login.";
+        const form = document.getElementById("loginForm");
+        document.getElementById("loginBtn").addEventListener("click", async () => {
+            const username = document.querySelector('[name="username"]').value;
+            const password = document.querySelector('[name="password"]').value;
+
+            const res = await fetch('/log-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (!res.ok) {
+                alert("Invalid login");
+                return;
+            }
+
+            const data = await res.json();
+
+            localStorage.setItem('token', data.token);
+            window.location.href = '/home';
+        });
     </script>
 </body>
 </html>
