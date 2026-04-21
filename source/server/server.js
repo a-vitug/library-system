@@ -13,6 +13,8 @@ const app = express();
 const PORT = 3000;
 
 const routes = require('./routes');
+const apiBooksRoute = require('./routes/apiBooks');
+const apiUserRoute = require('./routes/apiUser');
 
 db.once("open", () => {
   console.error("MongoDB connection");
@@ -25,6 +27,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', routes);
 app.use(express.static(path.join(__dirname, '../../front-end')));
 app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
+
+// API Books
+app.use('/api/books', apiBooksRoute);
+app.use('/api/user', apiUserRoute);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));

@@ -5,9 +5,21 @@ const bookSchema = new mongoose.Schema({
   author: String,
   genre: String,
   isbn: String,
+
   available: {
     type: Boolean,
     default: true
+  },
+
+  checkedOutBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null
+  },
+
+  dueDate: {
+    type: Date,
+    default: null
   }
 });
 

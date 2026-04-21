@@ -114,13 +114,13 @@
     <div class="left">
         <section class="leftSide">
             <div class="filter">
-                <button online="filterItems('all')">All</button>
-                <button online="filterItems('all')">Action</button>
-                <button online="filterItems('all')">Thriller</button>
-                <button online="filterItems('all')">Mystery</button>
-                <button online="filterItems('all')">Romance</button>
-                <button online="filterItems('all')">Fiction</button>
-                <button online="filterItems('all')">Non-fiction</button>
+                <button onclick="filterItems('all')">All</button>
+                <button onclick="filterItems('all')">Action</button>
+                <button onclick="filterItems('all')">Thriller</button>
+                <button onclick="filterItems('all')">Mystery</button>
+                <button onclick="filterItems('all')">Romance</button>
+                <button onclick="filterItems('all')">Fiction</button>
+                <button onclick="filterItems('all')">Non-fiction</button>
             </div>
         </section>
     </div>
@@ -158,11 +158,34 @@
      </div>
 </div>
     <script>
-        fetch('../../static/navbarloggedin.html')
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById('nav-placeholder').innerHTML = data;
-        });
+        // fetch('../../static/navbarloggedin.html')
+        // .then(res => res.text())
+        // .then(data => {
+        //     document.getElementById('nav-placeholder').innerHTML = data;
+        // });
+        async function addBook(book) {
+            const token = localStorage.getItem('token');
+
+            const res = await fetch('/api/books/add-from-api', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                title: book.title,
+                authors: book.authors,
+                isbn13: book.isbn13
+                })
+            });
+
+            if (!res.ok) {
+                alert("Only managers can add books");
+                return;
+            }
+
+            alert("Book added to library!");
+        }
     </script>
 </body>
  

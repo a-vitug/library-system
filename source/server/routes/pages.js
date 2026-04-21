@@ -33,7 +33,7 @@ router.get('/admin', requireAuth, requireRole('manager'), (req, res) => {
   res.sendFile(path.join(PAGES_DIR, 'manager-portal.html'));
 });
 
-router.get('/librarian', requireAuth, requireRole('librarian'), (req, res) => {
+router.get('/librarian', requireAuth, requireRole('employee'), (req, res) => {
   res.sendFile(path.join(PAGES_DIR, 'librarian-portal.html'));
 });
 
