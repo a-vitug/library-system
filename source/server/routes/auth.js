@@ -2,13 +2,10 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const requireRole = require('../middleware/authMid');
 
 const PAGES_DIR = path.join(__dirname, '../../../front-end/pages');
-
-// Home
-router.get('/home', (req, res) => {
-  res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
-});
 
 // Login
 router.get('/log-in', (req, res) => {
@@ -31,9 +28,13 @@ router.post('/log-in', async (req, res) => {
       return res.status(401).send("Invalid credentials");
     }
 
-    if (role && role !== user.role) {
-      return res.status(403).send("Wrong role selected");
-    }
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      "secretkey",
+      { expiresIn: "1h"}
+    )
+
+    res.json({ token });
 
     return res.redirect('/home');
 
@@ -74,14 +75,6 @@ router.post('/create-account', async (req, res) => {
     console.error(err);
     res.status(500).send("Server error");
   }
-});
-
-// Genres
-router.get('/genre/:name', (req, res) => {
-  const filePath = path.join(PAGES_DIR, `../../front-end/pages/genres/${req.params.name}.html`);
-  res.sendFile(filePath, (err) => {
-    if (err) res.status(404).send('Genre not found');
-  });
 });
 
 module.exports = router;
