@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
 const path = require('path');
 
 const PAGES_DIR = path.join(__dirname, '../../../front-end/pages');
@@ -50,7 +49,7 @@ router.get('/create-account', (req, res) => {
 });
 
 router.post('/create-account', async (req, res) => {
-  const { username, email, password, phone, role } = req.body;
+  const { name, username, email, password, phone, role } = req.body;
 
   try {
     const exists = await User.findOne({ username });
@@ -59,9 +58,10 @@ router.post('/create-account', async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     const user = new User({
+      name,
       username,
       email,
-      password: hashed,
+      password,
       phone,
       role
     });
