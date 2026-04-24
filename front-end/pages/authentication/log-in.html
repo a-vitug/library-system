@@ -1,37 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-     <link rel="stylesheet" href="/css/pages/log-in.css"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/log-in.css">
+    <title>Log In - Library</title>
 </head>
 <body>
-   
-    <div class="container">
-         <h1>Library Login</h1>
+    <div class="login-wrapper">
+        <div class="container">
+            <h1>Library Login</h1>
 
-        <form action="/login" method="POST">
-            <select name="role">
-                <option value="1">Manager</option>
-                <option value="2">Employee</option>
-                <option value="3">Member</option>
-            </select>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Sign In</button>
+            <form action="/log-in" method="POST">
+                <select name="role">
+                    <option value="1">Manager</option>
+                    <option value="2">Employee</option>
+                    <option value="3">Member</option>
+                </select>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
 
-             
-        </form>
-        <div>
-            <a href="/create-account">Create an Account here</a>
-        </div>
+            <div id="success-msg"></div>
 
-        <div class="links">
-                <a href="/home">< Go back</a>
+            <div class="links">
+                <a href="/home">&#8592; Go back</a>
+                <a href="/create-account">Create an account</a>
+               
             </div>
-        <div id="success-msg" style="color: green; text-align: center;"></div>
+        </div>
     </div>
 
     <script>
-        if (window.location.search.includes('signup=success')) document.getElementById('success-msg').innerText = "Account created! Please login.";
+        if (window.location.search.includes('signup=success'))
+            document.getElementById('success-msg').innerText = "Account created! Please login.";
     </script>
 </body>
 </html>

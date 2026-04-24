@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <head>
-    <link rel="stylesheet" href="/front-end/static/style.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/portals/member.css">
 </head>
 
 <body>
@@ -11,10 +13,11 @@
             <div class="profile-info">
                 <h1 id="display-name">John Doe</h1>
             </div>
-            <!-- <button class="btn-edit">Edit Profile</button> -->
             <button onclick="logout()" class="btn-logout">Log Out</button>
         </div>
-    <hr class="divider">
+        <hr class="divider">
+
+        <!-- Should be pulled from database  -->
         <div class="info-group">
             <label>Role</label>
             <input type="text" value="User" class="notEditable" readonly>
@@ -29,12 +32,6 @@
         </div>
     </main>
 
-    <script>
-        fetch('../static/navbarloggedin.html')
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById('nav-placeholder').innerHTML = data;
-        });
-    </script>
+    <script src="/js/navbar.js"></script>
 
 </body> 
