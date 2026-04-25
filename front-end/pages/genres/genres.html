@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/pages/genre-base.css">
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <div class="left">
+            <div class="filter">
+                <button onclick="loadGenre('fiction')">All</button>
+                <button onclick="loadGenre('action')">Action</button>
+                <button onclick="loadGenre('thriller')">Thriller</button>
+                <button onclick="loadGenre('mystery')">Mystery</button>
+                <button onclick="loadGenre('romance')">Romance</button>
+                <button onclick="loadGenre('fiction')">Fiction</button>
+                <button onclick="loadGenre('non-fiction')">Non-fiction</button>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="search">
+                <form class="search-container" onsubmit="handleSearch(event)">
+                    <input type="text" id="searchInput" placeholder="Search books..." aria-label="Search">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div class="bookContainer" id="bookContainer">
+                <p>Loading books...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/genres-search.js"></script>
+</body>
+</html>

@@ -1,15 +1,13 @@
-body {
-    background-color: #f4f7f6;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.login-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    min-height: calc(100vh - 100px); /* account for navbar height */
+    padding: 40px 20px;
 }
 
 .container {
-    background: #ffffff;
+    background: var(--color-surface);
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -19,7 +17,7 @@ body {
 }
 
 h1 {
-    color: #2c3e50;
+    color: var(--color-primary);
     margin-bottom: 1.5rem;
     font-weight: 600;
 }
@@ -32,59 +30,58 @@ form {
 
 input, select {
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-divider);
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 1rem;
+    font-family: inherit;
     transition: border-color 0.3s ease;
+    background: var(--color-surface);
+    color: var(--color-text);
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--color-primary);
 }
 
-button {
-    background-color: #3498db;
-    color: white;
+button[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
     padding: 12px;
     border: none;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #2980b9;
+button[type="submit"]:hover {
+    background-color: var(--color-accent);
+    transform: translateY(-2px);
 }
 
-.error-box {
-    background: #ffe6e6;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 15px;
+#success-msg {
+    color: var(--color-success);
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
 }
 
 .links {
     margin-top: 20px;
-    font-size: 0.9rem;
-    text-align: left;
-    
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
 }
 
 .links a {
-    font-size: 0.85rem;
-    color: #246a99;
+    color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
 }
 
-a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-a:hover {
+.links a:hover {
+    color: var(--color-accent);
     text-decoration: underline;
 }

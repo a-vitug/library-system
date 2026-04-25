@@ -44,7 +44,7 @@ router.get('/create-account', (req, res) => {
 
 // Genres
 router.get('/genre/:name', (req, res) => {
-  const filePath = path.join(PAGES_DIR, `../../front-end/pages/genres/${req.params.name}.html`);
+  const filePath = path.join(PAGES_DIR, 'genres/genres.html');
   res.sendFile(filePath, (err) => {
     if (err) res.status(404).send('Genre not found');
   });
