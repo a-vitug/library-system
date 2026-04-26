@@ -11,20 +11,32 @@
 <body>
     <div id="nav-placeholder"></div>
 
+    <div id="books-of-the-week">
+        <div class="container">
 
-<div class="featured-carousel">
-        <div class="header">
-            <h1>📚 Books of the Week </h1>
-        </div>
-    </div>
+            <div>
+                <h1 class="h1">BOOKS</h1>
+                <h1 class="h1">OF THE WEEK</h1>
+                <div class="carousel-card">
+                    <div class="carousel-container" id="homeCarousel">
+                        <div class="carousel-slide active"><p>Loading...</p></div>
+                    </div>
+                    
+                </div>
+                <div id="carouselDots" class="carousel-dots"></div>
+            </div>
 
-    <div class="book-carousel">
-        <h2>Featured Books</h2>
-        <div class="carousel-container" id="homeCarousel">
-            <div class="carousel-slide active"><p>Loading...</p></div>
+            <hr class="section-divider">
+
+            <div>
+                <div class="section-header">
+                    <h1 class="h1">RECOMMENDATIONS</h1>
+                    <a href="/genre/allgenres" class="see-all">See all</a>
+                </div>
+                <div id="recommendationsGrid" class="reco-grid"></div>
+            </div>
+
         </div>
-        <button class="prev-btn" onclick="prevSlide()">&#8249;</button>
-        <button class="next-btn" onclick="nextSlide()">&#8250;</button>
     </div>
 
     <script src="/js/navbar.js"></script>

@@ -1,35 +1,94 @@
-// Fix this so it displays per user recommanded too?
-
 let currentSlide = 0;
+let autoplayTimer = null;
 
-async function loadFeatured() {
-    const res = await fetch('/api/google-books/search?q=bestseller&maxResults=6');
-    if (!res.ok) return;
-    const data = await res.json();
-    const books = data.results || [];
-    if (!books.length) return;
-
-    const container = document.getElementById('homeCarousel');
-    container.innerHTML = books.map((book, i) => `
-        <div class="carousel-slide${i === 0 ? ' active' : ''}">
-            ${book.thumbnail
-                ? `<img src="${book.thumbnail}" alt="${book.title}" style="height:160px;object-fit:contain;margin-bottom:12px;">`
-                : ''}
-            <h3>${book.title || 'Unknown Title'}</h3>
-            <p>${(book.authors || []).join(', ') || 'Unknown Author'}</p>
-            ${book.previewLink
-                ? `<a href="${book.previewLink}" target="_blank" class="home-link">Preview</a>`
-                : ''}
-        </div>
-    `).join('');
-    currentSlide = 0;
+async function fetchWithTimeout(url, ms = 8000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+        const res = await fetch(url, { signal: controller.signal });
+        return res;
+    } finally {
+        clearTimeout(timer);
+    }
 }
 
-function prevSlide() {
+async function loadFeatured() {
+    try {
+        const res = await fetchWithTimeout('/api/google-books/search?q=bestseller&maxResults=5');
+        if (!res.ok) return;
+        const data = await res.json();
+        const books = (data.results || []).slice(0, 5);
+        if (!books.length) return;
+
+        const container = document.getElementById('homeCarousel');
+        container.innerHTML = books.map((book, i) => `
+            <div class="carousel-slide${i === 0 ? ' active' : ''}">
+                ${book.thumbnail
+                    ? `<img src="${book.thumbnail}" alt="${book.title}" class="slide-cover">`
+                    : '<div class="slide-cover slide-no-cover"></div>'}
+                <div class="slide-info">
+                    <h2 class="slide-title">${book.title || 'Unknown Title'}</h2>
+                    <p class="slide-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
+                    <p class="slide-description">${book.description || ''}</p>
+                    ${book.googleId
+                        ? `<a href="https://books.google.com/books?id=${book.googleId}" target="_blank" class="slide-btn">Read More</a>`
+                        : ''}
+                </div>
+            </div>
+        `).join('');
+
+        renderDots(books.length);
+        currentSlide = 0;
+        startAutoplay();
+    } catch (err) {
+        console.error('loadFeatured error:', err.name === 'AbortError' ? 'Request timed out' : err);
+    }
+}
+
+async function loadRecommendations() {
+    try {
+        const res = await fetchWithTimeout('/api/google-books/search?q=popular+fiction&maxResults=6');
+        if (!res.ok) {
+            console.error('Recommendations fetch failed:', res.status);
+            return;
+        }
+        const data = await res.json();
+        const books = (data.results || []).slice(0, 6);
+        const grid = document.getElementById('recommendationsGrid');
+        if (!grid || !books.length) return;
+        grid.innerHTML = books.map(book => `
+            <div class="reco-card">
+                ${book.thumbnail
+                    ? `<img src="${book.thumbnail}" alt="${book.title}">`
+                    : '<div class="reco-no-cover"></div>'}
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('loadRecommendations error:', err);
+    }
+}
+
+function renderDots(count) {
+    const dotsContainer = document.getElementById('carouselDots');
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = Array.from({ length: count }, (_, i) => `
+        <button class="carousel-dot${i === 0 ? ' active' : ''}" onclick="goToSlide(${i})"></button>
+    `).join('');
+}
+
+function updateDots() {
+    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+    });
+}
+
+function goToSlide(index) {
     const slides = document.querySelectorAll('#homeCarousel .carousel-slide');
     slides[currentSlide].classList.remove('active');
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    currentSlide = index;
     slides[currentSlide].classList.add('active');
+    updateDots();
+    resetAutoplay();
 }
 
 function nextSlide() {
@@ -37,6 +96,16 @@ function nextSlide() {
     slides[currentSlide].classList.remove('active');
     currentSlide = (currentSlide + 1) % slides.length;
     slides[currentSlide].classList.add('active');
+    updateDots();
 }
 
-loadFeatured();
+function startAutoplay() {
+    autoplayTimer = setInterval(nextSlide, 7000);
+}
+
+function resetAutoplay() {
+    clearInterval(autoplayTimer);
+    startAutoplay();
+}
+
+loadFeatured().then(() => setTimeout(loadRecommendations, 500));

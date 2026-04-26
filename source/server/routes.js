@@ -42,6 +42,11 @@ router.get('/create-account', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/authentication/create-account.html'));
 });
 
+// Checkout
+router.get('/checkout', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, 'user-checkout.html'));
+});
+
 // Genres
 router.get('/genre/:name', (req, res) => {
   const filePath = path.join(PAGES_DIR, 'genres/genres.html');
