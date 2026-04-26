@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/portals/user-checkout.css">
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="checkout-banner">
+        <div class="checkout-banner-content">
+            <h1 class="checkout-banner-title">CHECKOUT</h1>
+            <p class="checkout-banner-subtitle">Review and confirm your borrowed books</p>
+        </div>
+    </div>
+
+  
+    <div class="checkout-layout">
+
+        
+        <div class="checkout-books">
+            <h2 class="section-heading">Selected Books</h2>
+            
+            <!-- dummy data, please add real data -->
+            <div class="book-item" id="bookItem1">
+                <div class="book-item-cover book-item-placeholder"></div>
+                <div class="book-item-info">
+                    <p class="book-item-title">The Great Gatsby</p>
+                    <p class="book-item-author">F. Scott Fitzgerald</p>
+                    <span class="book-item-badge">Fiction</span>
+                </div>
+                <button class="remove-btn" onclick="removeItem('bookItem1')" aria-label="Remove">&#x2715;</button>
+            </div>
+
+            <div class="book-item" id="bookItem2">
+                <div class="book-item-cover book-item-placeholder"></div>
+                <div class="book-item-info">
+                    <p class="book-item-title">To Kill a Mockingbird</p>
+                    <p class="book-item-author">Harper Lee</p>
+                    <span class="book-item-badge">Classic</span>
+                </div>
+                <button class="remove-btn" onclick="removeItem('bookItem2')" aria-label="Remove">&#x2715;</button>
+            </div>
+
+            <div class="book-item" id="bookItem3">
+                <div class="book-item-cover book-item-placeholder"></div>
+                <div class="book-item-info">
+                    <p class="book-item-title">Dune</p>
+                    <p class="book-item-author">Frank Herbert</p>
+                    <span class="book-item-badge">Sci-Fi</span>
+                </div>
+                <button class="remove-btn" onclick="removeItem('bookItem3')" aria-label="Remove">&#x2715;</button>
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <p>No books selected. <a href="/genre/all">Browse books</a></p>
+            </div>
+        </div>
+
+        <!-- dummy data, please add real data -->
+        <div class="checkout-summary">
+            <h2 class="section-heading">Summary</h2>
+
+            <div class="summary-card">
+                <div class="summary-row">
+                    <span class="summary-label">Books selected</span>
+                    <span class="summary-value" id="bookCount">3</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row">
+                    <label class="summary-label" for="loanPeriod">Loan period</label>
+                    <select id="loanPeriod" class="summary-select" onchange="updateDueDate()" disabled>
+                        
+                        <option value="14" selected>2 weeks</option>
+                    </select>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Due date</span>
+                    <span class="summary-value" id="dueDate"></span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Library card</span>
+                    <span class="summary-value summary-muted">#LIB-00421</span>
+                </div>
+
+                <button class="checkout-btn" id="checkoutBtn" onclick="confirmCheckout()">
+                    Confirm Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Checkout confirmed! Books are due by <span id="toastDate"></span>.</div>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/user-checkout.js"></script>
+</body>
+</html>

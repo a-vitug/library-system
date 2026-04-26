@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/genre-base.css">
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <!-- Hero banner -->
+    <div class="genre-banner">
+        <div class="banner-content">
+            <h1 class="banner-title">BROWSE BOOKS</h1>
+            <p class="banner-subtitle">To learn, to read, to be inspired</p>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <div class="left">
+            <p class="filters-label">Filters:</p>
+            <div class="filter">
+                <button onclick="loadGenre('all')">All Genres</button>
+                <button onclick="loadGenre('action')">Action</button>
+                <button onclick="loadGenre('thriller')">Thriller</button>
+                <button onclick="loadGenre('mystery')">Mystery</button>
+                <button onclick="loadGenre('romance')">Romance</button>
+                <button onclick="loadGenre('fiction')">Fiction</button>
+                <button onclick="loadGenre('non-fiction')">Non-Fiction</button>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="search">
+                <form class="search-container" onsubmit="handleSearch(event)">
+                    <input type="text" id="searchInput" placeholder="Search books..." aria-label="Search">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div class="bookContainer" id="bookContainer">
+                <p>Loading books...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeBook()">&#x2715;</button>
+            <div class="modal-body">
+                <img id="modalCover" src="" alt="Cover" class="modal-cover">
+                <div class="modal-info">
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-author" id="modalAuthor"></p>
+                    <p class="modal-genre" id="modalGenre"></p>
+                    <p class="modal-description" id="modalDescription"></p>
+                    <a id="modalPreview" href="#" target="_blank" class="modal-preview-btn">Preview on Google Books</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/genres-search.js"></script>
+</body>
+</html>

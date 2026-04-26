@@ -158,11 +158,6 @@
      </div>
 </div>
     <script>
-        // fetch('../../static/navbarloggedin.html')
-        // .then(res => res.text())
-        // .then(data => {
-        //     document.getElementById('nav-placeholder').innerHTML = data;
-        // });
         async function addBook(book) {
             const token = localStorage.getItem('token');
 
@@ -180,7 +175,7 @@
             });
 
             if (!res.ok) {
-                alert("Only managers can add books");
+                alert("Only authorized people can access.");
                 return;
             }
 

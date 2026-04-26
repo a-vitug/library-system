@@ -3,67 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/home.css"> 
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 
 <body>
     <div id="nav-placeholder"></div>
+    <div class="navRight" id="authArea"></div>
 
-     <nav>
-        <ul class="navLeft">
-            <li><a href="/home">Home</a></li>
-            <li class="dropDown">
-                <a href="/genre/allgenres">Genres</a>
-                <div class="dropDownGenre">
-                    <a href="/genre/allgenres">All Genres</a>
-                    <a href="/genre/action">Action</a>
-                    <a href="/genre/thriller">Thriller</a>
-                    <a href="/genre/mystery">Mystery</a>
-                    <a href="/genre/romance">Romance</a>
-                    <a href="/genre/fiction">Fiction</a>
-                    <a href="/genre/non-fiction">Non-fiction</a>
+    <div id="books-of-the-week">
+        <div class="container">
+
+            <div>
+                <h1 class="h1">BOOKS</h1>
+                <h1 class="h1">OF THE WEEK</h1>
+                <div class="carousel-card">
+                    <div class="carousel-container" id="homeCarousel">
+                        <div class="carousel-slide active"><p>Loading...</p></div>
+                    </div>
+                    
                 </div>
-            </li>
-            <li><a href="/about">About</a></li>
-        </ul>
-        
-        <div class="navRight" id="authArea"></div>
-            <!-- <a href="../pages/authentication/log-in.html" class="create-account">
-                <i class="user"></i> Log In
-            </a> -->
-        
-    </nav>
 
-    <div id="authArea"></div>
-
-    <div class="featured-carousel">
-        <div class="header">
-            <h1>📚 Books of the Week </h1>
-        </div>
-    </div>
-
-    <div class="book-carousel">
-        <h2>Featured Books</h2>
-        <div class="carousel-container">
-            <div class="carousel-slide active">
-                <h3>1984</h3>
-                <p>George Orwell</p>
+                <div id="carouselDots" class="carousel-dots"></div>
             </div>
-        <div class="carousel-slide">
-            <h3>Dune</h3>
-            <p>Frank Herbert</p>
+
+            <hr class="section-divider">
+
+            <div>
+                <div class="section-header">
+                    <h1 class="h1">RECOMMENDATIONS</h1>
+                    <a href="/genres/allgenres" class="see-all">See all</a>
+                </div>
+                <div id="recommendationsGrid" class="reco-grid"></div>
+            </div>
+
         </div>
-        <div class="carousel-slide">
-            <h3>Foundation</h3>
-            <p>Isaac Asimov</p>
-        </div>
-        <div class="carousel-slide">
-            <h3>The Hobbit</h3>
-            <p>J.R.R. Tolkien</p>
-        </div>
-        </div>
-        <button class="prev-btn">&lt;</button>
-        <button class="next-btn">&gt;</button>
     </div>
 
     <script>
@@ -95,5 +70,7 @@
             location.reload();
         }
     </script>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/carousel-load.js"></script>
 </body>
 </html>

@@ -1,0 +1,262 @@
+/* ── Banner ──────────────────────────────────────────────── */
+
+.checkout-banner {
+    margin-top: -72px;
+    height: 220px;
+    background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                url('/images/library.jpg') center 40% / cover no-repeat fixed;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 40px 28px;
+    box-sizing: border-box;
+}
+
+.checkout-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.checkout-banner-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.checkout-banner-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+.checkout-layout {
+    display: flex;
+    gap: 28px;
+    padding: 32px 32px;
+    align-items: flex-start;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.section-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-primary);
+    margin: 0 0 16px 0;
+}
+
+.checkout-books {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.book-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-surface);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s;
+}
+
+.book-item:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+
+.book-item-cover {
+    width: 52px;
+    height: 72px;
+    border-radius: 5px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.book-item-placeholder {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+}
+
+.book-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.book-item-title {
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 3px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-item-author {
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--color-author);
+    margin: 0 0 8px 0;
+}
+
+.book-item-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-link);
+    background: rgba(42, 157, 143, 0.1);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #aaa;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.remove-btn:hover {
+    background: #f3e8e8;
+    color: #c0392b;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--color-author);
+    background: var(--color-surface);
+    border-radius: 10px;
+}
+
+.empty-state a {
+    color: var(--color-link);
+    font-weight: 600;
+}
+
+/* ── Summary panel ───────────────────────────────────────── */
+
+.checkout-summary {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.summary-card {
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 22px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.summary-label {
+    font-size: 0.88rem;
+    color: var(--color-author);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.summary-muted {
+    font-weight: 500;
+    color: var(--color-author);
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--color-cream);
+    margin: 6px 0;
+}
+
+.summary-select {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.summary-select:disabled {
+    background: var(--color-cream);
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.checkout-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px;
+    background: var(--color-link);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.checkout-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.checkout-btn:active {
+    transform: translateY(0);
+}
+
+/* ── Toast ───────────────────────────────────────────────── */
+
+.toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--color-primary);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
+    z-index: 3000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}

@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const mongodb = require("mongodb").MongoClient;
 const mongoose = require("mongoose");
@@ -31,6 +32,24 @@ app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')))
 // API Books
 app.use('/api/books', apiBooksRoute);
 app.use('/api/user', apiUserRoute);
+
+const CACHE_FILE = path.join(__dirname, 'books-cache.json');
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function loadCache() {
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+    }
+  } catch {}
+  return {};
+}
+
+function saveCache(cache) {
+  try { fs.writeFileSync(CACHE_FILE, JSON.stringify(cache)); } catch {}
+}
+
+let booksCache = loadCache();
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
@@ -68,18 +87,17 @@ app.get('/api/google-books/search', async (req, res) => {
     const maxResults = Math.max(1, Math.min(40, parseInt(maxResultsRaw, 10) || 10));
     const startIndex = Math.max(0, parseInt(startIndexRaw, 10) || 0);
 
-    const params = {
-      q,
-      maxResults,
-      startIndex,
-    };
-
-    const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
-    if (apiKey) {
-      params.key = apiKey;
+    const cacheKey = `${q}|${maxResults}|${startIndex}`;
+    const cached = booksCache[cacheKey];
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      return res.json(cached.data);
     }
 
-    const response = await axios.get('https://www.googleapis.com/books/v1/volumes', { params });
+    const params = { q, maxResults, startIndex };
+    const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+    if (apiKey) params.key = apiKey;
+
+    const response = await axios.get('https://www.googleapis.com/books/v1/volumes', { params, timeout: 8000 });
     const data = response.data || {};
     const items = Array.isArray(data.items) ? data.items : [];
 
@@ -112,10 +130,13 @@ app.get('/api/google-books/search', async (req, res) => {
       };
     });
 
-    return res.json({
+    const payload = {
       totalItems: typeof data.totalItems === 'number' ? data.totalItems : results.length,
       results,
-    });
+    };
+    booksCache[cacheKey] = { ts: Date.now(), data: payload };
+    saveCache(booksCache);
+    return res.json(payload);
   } catch (err) {
     const status = err?.response?.status;
     const message = err?.response?.data?.error?.message || err.message || "Unknown error";
