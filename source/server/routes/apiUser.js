@@ -27,9 +27,7 @@ router.delete('/favorites/:bookId', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
-    user.favorites = user.favorites.filter(
-      id => id.toString() !== req.params.bookId
-    );
+    user.favorites = user.favorites.filter(id => id.toString() !== req.params.bookId);
 
     await user.save();
 
