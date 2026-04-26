@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Account</title>
+     
     <style>
         body {
             background-color: #f4f7f6;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: grid;
+            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -19,7 +19,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             text-align: center;
         }
 
@@ -30,32 +30,17 @@
         }
 
         form {
-            display: grid;
-            grid-template-columns: 120px 1fr;
+            display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: right;
             gap: 15px;
         }
 
-        .full-width {
-            grid-column: span 2;   
-            display: flex;
-            flex-direction: column; 
-            align-items: center;    
-            gap: 12px;              
-            margin-top: 20px;
-        }
-
         input, select {
-            width: 100%;
-            box-sizing: border-box;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
             transition: border-color 0.3s ease;
-
         }
 
         input:focus, select:focus {
@@ -86,7 +71,7 @@
             margin-bottom: 15px;
         }
 
-        .links {
+       .links {
             margin-top: 20px;
             font-size: 0.9rem;
             text-align: left;
@@ -109,48 +94,42 @@
             text-decoration: underline;
         }
     </style>
+
+     
 </head>
 <body>
-        <div class="container">
-            
-            <h1>Sign Up</h1>
-            <div id="error-container" style="color: red; margin-bottom: 10px"></div>
-            
-        <form action="/create-account" method="POST">
-            
-            <label for="name"><b>Name</b></label>
-            <input type="text" name="name" placeholder="Name" required>
-
-            <label for="username"><b>Username</b></label>
+   
+    <div class="container">
+         <h1>Library Login</h1>
+        <!-- {{#error}}
+        <div style="color: red;">
+            <strong>Error:</strong> {{error_text}}
+        </div>
+        {{/error}} -->
+        <form action="/log-in" method="POST">
+            <select name="role">
+                <option value="1">Manager</option>
+                <option value="2">Employee</option>
+                <option value="3">Member</option>
+            </select>
             <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign In</button>
 
-            <label for="email"><b>Email</b></label>
-            <input type="text" placeholder ="Email" name="email" required>
+             
+        </form>
+        <div>
+            <a href="/create-account">Create an Account here</a>
+        </div>
 
-            <label for="phone"><b>Phone number</b></label>
-            <input type="text" name="phone" placeholder="Phone Number" required>
-
-            <label for="password"><b>Password</b></label>
-            <input type="text" name="password" placeholder ="Password" required>
-
-            <div class="full-width">
-                <button type="submit" class="signupbutton">Sign Up</button>
-                <a href="/log-in">Login here</a>
-                
-            </div>
-            <div class="links">
+        <div class="links">
                 <a href="/home"> Go back</a>
             </div>
-        </div>
-    </form>
+        <div id="success-msg" style="color: green; text-align: center;"></div>
+    </div>
 
     <script>
-        const urlStatus = new URLSearchParams(window.location.search);
-        const error = urlStatus.get("error");
-        const container = document.getElementById("error-container");
-        if (error === '1') container.innerText = "Error: Username already exists.";
-        if (error === '2') container.innerText = "Error: Email already exists.";
-        if (error === '3') container.innerText = "Error: Phone number already exists.";
+        if (window.location.search.includes('signup=success')) document.getElementById('success-msg').innerText = "Account created! Please login.";
     </script>
 </body>
 </html>

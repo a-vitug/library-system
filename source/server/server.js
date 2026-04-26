@@ -1,13 +1,37 @@
 const express = require("express");
-const routes = require('./routes');
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
+const mongodb = require("mongodb").MongoClient;
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const axios = require("axios");
 const db = require("./config/connection");
+
 require('dotenv').config();
+
+const app = express();
+const PORT = 3000;
+
+const routes = require('./routes');
+const apiBooksRoute = require('./routes/apiBooks');
+const apiUserRoute = require('./routes/apiUser');
+
+db.once("open", () => {
+  console.error("MongoDB connection");
+});
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/', routes);
+app.use(express.static(path.join(__dirname, '../../front-end')));
+app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
+
+// API Books
+app.use('/api/books', apiBooksRoute);
+app.use('/api/user', apiUserRoute);
 
 const CACHE_FILE = path.join(__dirname, 'books-cache.json');
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -27,28 +51,9 @@ function saveCache(cache) {
 
 let booksCache = loadCache();
 
-const app = express();
-const PORT = 3000;
-
-db.once("open", () => {
-  console.error("MongoDB connection");
-});
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, '../../front-end')));
-app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')));
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
 });
-
-const user = {
-  username: "jdoe",
-  password: "test"
-};
 
 app.get('/api/users', async (req, res) => {
   try {
