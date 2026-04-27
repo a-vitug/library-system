@@ -5,20 +5,36 @@ const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
 
 // Add to favorites
-router.post('/favorites/:bookId', requireAuth, async (req, res) => {
+router.post('/favorites/:bookId', requireAuth, async(req,res) => {
   try {
+
     const user = await User.findById(req.user.id);
+    const book = await Book.findById(req.params.bookId);
 
-    if (!user.favorites.includes(req.params.bookId)) {
-      user.favorites.push(req.params.bookId);
-      await user.save();
-    }
+    if(!user.favorites.includes(book._id)) {
+      user.favorites.push(book._id);
+    };
 
-    res.json({ message: "Added to favorites" });
+    if(book.genre) {
+      book.genre.forEach(g => {
+        if(!user.interestGenres.includes(g)) {
+          user.interestGenres.push(g);
+        };
+      });
+    };
 
-  } catch (err) {
+    if(book.author && !user.interestAuthors.includes(book.author)) {
+      user.interestAuthors.push(book.author);
+    };
+
+    await user.save();
+
+    res.json({message:"Added to favorites"});
+
+  } catch(err) {
     res.status(500).send(err.message);
-  }
+  };
+
 });
 
 
@@ -42,8 +58,18 @@ router.delete('/favorites/:bookId', requireAuth, async (req, res) => {
 // Get favorite books
 router.get('/favorites', requireAuth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
-      .populate('favorites');
+    const user=await User.findById(id).populate('favorites');
+
+    const genres = user.favorites.flatMap(book => book.genre);
+
+    const topGenre = mostCommon(genres);
+
+    const recs = await Book.find({
+      genre: topGenre,
+      _id:{
+        $nin:user.favorites
+      }
+    }).limit(8);
 
     res.json(user.favorites);
 
@@ -66,5 +92,18 @@ router.get('/my-books', requireAuth, async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+// Recommendations
+// router.get('/recommendations', requireAuth, async (req, res) => {
+//   try {
+//     const user = await User.findOneById(req.user.id).populate('favorites');
+
+//     if(!user.favorites.length) {
+//       return res.json([]);
+//     };
+
+//     const genres = user.favorites.
+//   }
+// });
 
 module.exports = router;

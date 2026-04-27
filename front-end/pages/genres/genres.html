@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/pages/genre-base.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/pages/genre-base.css">
 </head>
 <body>
     <div id="nav-placeholder"></div>
@@ -57,6 +57,10 @@
                     <p class="modal-genre" id="modalGenre"></p>
                     <p class="modal-description" id="modalDescription"></p>
                     <a id="modalPreview" href="#" target="_blank" class="modal-preview-btn">Preview on Google Books</a>
+                    <div class="book-actions">
+                        <button onclick="saveFavorite()">♡ Favorite</button>
+                        <button onclick="borrowBook()">Add to Cart</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -295,3 +295,16 @@
 .modal-preview-btn:hover {
     opacity: 0.85;
 }
+
+.book-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.book-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}

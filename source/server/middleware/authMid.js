@@ -4,7 +4,7 @@ function requireAuth(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header) {
-    return res.status(401).send("Not authenticated");
+    return res.status(401).send("Authentication invalid");
   }
 
   const token = header.split(' ')[1];
@@ -18,11 +18,11 @@ function requireAuth(req, res, next) {
   }
 }
 
-// 🛡️ AUTHORIZATION (checks role)
+// Checks role
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).send("Not authenticated");
+      return res.status(401).send("Authentication invalid");
     }
 
     if (!roles.includes(req.user.role)) {

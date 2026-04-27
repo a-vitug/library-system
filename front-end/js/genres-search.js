@@ -6,7 +6,7 @@ async function fetchBooks(query, maxResults = 20) {
     if (!res.ok) throw new Error('Failed to fetch');
     const data = await res.json();
     return data.results || [];
-}
+};
 
 async function loadGenre(genre) {
     document.querySelectorAll('.filter button').forEach(btn => {
@@ -25,7 +25,7 @@ async function loadGenre(genre) {
         console.error('loadGenre error:', err);
         document.getElementById('bookContainer').innerHTML = '<p>Failed to load books. Please try again.</p>';
     }
-}
+};
 
 function renderCards(books) {
     bookCache = books;
@@ -41,7 +41,7 @@ function renderCards(books) {
             <p class="book-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
         </div>
     `).join('');
-}
+};
 
 function openBook(index) {
     const book = bookCache[index];
@@ -70,16 +70,20 @@ function openBook(index) {
 
     document.getElementById('bookModal').classList.add('active');
     document.body.style.overflow = 'hidden';
-}
+
+    window.currentBook = book;
+
+    const modalInfo = document.querySelector('.modal-info');
+};
 
 function closeBook() {
     document.getElementById('bookModal').classList.remove('active');
     document.body.style.overflow = '';
-}
+};
 
 function closeModal(e) {
     if (e.target.id === 'bookModal') closeBook();
-}
+};
 
 async function handleSearch(e) {
     e.preventDefault();
@@ -93,6 +97,94 @@ async function handleSearch(e) {
         console.error('handleSearch error:', err);
         document.getElementById('bookContainer').innerHTML = '<p>Search failed. Please try again.</p>';
     }
-}
+};
+
+async function saveFavorite(){
+    const token = localStorage.getItem('token');
+
+    if(!token) {
+        alert("User needs to be logged in");
+        return;
+    }
+
+    const book = currentBook;
+
+    let created = await fetch('/api/books/add-from-api',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            Authorization:`Bearer ${token}`
+        },
+        body: JSON.stringify({
+            title: book.title,
+            authors: book.authors,
+            categories: book.categories,
+            isbn: book.isbn13
+        })
+    });
+
+    let apiBook = await created.json();
+
+    await fetch(`/api/user/favorites/${apiBook._id}`,{
+        method:'POST',
+        headers:{
+        Authorization:`Bearer ${token}`
+        }
+    });
+
+    alert("Added to favorites");
+};
+
+async function borrowBook() {
+    try {
+        const token = localStorage.getItem('token');
+
+        if(!token) {
+            alert("Please log in first.");
+            return;
+        }
+
+        let created = await fetch('/api/books/add-from-api', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                Authorization:`Bearer ${token}`
+            },
+            body: JSON.stringify({
+                title: currentBook.title,
+                authors: currentBook.authors,
+                isbn: currentBook.isbn13
+            })
+        });
+
+        if(!created.ok){
+            alert("Could not add book.");
+            return;
+        }
+
+        let apiBook = await created.json();
+        let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
+
+        if(!cart.find(b => b._id === apiBook._id)) {
+            cart.push(apiBook);
+            localStorage.setItem(
+                "checkoutCart",
+                JSON.stringify(cart)
+            );
+        }
+
+        const goCheckout = confirm("Book added to cart.\n\nPress OK to go to check out.\nPress Cancel to keep browsing for more books.");
+
+        if(goCheckout) {
+            window.location.href="/pages/user-checkout.html";
+        } else {
+            closeBook();
+        };
+
+    } catch(err) {
+        console.error(err);
+        alert("Something went wrong.");
+    };
+};
 
 loadGenre('all');

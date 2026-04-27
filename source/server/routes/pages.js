@@ -43,7 +43,8 @@ router.get('/member', requireAuth, requireRole('member'), (req, res) => {
 
 // Genres
 router.get('/genres/allgenres', (req, res) => {
-  const filePath = path.join(PAGES_DIR, `../../front-end/pages/genres/genres.html`);
+  const filePath = path.join(PAGES_DIR, '../../front-end/pages/genres/genres.html');
+  console.log(filePath);
   res.sendFile(filePath, (err) => {
     if (err) res.status(404).send('Genre not found');
   });

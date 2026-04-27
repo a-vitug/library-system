@@ -3,15 +3,24 @@ const router = express.Router();
 const Book = require('../models/Book');
 const { requireAuth, requireRole } = require('../middleware/authMid');
 
-router.post('/add-from-api', requireAuth, requireRole('manager'), async (req, res) => {
+router.post('/add-from-api', requireAuth, async (req, res) => {
   try {
-    const { title, authors, isbn } = req.body;
+    const { title, authors, categories, isbn } = req.body;
 
-    const book = new Book({
-      title,
-      author: authors?.join(', '),
-      isbn: isbn
-    });
+    const book = await Book.findOneAndUpdate(
+      { 
+        isbn,
+      },
+      {
+        title,
+        author: authors?.join(', '),
+        genre: categories || []
+      },
+      {
+        upsert: true,
+        returnDocument: "after"
+      }
+    );
 
     await book.save();
 
