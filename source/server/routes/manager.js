@@ -41,6 +41,12 @@ router.get('/users', async (req, res) => {
   }
 });
 
+// Delete a user
+router.delete('/api/users/:id', requireAuth, requireRole('manager'), async (req,res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.json({message:"User deleted."});
+});
+
 // Get all books
 router.get('/all-books', requireAuth, requireRole('manager'), async (req, res) => {
   const books = await Book.find().populate('checkedOutBy', 'name username');

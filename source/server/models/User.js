@@ -35,14 +35,14 @@ const userSchema = new mongoose.Schema(
       minlength: 8,
       select: false,
     },
-  },
-  {
+    interestGenres: [String],
+    interestAuthors: [String],
     favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
+        ref: "Book",
       }
-    ]
+    ],
   },
   {
     timestamps: true,

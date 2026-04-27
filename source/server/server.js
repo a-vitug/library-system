@@ -16,6 +16,7 @@ const PORT = 3000;
 const routes = require('./routes');
 const apiBooksRoute = require('./routes/apiBooks');
 const apiUserRoute = require('./routes/apiUser');
+const cartBooksRoute = require('./routes/cartBooks');
 
 db.once("open", () => {
   console.error("MongoDB connection");
@@ -32,6 +33,7 @@ app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')))
 // API Books
 app.use('/api/books', apiBooksRoute);
 app.use('/api/user', apiUserRoute);
+app.use('/books', cartBooksRoute);
 
 const CACHE_FILE = path.join(__dirname, 'books-cache.json');
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -143,6 +145,7 @@ app.get('/api/google-books/search', async (req, res) => {
     return res.status(status && Number.isInteger(status) ? status : 500).json({ error: message });
   }
 });
+
 app.use('/', routes);
 
 app.listen(PORT, () => {
