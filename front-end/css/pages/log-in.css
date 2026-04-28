@@ -6,6 +6,9 @@
     padding: 40px 20px;
 }
 
+body {
+     background: var(--color-primary);
+}
 .container {
     background: var(--color-surface);
     padding: 2.5rem;

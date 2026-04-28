@@ -7,6 +7,20 @@ fetch(navFile)
     .then(data => {
         document.getElementById("nav-placeholder").innerHTML = data;
 
+        const token = localStorage.getItem("token");
+        if (token) {
+            fetch('/user', { headers: { Authorization: `Bearer ${token}` } })
+                .then(r => r.ok ? r.json() : null)
+                .then(user => {
+                    if (!user?.name) return;
+                    const avatar = document.getElementById('nav-icon');
+                    if (avatar) avatar.textContent = user.name.charAt(0).toUpperCase();
+                    const usernameEl = document.getElementById('nav-username');
+                    if (usernameEl) usernameEl.textContent = user.name;
+                })
+                .catch(() => {});
+        }
+
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             if (nav) nav.classList.toggle('scrolled', window.scrollY > 60);

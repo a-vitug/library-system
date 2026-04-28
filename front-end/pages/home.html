@@ -10,7 +10,6 @@
 
 <body>
     <div id="nav-placeholder"></div>
-    <div class="navRight" id="authArea"></div>
 
     <div id="books-of-the-week">
         <div class="container">
@@ -41,35 +40,6 @@
         </div>
     </div>
 
-    <script>
-        const token = localStorage.getItem('token');
-        const authArea = document.getElementById('authArea');
-
-        if (token) {
-            fetch('/user', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Not logged in");
-            return res.json();
-        })
-        .then(user => {
-            authArea.innerHTML = `
-                <span>Welcome, ${user.name}</span>
-                <button onclick="logout()">Logout</button>
-            `;
-        });
-        } else {
-            authArea.innerHTML = `<a href="/log-in">Log In</a>`;
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            location.reload();
-        }
-    </script>
     <script src="/js/navbar.js"></script>
     <script src="/js/carousel-load.js"></script>
 </body>

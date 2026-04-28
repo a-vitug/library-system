@@ -1,79 +1,180 @@
-
-    .profile-container {
-    padding: 20px 20px;
+body {
     display: flex;
-    flex-direction: column; 
-    align-items: center;   
-
-    min-height: 80vh;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 0;
+    background: #1A1A1A;
 }
 
-.profile-header {
+/* ── Main panel ──────────────────────────────────────────── */
+
+.profile-container {
+    flex: 1;
+    background: var(--color-primary);
+    padding: 48px 52px;
     display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.avatar {
-    width: 150px;
-    height:  150px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
+.greeting {
+    font-size: 3rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #fff;
+    margin: 0 0 40px 0;
+    line-height: 1.1;
 }
+
+/* ── Member search ───────────────────────────────────────── */
+
+.member-search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.search-bar:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+#search-results {
+    color: #fff;
+}
+
+/* ── Book search ─────────────────────────────────────────── */
+
+.profile-container .search-container {
+    margin-bottom: 28px;
+}
+
+.profile-container .bookContainer {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.profile-container .book-title {
+    color: #fff;
+}
+
+.profile-container .book-author {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-isbn {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.04em;
+    margin: 0 0 4px 0;
+}
+
+.empty-msg {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    margin: 20px 0;
+}
+
+/* ── Serial result card ──────────────────────────────────── */
+
+.serial-result-card {
+    display: flex;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 600px;
+}
+
+.serial-cover {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.serial-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.serial-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #fff;
+}
+
+.serial-detail {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    margin-right: 4px;
+}
+
+.serial-status {
+    margin: 8px 0 4px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.status-available {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.status-checked-out {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+/* ── Misc ────────────────────────────────────────────────── */
 
 .btn-logout {
-    margin-top: 30px;
     background: transparent;
     border: 1px solid #ff4d4d;
     color: #ff4d4d;
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
-}
-.divider {
-    border: 0;
-    border-top: 1px solid #000000;
-    width:40%;
-    margin: 20px;
-
-    display: block;
-    margin: 5px 0;
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .btn-logout:hover {
     background: #ff4d4d;
     color: white;
-}
-
-.info-group label {
-    display: block;     
-    margin-top: 15px;    
-    margin-bottom: 5px;  
-    font-weight: bold;
-    color: #555;
-}
-
-.info-group input {
-    display: block;     
-    width: 100%;         
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
-}
-
-.notEditable {
-    color: gray;
-    background-color: #f5f5f5; 
-    cursor: not-allowed;       
-    pointer-events: none;      
-    user-select: none;         
-    border: 1px solid #ddd;
 }
