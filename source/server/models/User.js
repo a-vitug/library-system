@@ -43,6 +43,12 @@ const userSchema = new mongoose.Schema(
         ref: "Book",
       }
     ],
+    checkedOutBooks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book",
+      }
+    ],
   },
   {
     timestamps: true,

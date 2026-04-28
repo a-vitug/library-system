@@ -46,25 +46,26 @@ async function loadFeatured() {
 }
 
 async function loadRecommendations() {
-    const token = local.Storage.getItem('token');
+    const token = localStorage.getItem('token');
     const grid = document.getElementById('recommendationsGrid');
 
     try {
+
         if(token) {
             const res = await fetch('/api/user/recommendations', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-        };
 
-        if (!res.ok) {
-            const books = await res.json();
+            if (res.ok) {
+                const books = await res.json();
 
-            if (books.length) {
-                renderRecommendations( books, true );
-                return;
-            };
+                if (books.length) {
+                    renderRecommendations( books, true );
+                    return;
+                };
+            }
         };
 
         const res = await fetchWithTimeout('/api/google-books/search?q=popular+fiction&maxResults=6');
@@ -91,7 +92,7 @@ function renderRecommendations( books, personalized ) {
     const grid = document.getElementById('recommendationsGrid');
 
     if(personalized) {
-        document.querySelector('.section-header .h1').textContent = 'RECOMMENDED FOR YOU';
+        document.querySelector('.section-header h1').textContent = 'RECOMMENDED FOR YOU';
     }
 
     grid.innerHTML = books.map(book => `
@@ -101,7 +102,7 @@ function renderRecommendations( books, personalized ) {
                 : '<div class="reco-no-cover"></div>'}
         
             <h3>${book.title}</h3>
-            <p>${book.author || (book.authors || []).join(', ')}</p>
+            <p>${book.authors || (book.authors || []).join(', ')}</p>
             ${book.genre
                 ? `<small>${book.genre.join(', ')}`
                 : ''
@@ -150,4 +151,6 @@ function resetAutoplay() {
     startAutoplay();
 }
 
-loadFeatured().then(() => setTimeout(loadRecommendations, 500));
+//loadFeatured().then(() => setTimeout(loadRecommendations, 500));
+loadFeatured();
+loadRecommendations();
