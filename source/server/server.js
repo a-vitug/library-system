@@ -146,8 +146,6 @@ app.get('/api/google-books/search', async (req, res) => {
   }
 });
 
-app.use('/', routes);
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

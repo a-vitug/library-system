@@ -39,7 +39,7 @@ router.post('/favorites/:bookId', requireAuth, async(req,res) => {
 
 
 // Remove from favorites
-router.delete('/favorites/:bookId', requireAuth, async (req, res) => {
+router.delete('/favorites/:bookId', requireAuth, async(req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
@@ -56,9 +56,9 @@ router.delete('/favorites/:bookId', requireAuth, async (req, res) => {
 
 
 // Get favorite books
-router.get('/favorites', requireAuth, async (req, res) => {
+router.get('/favorites', requireAuth, async(req, res) => {
   try {
-    const user=await User.findById(id).populate('favorites');
+    const user = await User.findById(req.user.id).populate('favorites');
 
     const genres = user.favorites.flatMap(book => book.genre);
 
@@ -78,9 +78,15 @@ router.get('/favorites', requireAuth, async (req, res) => {
   }
 });
 
+router.get('/favorites/count', requireAuth, async(req, res) => {
+  const user = await User.findById(req.user.id);
+
+  res.json({ count:user.favorites.length });
+});
+
 
 // Get checked out books
-router.get('/my-books', requireAuth, async (req, res) => {
+router.get('/my-books', requireAuth, async(req, res) => {
   try {
     const books = await Book.find({
       checkedOutBy: req.user.id
@@ -94,16 +100,34 @@ router.get('/my-books', requireAuth, async (req, res) => {
 });
 
 // Recommendations
-// router.get('/recommendations', requireAuth, async (req, res) => {
-//   try {
-//     const user = await User.findOneById(req.user.id).populate('favorites');
+router.get('/recommendations', requireAuth, async(req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
 
-//     if(!user.favorites.length) {
-//       return res.json([]);
-//     };
+    if(!user.favorites.length) {
+      return res.json([]);
+    };
 
-//     const genres = user.favorites.
-//   }
-// });
+    const genres = {};
+
+    user.favorites.forEach(book => {(book.genre || []).forEach(g => {
+      genres[g] = (genres[g] || 0) + 1;
+    })});
+
+    const topGenre = Object.keys(genres).sort((a, b) => genres[b] - genres[a])[0];
+
+    const favoritesId = user.favorites.map(b => b._id);
+
+    const recs = await Book.find({
+      genre: topGenre,
+      _id: {$nin: favoritesId }
+    }).limit(6);
+
+    res.json(recs);
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 module.exports = router;
