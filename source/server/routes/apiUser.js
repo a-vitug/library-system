@@ -94,16 +94,36 @@ router.get('/my-books', requireAuth, async (req, res) => {
 });
 
 // Recommendations
-// router.get('/recommendations', requireAuth, async (req, res) => {
-//   try {
-//     const user = await User.findOneById(req.user.id).populate('favorites');
+router.get('/recommendations', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findOneById(req.user.id).populate('favorites');
 
-//     if(!user.favorites.length) {
-//       return res.json([]);
-//     };
+    if(!user.favorites.length) {
+      return res.json([]);
+    };
 
-//     const genres = user.favorites.
-//   }
-// });
+    const genres = user.favorites.flatMap(book => book.genre || []);
+
+    const count = {};
+
+    genres.forEach(g => {
+      count[g] = (count[g] || 0) + 1;
+    });
+
+    const topGenre = Object.keys(count).sort((a, b) => count[a])[0];
+
+    const favoritesId = user.favorites.map(b => b._id);
+
+    const recs = await Book.find({
+      genre: topGenre,
+      _id: {$nin: favoritesId }
+    }).limit(6);
+
+    res.json(recs);
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 module.exports = router;
