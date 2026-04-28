@@ -17,25 +17,13 @@
             <div class="avatar" id="manager-avatar"></div>
             <div class="profile-info">
                 <h1 id="display-name">Manager</h1>
+                <button onclick="logout()" class="btn-logout">Log Out</button>
             </div>
-            <button onclick="logout()" class="btn-logout">Log Out</button>
+            
         </div>
-
-        <hr class="divider">
-
-        <section class="member-search-section">
-            <h2>Member Accounts</h2>
-            <input
-                type="text"
-                id="search-input"
-                placeholder="Search by username or email..."
-                class="search-bar"
-            >
-            <div id="search-results"></div>
-        </section>
     </main>
 
-    <script src="/js/navbar.js"></script>
+    <script src="/js/manager-navbar.js"></script>
     <script src="/js/member-search.js"></script>
 </body>
 </html>
