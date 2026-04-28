@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="/css/components.css">
-
 </head>
 
 <body>
     <nav>
-     <ul class="navLeft">
-            <li><a href="/home">Home</a></li>
-            <li class="dropDown">
-                <a href="/genre/allgenres">Genres</a>
-                <div class="dropDownGenre">
-                    <a href="/genre/allgenres">All Genres</a>
-                    <a href="/genre/action">Action</a>
-                    <a href="/genre/thriller">Thriller</a>
-                    <a href="/genre/mystery">Mystery</a>
-                    <a href="/genre/romance">Romance</a>
-                    <a href="/genre/fiction">Fiction</a>
-                    <a href="/genre/non-fiction">Non-fiction</a>
+        <div class="nav-left">
+            <img src="/images/logo.svg" alt="Logo" class="avatar">
+            <span class="nav-label">NEXUS</span>
+        </div>
+
+        <div class="nav-center">
+            <a href="/home" class="nav-item">
+                <img src="/images/home.svg" alt="Home" class="nav-icon">
+                <span class="nav-label">HOME</span>
+            </a>
+            <a href="/genre/allgenres" class="nav-item">
+                <img src="/images/book.svg" alt="Library" class="nav-icon">
+                <span class="nav-label">GENRE</span>
+            </a>
+            <a href="#" class="nav-item">
+                <img src="/images/star.svg" alt="About" class="nav-icon">
+                <span class="nav-label">ABOUT</span>
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <div class="dropDown" style="position:relative">
+                <div class="avatar-trigger">
+                    <div class="topRightAvatar" id="nav-icon">?</div>
+                    <span class="nav-username" id="nav-username"></span>
                 </div>
-            </li>
-            <li><a href="/about">About</a></li>
-        </ul>
-        
-        <li class="dropDown">
-            <a href="/memberportal.html" class="topRightAvatar">JD</a>
                 <div class="profileDropDown">
-                    <a href="/memberportal.html">My Profile</a>
-                    <a href="/logout">Logout</a>
+                    <div class="dropdown-inner">
+                        <a href="pages/portals/member.html">Profile</a>
+                        <a href="/pages/user-favorites.html">Favorites</a>
+                        <a href="#" onclick="logout(); return false;" class="dropdown-logout">Log Out</a>
+                    </div>
                 </div>
-        </li>
-    
-        
+            </div>
+        </div>
     </nav>
 </body>
-

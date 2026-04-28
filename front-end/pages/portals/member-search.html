@@ -6,26 +6,15 @@
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/portals/librarian.css">
-    <title>Librarian Portal</title>
+    <title>Member Search</title>
 </head>
 
 <body data-role="librarian">
-    <!-- Probably wont need navbar for librarian/ manager -->
-    <div id="nav-placeholder"></div>
-
+<div id="nav-placeholder"></div>
     <main class="profile-container">
-        <div class="profile-header">
-            <div class="avatar" id="librarian-avatar"></div>
-            <div class="profile-info">
-                <h1 id="display-name">Librarian</h1>
-            </div>
-            <button onclick="logout()" class="btn-logout">Log Out</button>
-        </div>
-
-        <hr class="divider">
+        <h1 class="greeting">Member Search</h1>
 
         <section class="member-search-section">
-            <h2>Member Accounts</h2>
             <input
                 type="text"
                 id="search-input"
@@ -34,9 +23,11 @@
             >
             <div id="search-results"></div>
         </section>
+
+        <button onclick="logout()" class="btn-logout">Log Out</button>
     </main>
 
-    <script src="/js/navbar.js"></script>
+    <script src="/js/librarian-navbar.js"></script>
     <script src="/js/member-search.js"></script>
 </body>
-</html> 
+</html>

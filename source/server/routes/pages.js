@@ -34,7 +34,7 @@ router.get('/admin', requireAuth, requireRole('manager'), (req, res) => {
 });
 
 router.get('/librarian', requireAuth, requireRole('employee'), (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, 'librarian-portal.html'));
+  res.sendFile(path.join(PAGES_DIR, 'portals/librarian/librarian.html'));
 });
 
 router.get('/member', requireAuth, requireRole('member'), (req, res) => {

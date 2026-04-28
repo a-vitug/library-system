@@ -1,7 +1,7 @@
 let bookCache = [];
 let currentGenre = 'fiction';
 
-async function fetchBooks(query, maxResults = 20) {
+async function fetchBooks(query, maxResults = 100) {
     const res = await fetch(`/api/google-books/search?q=${encodeURIComponent(query)}&maxResults=${maxResults}`);
     if (!res.ok) throw new Error('Failed to fetch');
     const data = await res.json();
@@ -18,7 +18,7 @@ async function loadGenre(genre) {
     document.getElementById('bookContainer').innerHTML = '<p>Loading...</p>';
     const query = genre === 'all' ? 'fiction' : genre;
     try {
-        const books = await fetchBooks(`subject:${query}`, 20);
+        const books = await fetchBooks(`subject:${query}`, 100);
         bookCache = books;
         renderCards(books);
     } catch (err) {
@@ -35,8 +35,13 @@ function renderCards(books) {
         return;
     }
     container.innerHTML = books.map((book, i) => `
-        <div class="book-card" onclick="openBook(${i})">
-            <img src="${book.thumbnail || ''}" alt="${book.title}" onerror="this.style.display='none'">
+        <div class="book-item-wrapper" onclick="openBook(${i})">
+            <div class="book-card-stack">
+                <div class="book-card-back"></div>
+                <div class="book-card">
+                    <img src="${book.thumbnail || '/images/no-cover.png'}" alt="${book.title}" onerror="this.src='/images/no-cover.png'">
+                </div>
+            </div>
             <p class="book-title">${book.title || 'Unknown Title'}</p>
             <p class="book-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
         </div>
