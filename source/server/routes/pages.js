@@ -16,6 +16,10 @@ router.get('/home', (req, res) => {
   res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
 });
 
+router.get('/about', (req, res) => {
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/about.html'));
+});
+
 // Home for logged in users
 router.get('/user', requireAuth, async (req, res) => {
   try {
