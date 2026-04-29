@@ -40,3 +40,18 @@ buttons.forEach(btn => {
         btn.classList.add('active');
     });
 });
+
+function goToProfile() {
+    const role = localStorage.getItem("role");
+
+    if (!role) {
+        window.location = "/log-in";
+        return;
+    } else if (role === "member") {
+        window.location = "/member";
+    } else if (role === "employee") {
+        window.location = "/librarian";
+    } else if (role === "manager") {
+        window.location = "/admin";
+    }
+}

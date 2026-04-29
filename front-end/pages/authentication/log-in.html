@@ -14,7 +14,7 @@
             <h1>Library Login</h1>
 
         <form id="loginForm">
-            <select name="role">
+            <select name="role" id="role">
                 <option value="manager">Manager</option>
                 <option value="employee">Employee</option>
                 <option value="member">Member</option>
@@ -34,28 +34,30 @@
     </div>
 
     <script>
-        const form = document.getElementById("loginForm");
         document.getElementById("loginBtn").addEventListener("click", async () => {
             const username = document.querySelector('[name="username"]').value;
             const password = document.querySelector('[name="password"]').value;
+            const selectedRole = document.getElementById('role').value;
 
             const res = await fetch('/log-in', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password, role: selectedRole })
             });
-
-            if (!res.ok) {
-                alert("Invalid login");
-                return;
-            }
 
             const data = await res.json();
 
+            if (!res.ok) {
+                alert(data.error);
+                return;
+            }
+
             localStorage.setItem('token', data.token);
-            window.location.href = '/home';
+            localStorage.setItem('role', data.role);
+
+            window.location = "/home";
         });
     </script>
 </body>
