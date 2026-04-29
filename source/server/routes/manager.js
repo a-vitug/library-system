@@ -5,7 +5,7 @@ const { requireAuth, requireRole } = require('../middleware/authMid');
 const bcrypt = require('bcrypt');
 
 // Create employee
-router.post('/create-employee', async (req, res) => {
+router.post('/create-employee', async(req, res) => {
   const { name, username, email, password, phone, role } = req.body;
 
   try {

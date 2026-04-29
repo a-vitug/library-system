@@ -4,8 +4,15 @@ const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
 
+// Get user data
+router.get('/api/user/me', requireAuth, async(req, res) => {
+  const user = await User.findById(req.user.id).populate('favorites');
+
+  res.json(user);
+});
+
 // Add to favorites
-router.post('/favorites/:bookId', requireAuth, async(req,res) => {
+router.post('/favorites/:bookId', requireAuth, async(req, res) => {
   try {
 
     const user = await User.findById(req.user.id);

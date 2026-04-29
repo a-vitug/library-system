@@ -1,13 +1,17 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const User = require('../models/User');
-const path = require('path');
 const jwt = require('jsonwebtoken');
 const { requireAuth, requireRole } = require('../middleware/authMid');
 
 const PAGES_DIR = path.join(__dirname, '../../../front-end/pages');
 
 // Home
+router.get('/', (req, res) => {
+  res.redirect('/home');
+});
+
 router.get('/home', (req, res) => {
   res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
 });
@@ -29,25 +33,21 @@ router.get('/user', requireAuth, async (req, res) => {
 });
 
 // Role check
-router.get('/admin', requireAuth, requireRole('manager'), (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, 'manager-portal.html'));
+router.get('/admin', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, '/portals/manager/manager.html'));
 });
 
-router.get('/librarian', requireAuth, requireRole('employee'), (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, 'portals/librarian/librarian.html'));
+router.get('/librarian', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, '/portals/librarian/librarian.html'));
 });
 
-router.get('/member', requireAuth, requireRole('member'), (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, 'member-portal.html'));
+router.get('/member', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, '/portals/member.html'));
 });
 
 // Genres
-router.get('/genres/allgenres', (req, res) => {
-  const filePath = path.join(PAGES_DIR, '../../front-end/pages/genres/genres.html');
-  console.log(filePath);
-  res.sendFile(filePath, (err) => {
-    if (err) res.status(404).send('Genre not found');
-  });
+router.get('/genres', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, 'genres/genres.html'));
 });
 
 module.exports = router;

@@ -32,10 +32,26 @@ function logout() {
     window.location.href = "/log-in";
 }
 
- const buttons = document.querySelectorAll('.nav-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
+const buttons = document.querySelectorAll('.nav-btn');
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+function goToProfile() {
+    const role = localStorage.getItem("role");
+
+    if (!role) {
+        window.location = "/log-in";
+        return;
+    } else if (role === "member") {
+        window.location = "/member";
+    } else if (role === "employee") {
+        window.location = "/librarian";
+    } else if (role === "manager") {
+        window.location = "/admin";
+    }
+}

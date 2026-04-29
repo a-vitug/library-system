@@ -13,7 +13,7 @@ router.get('/log-in', (req, res) => {
 });
 
 router.post('/log-in', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role: selectedRole } = req.body;
 
   try {
     const user = await User.findOne({ username }).select('+password');
@@ -21,6 +21,8 @@ router.post('/log-in', async (req, res) => {
 
     const valid = await user.isCorrectPassword(password);
     if (!valid) return res.status(401).send("Invalid credentials");
+
+    if (user.role !== selectedRole) return res.status(403).json({ error: `This account is a ${ user.role } and does not have authority to access ${ selectedRole } page`});
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
