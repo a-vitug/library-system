@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/genre-base.css">
+    <link rel="stylesheet" href="/css/portals/librarian.css">
+    <title>Book Search — Librarian Portal</title>
+</head>
+
+<body data-role="librarian">
+    <div id="nav-placeholder"></div>
+
+    <main class="profile-container">
+        <h1 class="greeting">Book Search</h1>
+
+        <form class="search-container" onsubmit="handleSearch(event)">
+            <input type="text" id="searchInput" placeholder="Search by title, author, or ISBN..." aria-label="Search">
+            <button type="submit">Search</button>
+        </form>
+
+        <div id="results"></div>
+    </main>
+
+    <div id="bookModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeBook()">&#x2715;</button>
+            <div class="modal-body">
+                <img id="modalCover" src="" alt="Cover" class="modal-cover">
+                <div class="modal-info">
+                    <p class="modal-isbn" id="modalISBN"></p>
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-author" id="modalAuthor"></p>
+                    <p class="modal-genre" id="modalGenre"></p>
+                    <p class="modal-description" id="modalDescription"></p>
+                    <a id="modalPreview" href="#" target="_blank" class="modal-preview-btn">Preview on Google Books</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/manager-navbar.js"></script>
+    <script src="/js/serial-book-search.js"></script>
+</body>
+</html>
