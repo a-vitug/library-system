@@ -161,8 +161,6 @@ body {
     border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
-/* ── Misc ────────────────────────────────────────────────── */
-
 .btn-logout {
     background: transparent;
     border: 1px solid #ff4d4d;
