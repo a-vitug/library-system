@@ -46,26 +46,69 @@ async function loadFeatured() {
 }
 
 async function loadRecommendations() {
+    const token = localStorage.getItem('token');
+    const grid = document.getElementById('recommendationsGrid');
+
     try {
+
+        if(token) {
+            const res = await fetch('/api/user/recommendations', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            if (res.ok) {
+                const books = await res.json();
+
+                if (books.length) {
+                    renderRecommendations( books, true );
+                    return;
+                };
+            }
+        };
+
         const res = await fetchWithTimeout('/api/google-books/search?q=popular+fiction&maxResults=6');
-        if (!res.ok) {
-            console.error('Recommendations fetch failed:', res.status);
-            return;
-        }
         const data = await res.json();
-        const books = (data.results || []).slice(0, 6);
-        const grid = document.getElementById('recommendationsGrid');
-        if (!grid || !books.length) return;
-        grid.innerHTML = books.map(book => `
-            <div class="reco-card">
-                ${book.thumbnail
-                    ? `<img src="${book.thumbnail}" alt="${book.title}">`
-                    : '<div class="reco-no-cover"></div>'}
-            </div>
-        `).join('');
+
+        renderRecommendations(data.results || [], false);
+
+        // const books = (data.results || []).slice(0, 6);
+        // const grid = document.getElementById('recommendationsGrid');
+        // if (!grid || !books.length) return;
+        // grid.innerHTML = books.map(book => `
+        //     <div class="reco-card">
+        //         ${book.thumbnail
+        //             ? `<img src="${book.thumbnail}" alt="${book.title}">`
+        //             : '<div class="reco-no-cover"></div>'}
+        //     </div>
+        // `).join('');
     } catch (err) {
         console.error('loadRecommendations error:', err);
     }
+}
+
+function renderRecommendations( books, personalized ) {
+    const grid = document.getElementById('recommendationsGrid');
+
+    if(personalized) {
+        document.querySelector('.section-header h1').textContent = 'RECOMMENDED FOR YOU';
+    }
+
+    grid.innerHTML = books.map(book => `
+        <div class="reco-card">
+            ${book.thumbnail
+                ? `<img src="${book.thumbnail}" alt="${book.title}">`
+                : '<div class="reco-no-cover"></div>'}
+        
+            <h3>${book.title}</h3>
+            <p>${book.authors || (book.authors || []).join(', ')}</p>
+            ${book.genre
+                ? `<small>${book.genre.join(', ')}`
+                : ''
+            }
+        </div>
+    `).join('');
 }
 
 function renderDots(count) {
@@ -108,4 +151,6 @@ function resetAutoplay() {
     startAutoplay();
 }
 
-loadFeatured().then(() => setTimeout(loadRecommendations, 500));
+//loadFeatured().then(() => setTimeout(loadRecommendations, 500));
+loadFeatured();
+loadRecommendations();

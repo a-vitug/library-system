@@ -17,6 +17,7 @@ const routes = require('./routes');
 const apiBooksRoute = require('./routes/apiBooks');
 const apiUserRoute = require('./routes/apiUser');
 const cartBooksRoute = require('./routes/cartBooks');
+const managerRoutes = require('./routes/manager');
 
 db.once("open", () => {
   console.error("MongoDB connection");
@@ -34,6 +35,7 @@ app.use('/pages', express.static(path.join(__dirname, '../../front-end/pages')))
 app.use('/api/books', apiBooksRoute);
 app.use('/api/user', apiUserRoute);
 app.use('/books', cartBooksRoute);
+app.use('/manager', managerRoutes);
 
 const CACHE_FILE = path.join(__dirname, 'books-cache.json');
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -145,8 +147,6 @@ app.get('/api/google-books/search', async (req, res) => {
     return res.status(status && Number.isInteger(status) ? status : 500).json({ error: message });
   }
 });
-
-app.use('/', routes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

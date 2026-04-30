@@ -15,7 +15,7 @@
                 <img src="/images/home.svg" alt="Home" class="nav-icon">
                 <span class="nav-label">HOME</span>
             </a>
-            <a href="/genre/allgenres" class="nav-item">
+            <a href="/genres" class="nav-item">
                 <img src="/images/book.svg" alt="Library" class="nav-icon">
                 <span class="nav-label">GENRE</span>
             </a>
@@ -32,12 +32,12 @@
         <div class="nav-right">
             <div class="dropDown" style="position:relative">
                 <div class="avatar-trigger">
-                    <div class="topRightAvatar" id="nav-icon">?</div>
-                    <span class="nav-username" id="nav-username"></span>
+                    <div class="topRightAvatar" id="nav-icon" onclick="goToProfile()">?</div>
+                    <span class="nav-username" id="nav-username" onclick="goToProfile()"></span>
                 </div>
                 <div class="profileDropDown">
                     <div class="dropdown-inner">
-                        <a href="pages/portals/member.html">Profile</a>
+                        <a href="/member">Profile</a>
                         <a href="/pages/user-favorites.html">Favorites</a>
                         <a href="#" onclick="logout(); return false;" class="dropdown-logout">Log Out</a>
                     </div>
