@@ -3,7 +3,7 @@
 .checkout-banner {
     margin-top: -72px;
     height: 220px;
-    background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    background: linear-gradient(rgb(0 0 0 / 55%), rgb(0 0 0 / 55%)),
                 url('/images/library.jpg') center 40% / cover no-repeat fixed;
     display: flex;
     align-items: flex-end;
@@ -27,14 +27,14 @@
 
 .checkout-banner-subtitle {
     font-size: 0.95rem;
-    color: rgba(255,255,255,0.8);
+    color: rgb(255 255 255 / 80%);
     margin: 0;
 }
 
 .checkout-layout {
     display: flex;
     gap: 28px;
-    padding: 32px 32px;
+    padding: 32px;
     align-items: flex-start;
     max-width: 1100px;
     margin: 0 auto;
@@ -46,7 +46,7 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--color-primary);
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
 }
 
 .checkout-books {
@@ -64,12 +64,12 @@
     border-radius: 10px;
     padding: 14px 16px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
     transition: box-shadow 0.2s;
 }
 
 .book-item:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 13%);
 }
 
 .book-item-cover {
@@ -91,10 +91,10 @@
 
 .book-item-title {
     font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 3px 0;
+    margin: 0 0 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -102,10 +102,10 @@
 
 .book-item-author {
     font-size: 0.85rem;
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-weight: 400;
     color: var(--color-author);
-    margin: 0 0 8px 0;
+    margin: 0 0 8px;
 }
 
 .book-item-badge {
@@ -115,7 +115,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-link);
-    background: rgba(42, 157, 143, 0.1);
+    background: rgb(42 157 143 / 10%);
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -161,7 +161,7 @@
     background: var(--color-surface);
     border-radius: 12px;
     padding: 22px 20px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 12px rgb(0 0 0 / 10%);
 }
 
 .summary-row {
@@ -248,7 +248,7 @@
     padding: 14px 24px;
     border-radius: 10px;
     font-size: 0.9rem;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 24px rgb(0 0 0 / 25%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s, transform 0.3s;

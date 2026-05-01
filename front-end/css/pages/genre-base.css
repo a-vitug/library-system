@@ -3,7 +3,7 @@
 .genre-banner {
     margin-top: -72px;
     height: 400px;
-    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    background: linear-gradient(rgb(0 0 0 / 45%), rgb(0 0 0 / 45%)),
                 url('/images/library.jpg') center 35% / cover no-repeat fixed;
     display: flex;
     align-items: flex-end;
@@ -27,7 +27,7 @@
 
 .banner-subtitle {
     font-size: 20px;
-    color: rgba(255,255,255,0.85);
+    color: rgb(255 255 255 / 85%);
     margin: 0;
 }
 
@@ -45,7 +45,7 @@
     font-weight: 700;
     font-size: 0.95rem;
     color: var(--color-text);
-    margin: 0 0 10px 0;
+    margin: 0 0 10px;
 }
 
 .search {
@@ -125,8 +125,7 @@
 .bookContainer {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    row-gap: 40px;
-    column-gap: 28px;
+    gap: 40px 28px;
     padding: 20px 0;
 }
 
@@ -144,14 +143,11 @@
 
 .book-card-back {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 10px;
-    bottom: 10px;
+    inset: 0 10px 10px 0;
     background: #111;
     border-radius: 2px;
     transform: translate(8px, 8px);
-    transform-origin: middle left;
+    transform-origin: center left;
     transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -196,7 +192,7 @@
 
 .book-title {
     font-size: 15px;
-    margin: 10px 0 0 0;
+    margin: 10px 0 0;
     color: var(--color-text);
     font-family: 'Inter Medium', sans-serif;
     font-weight: 700;
@@ -208,7 +204,7 @@
 .book-author {
     font-size: 13px;
     color: #808080;
-    margin: 3px 0 0 0;
+    margin: 3px 0 0;
     font-family: 'Inter Medium', sans-serif;
     font-weight: 300;
 }
@@ -226,7 +222,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgb(0 0 0 / 55%);
     z-index: 2000;
     align-items: center;
     justify-content: center;
@@ -245,7 +241,7 @@
     max-height: 85vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 30%);
 }
 
 .modal-close {
@@ -282,7 +278,7 @@
 }
 
 .modal-info h2 {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px;
     font-size: 1.2rem;
     color: var(--color-text);
 }
@@ -290,14 +286,14 @@
 .modal-author {
     font-size: 0.95rem;
     color: var(--color-muted);
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
 }
 
 .modal-genre {
     font-size: 0.85rem;
     color: var(--color-primary);
     font-weight: 600;
-    margin: 0 0 12px 0;
+    margin: 0 0 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -306,10 +302,8 @@
     font-size: 0.9rem;
     color: var(--color-text);
     line-height: 1.6;
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
     display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
