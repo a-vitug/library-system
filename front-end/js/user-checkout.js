@@ -33,7 +33,12 @@ function loadCartBooks() {
                 <div class = "book-item-info">
                     <p class = "book-item-title">${book.title}</p>
                     <p class = "book-item-author">${book.author || "Unknown Author"}</p>
-                    <span class = "book-item-badge">Available</span>
+                    ${book.available !== undefined
+                        ? book.available
+                            ? '<span class="status-badge status-available">Available</span>'
+                            : '<span class="status-badge status-checked-out">Checked Out</span>'
+                        : '<span class="book-item-badge">Available</span>'
+                    }
                 </div>
                 <button class = "remove-btn" onclick = "removeItem('bookItem${i}', '${book._id}')"> ✕ </button>
             </div>`
