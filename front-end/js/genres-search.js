@@ -44,6 +44,12 @@ function renderCards(books) {
             </div>
             <p class="book-title">${book.title || 'Unknown Title'}</p>
             <p class="book-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
+            ${book.available !== undefined
+                ? book.available
+                    ? '<span class="status-badge status-available">Available</span>'
+                    : '<span class="status-badge status-checked-out">Checked Out</span>'
+                : ''
+            }
         </div>
     `).join('');
 };
