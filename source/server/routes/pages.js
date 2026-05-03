@@ -21,7 +21,7 @@ router.get('/about', (req, res) => {
 });
 
 // Home for logged in users
-router.get('/user', requireAuth, async (req, res) => {
+router.get('/logged-in', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 

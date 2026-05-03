@@ -5,7 +5,7 @@ const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
 
 // Get user data
-router.get('/api/user/me', requireAuth, async(req, res) => {
+router.get('/me', requireAuth, async(req, res) => {
   const user = await User.findById(req.user.id).populate('favorites');
 
   res.json(user);
@@ -18,19 +18,23 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
     const user = await User.findById(req.user.id);
     const book = await Book.findById(req.params.bookId);
 
-    if(!user.favorites.includes(book._id)) {
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    };
+
+    if (!user.favorites.includes(book._id)) {
       user.favorites.push(book._id);
     };
 
-    if(book.genre) {
+    if (book.genre) {
       book.genre.forEach(g => {
-        if(!user.interestGenres.includes(g)) {
+        if (!user.interestGenres.includes(g)) {
           user.interestGenres.push(g);
         };
       });
     };
 
-    if(book.author && !user.interestAuthors.includes(book.author)) {
+    if (book.author && !user.interestAuthors.includes(book.author)) {
       user.interestAuthors.push(book.author);
     };
 

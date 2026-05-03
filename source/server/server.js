@@ -59,25 +59,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../front-end/pages/home.html'));
 });
 
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/users', async (req, res) => {
-  try {
-    const newUser = new User(req.body);
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 app.get('/api/google-books/search', async (req, res) => {
   try {
     const q = (req.query.q || "").toString().trim();

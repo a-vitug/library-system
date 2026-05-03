@@ -107,6 +107,12 @@ function renderRecommendations( books, personalized ) {
                 ? `<small>${book.genre.join(', ')}`
                 : ''
             }
+            ${book.available !== undefined
+                ? book.available
+                    ? '<span class="status-badge status-available">Available</span>'
+                    : '<span class="status-badge status-checked-out">Checked Out</span>'
+                : ''
+            }
         </div>
     `).join('');
 }
