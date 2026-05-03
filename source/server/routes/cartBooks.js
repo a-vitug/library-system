@@ -43,7 +43,9 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
 router.post('/return/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(book.checkedOutBy);
+    const isMember = book.checkedOutBy.toString() === req.user.id;
+    const isStaff = req.user.role === 'manager' || req.user.role === 'librarian';
 
     if (!book) return res.status(404).send("Book not found");
 
@@ -51,20 +53,22 @@ router.post('/return/:id', requireAuth, async (req, res) => {
       return res.status(400).send("Book is already available");
     }
 
-    if (book.checkedOutBy.toString() !== req.user.id) {
-      return res.status(403).send("Returned book");
+    if (!isMember && !isStaff) {
+      return res.status(403).send("Not allowed to return this book");
     }
 
     book.available = true;
     book.checkedOutBy = null;
     book.dueDate = null;
 
-    user.checkedOutBooks = user.checkedOutBooks.filter(
-      id => id.toString() !== book._id.toString()
-    );
+    if (user) {
+      user.checkedOutBooks = user.checkedOutBooks.filter(
+        id => id.toString() !== book._id.toString()
+      );
+      await user.save();
+    }
 
-    await book.save();    
-    await user.save();
+    await book.save();
 
     res.json({ message: "Book returned" });
 
