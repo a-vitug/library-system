@@ -2,19 +2,12 @@ const express = require('express');
 const { requireAuth } = require('../middleware/authMid');
 const router = express.Router();
 const Book = require('../models/Book');
+const User = require('../models/User');
 
 // Checkout
 router.post('/checkout/:id', requireAuth, async (req, res) => {
   try {
-    const token = localStorage.getItem("item");
     const book = await Book.findById(req.params.id);
-
-    await fetch(`/books/checkout/${book._id}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
 
     if (!book) return res.status(404).send("Book not found");
 
@@ -43,6 +36,7 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
 router.post('/return/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
+    const user = await User.findById(req.user.id);
 
     if (!book) return res.status(404).send("Book not found");
 
@@ -58,7 +52,12 @@ router.post('/return/:id', requireAuth, async (req, res) => {
     book.checkedOutBy = null;
     book.dueDate = null;
 
-    await book.save();
+    user.checkedOutBooks = user.checkedOutBooks.filter(
+      id => id.toString() !== book._id.toString()
+    );
+
+    await book.save();    
+    await user.save();
 
     res.json({ message: "Book returned" });
 

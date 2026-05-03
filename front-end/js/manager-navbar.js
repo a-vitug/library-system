@@ -14,7 +14,7 @@ async function loadDisplayName() {
     const token = localStorage.getItem('token');
     if (!token) return;
     try {
-        const res = await fetch('/user', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch('manager/users', { headers: { Authorization: `Bearer ${token}` } });
         if (res.ok) {
             const data = await res.json();
             const el = document.getElementById('display-name');

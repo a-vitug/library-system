@@ -24,11 +24,16 @@ fetch(navFile)
 
         const token = localStorage.getItem("token");
         if (token) {
-            fetch('/user', { headers: { Authorization: `Bearer ${token}` } })
+            fetch('/api/user/me', { 
+                headers: { 
+                    Authorization: `Bearer ${token}` 
+                }
+            })
                 .then(r => r.ok ? r.json() : null)
                 .then(user => {
-                    if (!user?.name) return;
+                    if (!user || !user.name) return;
                     const avatar = document.getElementById('nav-icon');
+                    const usernameEl = document.getElementById('nav-username');
                     if (avatar) avatar.textContent = user.name.charAt(0).toUpperCase();
                     if (usernameEl) usernameEl.textContent = user.name;
                 })

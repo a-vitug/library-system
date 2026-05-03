@@ -21,7 +21,7 @@ router.get('/search', requireAuth, requireRole('employee', 'manager'), async (re
 
 router.post('/add-from-api', requireAuth, async (req, res) => {
   try {
-    const { title, authors, categories, isbn } = req.body;
+    const { title, authors, categories, isbn, thumbnail, description } = req.body;
 
     const book = await Book.findOneAndUpdate(
       { 
@@ -30,7 +30,9 @@ router.post('/add-from-api', requireAuth, async (req, res) => {
       {
         title,
         author: authors?.join(', '),
-        genre: categories || []
+        genre: categories || [],
+        thumbnail,
+        description,
       },
       {
         upsert: true,

@@ -129,7 +129,7 @@ router.get('/recommendations', requireAuth, async(req, res) => {
 
     const favoritesId = user.favorites.map(b => b._id);
 
-    const recs = await Book.find({
+    let recs = await Book.find({
       genre: topGenre,
       _id: {$nin: favoritesId }
     }).limit(6);

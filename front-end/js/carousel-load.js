@@ -61,7 +61,7 @@ async function loadRecommendations() {
             if (res.ok) {
                 const books = await res.json();
 
-                if (books.length) {
+                if (books.length >= 6) {
                     renderRecommendations( books, true );
                     return;
                 };
@@ -72,17 +72,6 @@ async function loadRecommendations() {
         const data = await res.json();
 
         renderRecommendations(data.results || [], false);
-
-        // const books = (data.results || []).slice(0, 6);
-        // const grid = document.getElementById('recommendationsGrid');
-        // if (!grid || !books.length) return;
-        // grid.innerHTML = books.map(book => `
-        //     <div class="reco-card">
-        //         ${book.thumbnail
-        //             ? `<img src="${book.thumbnail}" alt="${book.title}">`
-        //             : '<div class="reco-no-cover"></div>'}
-        //     </div>
-        // `).join('');
     } catch (err) {
         console.error('loadRecommendations error:', err);
     }
