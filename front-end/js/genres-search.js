@@ -1,5 +1,7 @@
 let bookCache = [];
 let currentGenre = 'fiction';
+let currentBookId = null;
+let currentBook = null;
 
 async function fetchBooks(query, maxResults = 100) {
     const res = await fetch(`/api/google-books/search?q=${encodeURIComponent(query)}&maxResults=${maxResults}`);
@@ -83,6 +85,8 @@ function openBook(index) {
     document.body.style.overflow = 'hidden';
 
     window.currentBook = book;
+    currentBook = book;
+    currentBookId = book._id;
 
     const modalInfo = document.querySelector('.modal-info');
 };
@@ -93,7 +97,10 @@ function closeBook() {
 };
 
 function closeModal(e) {
-    if (e.target.id === 'bookModal') closeBook();
+    if (e.target.id === 'bookModal') {
+        document.getElementById('bookModal').classList.remove('active');
+        closeBook();
+    };
 };
 
 async function handleSearch(e) {
@@ -180,16 +187,13 @@ async function borrowBook() {
 
         if(!cart.find(b => b._id === apiBook._id)) {
             cart.push(apiBook);
-            localStorage.setItem(
-                "checkoutCart",
-                JSON.stringify(cart)
-            );
+            localStorage.setItem("checkoutCart", JSON.stringify(cart));
         }
 
         const goCheckout = confirm("Book added to cart.\n\nPress OK to go to check out.\nPress Cancel to keep browsing for more books.");
 
         if(goCheckout) {
-            window.location.href="/pages/user-checkout.html";
+            window.location.href="/cart";
         } else {
             closeBook();
         };
