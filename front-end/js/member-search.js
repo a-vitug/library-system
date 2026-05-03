@@ -3,7 +3,7 @@ let allMembers = [];
 
 async function loadMembers() {
     const token = localStorage.getItem("token");
-    const res = await fetch("/api/users", {
+    const res = await fetch("/manager/users", {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) {
@@ -25,6 +25,7 @@ function renderResults(members) {
         <tr>
             <td>${m.username}</td>
             <td>${m.email}</td>
+            <td>${m.role}</td>
             <td>${new Date(m.createdAt).toLocaleDateString()}</td>
             <td class="actions">
                 <button onclick="viewMember('${m._id}')">View</button>
@@ -39,6 +40,7 @@ function renderResults(members) {
                 <tr>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Role</th>
                     <th>Joined</th>
                     <th>Actions</th>
                 </tr>
@@ -64,7 +66,7 @@ function viewMember(id) {
 async function deleteMember(id) {
     if (!confirm("Are you sure you want to delete this member?")) return;
     const token = localStorage.getItem("token");
-    const res = await fetch(`/api/users/${id}`, {
+    const res = await fetch(`/manager/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
     });

@@ -2,6 +2,7 @@ let bookCache = [];
 let currentGenre = 'fiction';
 let currentBookId = null;
 let currentBook = null;
+let borrowedBookIds = [];
 
 async function fetchBooks(query, maxResults = 100) {
     const res = await fetch(`/api/google-books/search?q=${encodeURIComponent(query)}&maxResults=${maxResults}`);
@@ -22,6 +23,7 @@ async function loadGenre(genre) {
     try {
         const books = await fetchBooks(`subject:${query}`, 100);
         bookCache = books;
+        await loadBorrowedBooks();
         renderCards(books);
     } catch (err) {
         console.error('loadGenre error:', err);
@@ -46,11 +48,14 @@ function renderCards(books) {
             </div>
             <p class="book-title">${book.title || 'Unknown Title'}</p>
             <p class="book-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
-            ${book.available !== undefined
-                ? book.available
-                    ? '<span class="status-badge status-available">Available</span>'
-                    : '<span class="status-badge status-checked-out">Checked Out</span>'
-                : ''
+            ${
+                borrowedBookIds.includes(book._id)
+                    ? '<span class="status-badge status-checked-out">Already Borrowed</span>'
+                    : book.available !== undefined
+                        ? book.available
+                            ? '<span class="status-badge status-available">Available</span>'
+                            : '<span class="status-badge status-checked-out">Checked Out</span>'
+                        : ''
             }
         </div>
     `).join('');
@@ -85,6 +90,20 @@ function openBook(index) {
     document.body.style.overflow = 'hidden';
 
     window.currentBook = book;
+
+    const borrowBtn = document.querySelector('.book-actions button:nth-child(2)');
+
+    if (borrowedBookIds.includes(book._id)) {
+        borrowBtn.textContent = "Already Borrowed";
+        borrowBtn.disabled = true;
+    } else if (book.available === false) {
+        borrowBtn.textContent = "Checked Out";
+        borrowBtn.disabled = true;
+    } else {
+        borrowBtn.textContent = "Add to Cart";
+        borrowBtn.disabled = false;
+    }
+
     currentBook = book;
     currentBookId = book._id;
 
@@ -157,6 +176,18 @@ async function saveFavorite(){
 
 async function borrowBook() {
     try {
+        if (!currentBook) return;
+
+        if (borrowedBookIds.includes(currentBook._id)) {
+            alert("You already borrowed this book.");
+            return;
+        }
+
+        if (currentBook.available === false) {
+            alert("This book is currently checked out.");
+            return;
+        }
+
         const token = localStorage.getItem('token');
 
         if(!token) {
@@ -190,6 +221,13 @@ async function borrowBook() {
             localStorage.setItem("checkoutCart", JSON.stringify(cart));
         }
 
+        let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
+
+        if (cart.find(b => b._id === currentBook._id)) {
+            alert("This book is already in your cart.");
+            return;
+        }
+
         const goCheckout = confirm("Book added to cart.\n\nPress OK to go to check out.\nPress Cancel to keep browsing for more books.");
 
         if(goCheckout) {
@@ -203,5 +241,24 @@ async function borrowBook() {
         alert("Something went wrong.");
     };
 };
+
+async function loadBorrowedBooks() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const res = await fetch('/api/user/my-books', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const books = await res.json();
+        borrowedBookIds = books.map(b => b._id);
+
+    } catch (err) {
+        console.error("Failed to load borrowed books", err);
+    }
+}
 
 loadGenre('all');

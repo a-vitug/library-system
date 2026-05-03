@@ -100,8 +100,17 @@ async function confirmCheckout() {
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3500);
     localStorage.removeItem("checkoutCart");
+    localStorage.setItem("justCheckedOut", "true");
 
-    loadCartBooks();
+    updateDueDate();
+
+    const justCheckedOut = localStorage.getItem("justCheckedOut");
+
+    if (justCheckedOut === "true") {
+        loadBooks();
+    } else {
+        loadCartBooks();
+    }
 }
 
 async function loadBooks() {
@@ -121,6 +130,7 @@ async function loadBooks() {
 
   if (!books.length) {
     emptyState.style.display = 'block';
+    emptyState.innerHTML = `<p>No borrowed books yet.</p>`;
     return;
   }
 
@@ -141,6 +151,8 @@ async function loadBooks() {
 
     container.appendChild(div);
   });
+
+  localStorage.removeItem("justCheckedOut");
 }
 
 async function returnBook(id) {
