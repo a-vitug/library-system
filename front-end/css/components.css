@@ -122,11 +122,15 @@ nav.scrolled .avatar {
 }
 
 .avatar {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: #c8cdd6;
     flex-shrink: 0;
+}
+
+img.avatar {
+    background-color: transparent;
 }
 
 .nav-btn {
@@ -158,6 +162,7 @@ nav.scrolled .avatar {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 
 /* Logged-in navbar avatar & profile dropdown */
 
@@ -256,9 +261,18 @@ nav.scrolled .avatar {
     background-color: rgb(239 68 68 / 15%) !important;
 }
 
+/* Sidebar Logo */
+.nav-logo {
+    width: 160px;
+    display: block;
+    align-self: center;
+    margin-bottom: 24px;
+    object-fit: contain;
+}
+
 /* Librarian Nav Bar */
 .lib-nav {
-    background-color: var(--color-cream);
+    background-color: transparent;
     width: 260px;
     flex-shrink: 0;
     display: flex;
@@ -275,14 +289,14 @@ nav.scrolled .avatar {
     padding: 12px 16px;
     border-radius: 8px;
     text-decoration: none;
-    color: #1F2937;
+    color: #fff;
     font-size: 1.1rem;
     font-weight: 500;
     transition: background 0.15s;
 }
 
 .lib-item:hover {
-    background: rgb(0 0 0 / 8%);
+    background: rgb(255 255 255 / 8%);
 }
 
 .nav-left:hover {
@@ -323,5 +337,5 @@ nav.scrolled .avatar {
     height: 24px;
     object-fit: contain;
     flex-shrink: 0;
-    filter: brightness(0);
+    filter: brightness(0) invert(1);
 }
