@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
@@ -115,26 +116,47 @@ router.get('/recommendations', requireAuth, async(req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
 
-    if(!user.favorites.length) {
-      return res.json([]);
-    };
+    const allowedGenres = [
+      "romance",
+      "mystery",
+      "fiction",
+      "thriller",
+      "action",
+      "non-fiction"
+    ];
 
-    const genres = {};
+    const favoriteGenres = user.favorites
+      .flatMap(book => book.genre || [])
+      .map(userGenre => userGenre.toLowerCase())
+      .filter(userGenre => allowedGenres.includes(userGenre))
+    ;
 
-    user.favorites.forEach(book => {(book.genre || []).forEach(g => {
-      genres[g] = (genres[g] || 0) + 1;
-    })});
+    const genre = favoriteGenres.length
+      ? favoriteGenres[Math.floor(Math.random() * favoriteGenres.length)]
+      : "fiction"
+    ;
 
-    const topGenre = Object.keys(genres).sort((a, b) => genres[b] - genres[a])[0];
+    const response = await axios.get("https://www.googleapis.com/books/v1/volumes", {
+      params: {
+        q: `subject: ${genre}`,
+        maxResults: 6,
+        startIndex: Math.floor(Math.random() * 30)
+      }
+    });
 
-    const favoritesId = user.favorites.map(b => b._id);
+    const books = (response.data.items || []).map(item => {
+      const info = item.volumeInfo || {};
 
-    let recs = await Book.find({
-      genre: topGenre,
-      _id: {$nin: favoritesId }
-    }).limit(6);
+      return {
+        title: info.title,
+        authors: info.authors || [],
+        thumbnail: info.imageLinks?.thumbnail || null,
+        genre: info.categories || [genre],
+        available: true,
+      };
+    });
 
-    res.json(recs);
+    res.json(books);
 
   } catch (err) {
     res.status(500).send(err.message);

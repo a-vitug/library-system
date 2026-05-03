@@ -23,6 +23,13 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
     due.setDate(due.getDate() + 14);
     book.dueDate = due;
 
+    const user = await User.findById(req.user.id);
+
+    if (!user.checkedOutBooks.includes(book._id)) {
+      user.checkedOutBooks.push(book._id);
+      await user.save();
+    }
+
     await book.save();
 
     res.json({ message: "Book checked out", dueDate: book.dueDate });

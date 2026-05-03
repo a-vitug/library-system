@@ -1,7 +1,6 @@
 let favoriteBooks = [];
 let currentBook = null;
 
-// Load favorites when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadFavorites();
 });
@@ -99,13 +98,11 @@ function openBookModal(index) {
 
     currentBook = book;
 
-    // Set modal content
     document.getElementById('modalTitle').textContent = book.title || 'Unknown Title';
     document.getElementById('modalAuthor').textContent = book.author || 'Unknown Author';
     document.getElementById('modalGenre').textContent = (book.genre || []).join(', ') || 'No genre specified';
     document.getElementById('modalDescription').textContent = book.description || 'No description available.';
 
-    // Set cover image
     const cover = document.getElementById('modalCover');
     if (book.thumbnail) {
         cover.src = book.thumbnail;
@@ -114,7 +111,6 @@ function openBookModal(index) {
         cover.style.display = 'none';
     }
 
-    // Set availability status
     const availabilityDiv = document.getElementById('modalAvailability');
     if (book.available !== undefined) {
         availabilityDiv.innerHTML = book.available
@@ -124,7 +120,6 @@ function openBookModal(index) {
         availabilityDiv.innerHTML = '';
     }
 
-    // Set preview button
     const previewBtn = document.getElementById('modalPreview');
     if (book.googleId) {
         previewBtn.href = `https://books.google.com/books?id=${book.googleId}`;
@@ -133,7 +128,6 @@ function openBookModal(index) {
         previewBtn.style.display = 'none';
     }
 
-    // Show modal
     document.getElementById('bookModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
@@ -144,7 +138,6 @@ function closeModal() {
     currentBook = null;
 }
 
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('bookModal');
     if (event.target === modal) {
@@ -173,10 +166,8 @@ async function removeFavorite() {
             throw new Error('Failed to remove favorite');
         }
 
-        // Remove from local array
         favoriteBooks = favoriteBooks.filter(book => book._id !== currentBook._id);
         
-        // Close modal and re-render
         closeModal();
         renderFavorites();
 
@@ -207,10 +198,8 @@ async function removeFavoriteFromCard(event, bookId) {
             throw new Error('Failed to remove favorite');
         }
 
-        // Remove from local array
         favoriteBooks = favoriteBooks.filter(book => book._id !== bookId);
         
-        // Re-render
         renderFavorites();
 
     } catch (error) {
@@ -229,17 +218,14 @@ async function addToCart(event, bookId) {
     }
 
     try {
-        // Add book to cart (similar to how it's done in genres-search.js)
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
-        // Find the book in favorites
         const book = favoriteBooks.find(b => b._id === bookId);
         if (!book) {
             alert('Book not found');
             return;
         }
 
-        // Check if book is already in cart
         if (!cart.find(b => b._id === bookId)) {
             cart.push(book);
             localStorage.setItem("checkoutCart", JSON.stringify(cart));
@@ -269,7 +255,6 @@ async function borrowBook() {
     }
 
     try {
-        // Add to cart (same logic as addToCart)
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
         if (!cart.find(b => b._id === currentBook._id)) {

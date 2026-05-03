@@ -20,6 +20,10 @@ router.get('/about', (req, res) => {
   res.sendFile(path.join(process.cwd(), '../../front-end/pages/about.html'));
 });
 
+router.get('/cart', (req, res) => {
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/portals/member/user-checkout.html'));
+});
+
 // Home for logged in users
 router.get('/logged-in', requireAuth, async (req, res) => {
   try {
@@ -46,7 +50,7 @@ router.get('/librarian', (req, res) => {
 });
 
 router.get('/member', (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, '/portals/member.html'));
+  res.sendFile(path.join(PAGES_DIR, '/portals/member/member.html'));
 });
 
 // Genres
