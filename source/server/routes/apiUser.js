@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
@@ -22,9 +23,9 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       return res.status(404).json({ error: "Book not found" });
     };
 
-    if (!user.favorites.includes(book._id)) {
+    if (!user.favorites.some(id => id.toString() === book._id.toString())) {
       user.favorites.push(book._id);
-    };
+    }
 
     if (book.genre) {
       book.genre.forEach(g => {
@@ -34,9 +35,13 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       });
     };
 
-    if (book.author && !user.interestAuthors.includes(book.author)) {
-      user.interestAuthors.push(book.author);
-    };
+    if (book.authors) {
+      book.authors.forEach(a => {
+        if (!user.interestAuthors.includes(a)) {
+          user.interestAuthors.push(a);
+        }
+      });
+    }
 
     await user.save();
 
@@ -70,17 +75,7 @@ router.delete('/favorites/:bookId', requireAuth, async(req, res) => {
 router.get('/favorites', requireAuth, async(req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
-
     const genres = user.favorites.flatMap(book => book.genre);
-
-    const topGenre = mostCommon(genres);
-
-    const recs = await Book.find({
-      genre: topGenre,
-      _id:{
-        $nin:user.favorites
-      }
-    }).limit(8);
 
     res.json(user.favorites);
 
@@ -111,33 +106,85 @@ router.get('/my-books', requireAuth, async(req, res) => {
 });
 
 // Recommendations
-router.get('/recommendations', requireAuth, async(req, res) => {
+router.get('/recommendations', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
 
-    if(!user.favorites.length) {
+    if (!user || !user.favorites.length) {
       return res.json([]);
-    };
+    }
 
-    const genres = {};
+    const favoriteTitles = new Set(
+      user.favorites.map(b => (b.title || "").toLowerCase())
+    );
 
-    user.favorites.forEach(book => {(book.genre || []).forEach(g => {
-      genres[g] = (genres[g] || 0) + 1;
-    })});
+    const genreScore = {};
 
-    const topGenre = Object.keys(genres).sort((a, b) => genres[b] - genres[a])[0];
+    user.favorites.forEach((book, index) => {
+      const genres = book.genre || book.categories || [];
 
-    const favoritesId = user.favorites.map(b => b._id);
+      const weight = index + 1;
 
-    let recs = await Book.find({
-      genre: topGenre,
-      _id: {$nin: favoritesId }
-    }).limit(6);
+      genres.forEach(g => {
+        const key = g.toLowerCase();
+        genreScore[key] = (genreScore[key] || 0) + weight;
+      });
+    });
 
-    res.json(recs);
+    const topGenres = Object.entries(genreScore)
+      .sort((a, b) => b[1] - a[1])
+      .map(g => g[0])
+      .slice(0, 3);
+
+    let results = [];
+
+    for (let genre of topGenres) {
+      const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+        params: {
+          q: `subject:${genre}`,
+          maxResults: 5
+        }
+      });
+
+      const items = response.data.items || [];
+
+      const mapped = items.map(item => ({
+        title: item.volumeInfo.title,
+        authors: item.volumeInfo.authors || [],
+        thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+        genre: item.volumeInfo.categories || []
+      }));
+
+      results = results.concat(mapped);
+    }
+
+    const trendingResult = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+      params: {
+        q: 'bestseller',
+        maxResults: 5
+      }
+    });
+
+    const trending = (trendingResult.data.items || []).map(item => ({
+      title: item.volumeInfo.title,
+      authors: item.volumeInfo.authors || [],
+      thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+      genre: item.volumeInfo.categories || []
+    }));
+
+    results = results.concat(trending);
+
+    results = results.filter(book =>
+      !favoriteTitles.has((book.title || "").toLowerCase())
+    );
+
+    results = results.sort(() => 0.5 - Math.random());
+
+    res.json(results.slice(0, 12));
 
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error(err);
+    res.status(500).send("Error generating recommendations");
   }
 });
 

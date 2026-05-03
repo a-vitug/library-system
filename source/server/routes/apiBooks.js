@@ -29,7 +29,7 @@ router.post('/add-from-api', requireAuth, async (req, res) => {
       },
       {
         title,
-        author: authors?.join(', '),
+        authors: authors || [],
         genre: categories || [],
         thumbnail,
         description,
@@ -39,8 +39,6 @@ router.post('/add-from-api', requireAuth, async (req, res) => {
         returnDocument: "after"
       }
     );
-
-    await book.save();
 
     res.json(book);
 

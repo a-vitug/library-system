@@ -69,9 +69,13 @@
                 phone: document.getElementById('new-phone').value,
                 role: document.getElementById('new-role').value
             };
-            const res = await fetch('/create-account', {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/manager/users', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(body)
             });
             if (res.ok || res.redirected) {

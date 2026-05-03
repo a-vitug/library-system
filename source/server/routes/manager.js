@@ -21,7 +21,7 @@ router.post('/create-employee', requireAuth, requireRole("manager"), async(req, 
       email,
       password: hashed,
       phone,
-      role: "employee"
+      role
     });
 
     await employee.save();
@@ -46,16 +46,32 @@ router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
 
 router.post('/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
-    const newUser = new User(req.body);
+    const { name, username, email, password, phone, role } = req.body;
+
+    const exists = await User.findOne({ username });
+    if (exists) return res.status(400).send("User already exists");
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      name,
+      username,
+      email,
+      password: hashed,
+      phone,
+      role
+    });
+
     await newUser.save();
     res.status(201).json(newUser);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // Delete a user
-router.delete('/api/users/:id', requireAuth, requireRole('manager'), async (req,res) => {
+router.delete('/users/:id', requireAuth, requireRole('manager'), async (req,res) => {
   if (req.user.id === req.params.id) {
     return res.status(400).send("You cannot delete your own account");
   };

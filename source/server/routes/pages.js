@@ -13,11 +13,15 @@ router.get('/', (req, res) => {
 });
 
 router.get('/home', (req, res) => {
-  res.sendFile(path.join(process.cwd(), '../../front-end/pages/home.html'));
+  res.sendFile(path.join(PAGES_DIR, '../../front-end/pages/home.html'));
 });
 
 router.get('/about', (req, res) => {
-  res.sendFile(path.join(process.cwd(), '../../front-end/pages/about.html'));
+  res.sendFile(path.join(PAGES_DIR, '../../front-end/pages/about.html'));
+});
+
+router.get('/cart', (req, res) => {
+  res.sendFile(path.join(PAGES_DIR, '../../front-end/pages/portals/member/user-checkout.html'));
 });
 
 // Home for logged in users
@@ -46,7 +50,7 @@ router.get('/librarian', (req, res) => {
 });
 
 router.get('/member', (req, res) => {
-  res.sendFile(path.join(PAGES_DIR, '/portals/member.html'));
+  res.sendFile(path.join(PAGES_DIR, '/portals/member/member.html'));
 });
 
 // Genres

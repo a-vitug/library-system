@@ -8,24 +8,40 @@ const User = require('../models/User');
 router.post('/checkout/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-
     if (!book) return res.status(404).send("Book not found");
 
     if (!book.available) {
       return res.status(400).send("Book already checked out");
     }
 
-    book.available = false;
-    book.checkedOutBy = req.user.id;
+    const isStaff = req.user.role === 'manager' || req.user.role === 'librarian';
 
-    // due in 14 days
+    const targetUserId = (isStaff && req.body.targetUserId)
+      ? req.body.targetUserId
+      : req.user.id;
+
+    const user = await User.findById(targetUserId);
+    if (!user) return res.status(404).send("User not found");
+
+    book.available = false;
+    book.checkedOutBy = targetUserId;
+
     const due = new Date();
     due.setDate(due.getDate() + 14);
     book.dueDate = due;
 
+    if (!user.checkedOutBooks.includes(book._id)) {
+      user.checkedOutBooks.push(book._id);
+      await user.save();
+    }
+
     await book.save();
 
-    res.json({ message: "Book checked out", dueDate: book.dueDate });
+    res.json({
+      message: "Book checked out",
+      dueDate: book.dueDate,
+      user: user.username
+    });
 
   } catch (err) {
     res.status(500).send(err.message);
@@ -36,7 +52,9 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
 router.post('/return/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(book.checkedOutBy);
+    const isMember = book.checkedOutBy.toString() === req.user.id;
+    const isStaff = req.user.role === 'manager' || req.user.role === 'librarian';
 
     if (!book) return res.status(404).send("Book not found");
 
@@ -44,20 +62,22 @@ router.post('/return/:id', requireAuth, async (req, res) => {
       return res.status(400).send("Book is already available");
     }
 
-    if (book.checkedOutBy.toString() !== req.user.id) {
-      return res.status(403).send("Returned book");
+    if (!isMember && !isStaff) {
+      return res.status(403).send("Not allowed to return this book");
     }
 
     book.available = true;
     book.checkedOutBy = null;
     book.dueDate = null;
 
-    user.checkedOutBooks = user.checkedOutBooks.filter(
-      id => id.toString() !== book._id.toString()
-    );
+    if (user) {
+      user.checkedOutBooks = user.checkedOutBooks.filter(
+        id => id.toString() !== book._id.toString()
+      );
+      await user.save();
+    }
 
-    await book.save();    
-    await user.save();
+    await book.save();
 
     res.json({ message: "Book returned" });
 

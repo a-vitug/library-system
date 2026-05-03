@@ -1,7 +1,6 @@
 let favoriteBooks = [];
 let currentBook = null;
 
-// Load favorites when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadFavorites();
 });
@@ -73,7 +72,17 @@ function renderFavorites() {
                     </div>
                     <div class="favorite-card-body">
                         <h3 class="favorite-title">${book.title || 'Unknown Title'}</h3>
-                        <p class="favorite-author">${book.author || 'Unknown Author'}</p>
+                        <p class="favorite-author">
+                            ${
+                                book.authors?.length
+                                    ? book.authors.join(', ')
+                                    : book.author || 'Unknown Author'
+                            }
+                        </p>
+                        ${!book.available 
+                            ? '<span class="status-badge status-checked-out">Checked Out</span>'
+                            : '<span class="status-badge status-available">Available</span>'
+                        }
                         ${book.genre && book.genre.length 
                             ? `<span class="favorite-genre">${book.genre[0]}</span>`
                             : ''
@@ -82,9 +91,12 @@ function renderFavorites() {
                             <button class="action-btn remove-btn" onclick="removeFavoriteFromCard(event, '${book._id}')">
                                 Remove
                             </button>
-                            <button class="action-btn borrow-btn" onclick="addToCart(event, '${book._id}')">
-                                Add to Cart
-                            </button>
+                        ${!book.available 
+                            ? '<button class="action-btn borrow-btn" disabled>Unavailable</button>'
+                            : `<button class="action-btn borrow-btn" onclick="addToCart(event, '${book._id}')">
+                                    Add to Cart
+                            </button>`
+                        }
                         </div>
                     </div>
                 </div>
@@ -99,13 +111,14 @@ function openBookModal(index) {
 
     currentBook = book;
 
-    // Set modal content
     document.getElementById('modalTitle').textContent = book.title || 'Unknown Title';
-    document.getElementById('modalAuthor').textContent = book.author || 'Unknown Author';
+    document.getElementById('modalAuthor').textContent =
+        book.authors?.length
+            ? book.authors.join(', ')
+            : book.author || 'Unknown Author';
     document.getElementById('modalGenre').textContent = (book.genre || []).join(', ') || 'No genre specified';
     document.getElementById('modalDescription').textContent = book.description || 'No description available.';
 
-    // Set cover image
     const cover = document.getElementById('modalCover');
     if (book.thumbnail) {
         cover.src = book.thumbnail;
@@ -114,17 +127,15 @@ function openBookModal(index) {
         cover.style.display = 'none';
     }
 
-    // Set availability status
     const availabilityDiv = document.getElementById('modalAvailability');
-    if (book.available !== undefined) {
-        availabilityDiv.innerHTML = book.available
-            ? '<span class="status-badge status-available">Available</span>'
-            : '<span class="status-badge status-checked-out">Checked Out</span>';
+    if (!book.available) {
+        availabilityDiv.innerHTML = '<span class="status-badge status-checked-out">Checked Out</span>';
+        document.getElementById('borrowBtn').disabled = true;
     } else {
-        availabilityDiv.innerHTML = '';
+        availabilityDiv.innerHTML = '<span class="status-badge status-available">Available</span>';
+        document.getElementById('borrowBtn').disabled = false;
     }
 
-    // Set preview button
     const previewBtn = document.getElementById('modalPreview');
     if (book.googleId) {
         previewBtn.href = `https://books.google.com/books?id=${book.googleId}`;
@@ -133,7 +144,6 @@ function openBookModal(index) {
         previewBtn.style.display = 'none';
     }
 
-    // Show modal
     document.getElementById('bookModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
@@ -144,7 +154,6 @@ function closeModal() {
     currentBook = null;
 }
 
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('bookModal');
     if (event.target === modal) {
@@ -173,10 +182,8 @@ async function removeFavorite() {
             throw new Error('Failed to remove favorite');
         }
 
-        // Remove from local array
         favoriteBooks = favoriteBooks.filter(book => book._id !== currentBook._id);
         
-        // Close modal and re-render
         closeModal();
         renderFavorites();
 
@@ -207,10 +214,8 @@ async function removeFavoriteFromCard(event, bookId) {
             throw new Error('Failed to remove favorite');
         }
 
-        // Remove from local array
         favoriteBooks = favoriteBooks.filter(book => book._id !== bookId);
         
-        // Re-render
         renderFavorites();
 
     } catch (error) {
@@ -220,7 +225,7 @@ async function removeFavoriteFromCard(event, bookId) {
 }
 
 async function addToCart(event, bookId) {
-    event.stopPropagation(); // Prevent opening the modal
+    event.stopPropagation();
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -229,25 +234,45 @@ async function addToCart(event, bookId) {
     }
 
     try {
-        // Add book to cart (similar to how it's done in genres-search.js)
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
-        // Find the book in favorites
         const book = favoriteBooks.find(b => b._id === bookId);
+
+        if (!book.available) {
+            alert("This book is already checked out");
+            return;
+        }
+
         if (!book) {
             alert('Book not found');
             return;
         }
 
-        // Check if book is already in cart
-        if (!cart.find(b => b._id === bookId)) {
-            cart.push(book);
+        if (!cart.some(b => b._id === bookId)) {
+            let created = await fetch('/api/books/add-from-api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title: book.title,
+                    authors: book.authors,
+                    genre: book.genre,
+                    isbn: book.isbn,
+                    thumbnail: book.thumbnail,
+                    description: book.description
+                })
+            });
+
+            const apiBook = await created.json();
+            cart.push(apiBook);
             localStorage.setItem("checkoutCart", JSON.stringify(cart));
             
             const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
             
             if (goCheckout) {
-                window.location.href = "/pages/user-checkout.html";
+                window.location.href = "/cart";
             }
         } else {
             alert('This book is already in your cart');
@@ -269,20 +294,37 @@ async function borrowBook() {
     }
 
     try {
-        // Add to cart (same logic as addToCart)
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
-        if (!cart.find(b => b._id === currentBook._id)) {
-            cart.push(currentBook);
-            localStorage.setItem("checkoutCart", JSON.stringify(cart));
-            
-            const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
-            
-            if (goCheckout) {
-                window.location.href = "/pages/user-checkout.html";
-            } else {
-                closeModal();
-            }
+        if (!cart.some(b => b._id === currentBook._id)) {
+            let created = await fetch('/api/books/add-from-api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                title: currentBook.title,
+                authors: currentBook.authors,
+                genre: currentBook.genre,
+                isbn: currentBook.isbn,
+                thumbnail: currentBook.thumbnail,
+                description: currentBook.description
+            })
+        });
+
+        const apiBook = await created.json();
+
+        cart.push(apiBook);
+        localStorage.setItem("checkoutCart", JSON.stringify(cart));
+        
+        const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
+        
+        if (goCheckout) {
+            window.location.href = "/cart";
+        } else {
+            closeModal();
+        }
         } else {
             alert('This book is already in your cart');
         }
