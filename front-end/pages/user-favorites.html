@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites - Library System</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/user-favorites.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="favorites-container">
+        <div class="favorites-header">
+            <h1 class="page-title">⭐ My Favorites</h1>
+            <p class="page-subtitle">Books you've saved for later</p>
+        </div>
+
+        <div id="favoritesContent">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your favorites...</p>
+            </div>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">📚</div>
+            <h2>No favorites yet</h2>
+            <p>Start exploring and add books to your favorites to see them here!</p>
+            <a href="/pages/home.html" class="browse-btn">Browse Books</a>
+        </div>
+    </div>
+
+    <!-- Book Modal -->
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <img id="modalCover" src="" alt="Book Cover" class="modal-cover">
+                <div class="modal-info">
+                    <h2 id="modalTitle"></h2>
+                    <p id="modalAuthor"></p>
+                    <div id="modalAvailability"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p id="modalGenre"></p>
+                <p id="modalDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalPreview" class="preview-btn" target="_blank">Preview on Google Books</button>
+                <button id="removeFavoriteBtn" class="remove-favorite-btn" onclick="removeFavorite()">Remove from Favorites</button>
+                <button id="borrowBtn" class="borrow-btn" onclick="borrowBook()">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/user-favorites.js"></script>
+</body>
+</html>

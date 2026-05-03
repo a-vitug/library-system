@@ -90,6 +90,14 @@
     background: var(--color-secondary);
 }
 
+.search-container button[type="submit"] img {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 3px;
+    color: white;
+}
+
 .right {
     flex: 1;
     display: flex;

@@ -1,15 +1,139 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/pages/genre-base.css">
     <link rel="stylesheet" href="/css/portals/librarian.css">
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <link rel="stylesheet" href="/css/portals/manager/stock.css">
+    <title>Stock — Manager</title>
 </head>
 
-<body>
+<body data-role="manager">
     <div id="nav-placeholder"></div>
-    
+
+    <main class="profile-container">
+        <div class="manager-header">
+            <div>
+                <h1 class="manager-greeting">Stock</h1>
+                
+            </div>
+        </div>
+<hr class="section-divider">
+        <div class="stock-summary">
+            <div class="stat-card">
+                <span class="stat-label">Titles Checked Out</span>
+                <span class="stat-number" id="total-titles">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Copies Out</span>
+                <span class="stat-number" id="total-copies">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Order Value</span>
+                <span class="stat-number" id="total-value">—</span>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="stock-table-wrapper">
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Qty Checked Out</th>
+                        <th>Unit Cost</th>
+                        <th>Order Total</th>
+                        <th>Running Total</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-tbody">
+                    <tr>
+                        <td colspan="7" class="stock-empty">Loading…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 
     <script src="/js/manager-navbar.js"></script>
+    <script>
+        async function loadStock() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/log-in'; return; }
 
-</body> 
+            const res = await fetch('/manager/all-books', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/log-in';
+                return;
+            }
+
+            if (!res.ok) return;
+
+            const books = await res.json();
+
+            // Only checked-out books
+            const checkedOut = books.filter(b => !b.available && b.checkedOutBy);
+
+            // Group by title (multiple copies of same title count as qty)
+            const grouped = {};
+            for (const book of checkedOut) {
+                const key = book.title;
+                if (!grouped[key]) {
+                    grouped[key] = { title: book.title, author: book.author, price: book.price || 0, qty: 0 };
+                }
+                grouped[key].qty++;
+            }
+
+            const rows = Object.values(grouped).sort((a, b) => a.title.localeCompare(b.title));
+
+            const tbody = document.getElementById('stock-tbody');
+
+            if (rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="stock-empty">No books currently checked out.</td></tr>';
+                document.getElementById('total-titles').textContent = '0';
+                document.getElementById('total-copies').textContent = '0';
+                document.getElementById('total-value').textContent = '$0.00';
+                return;
+            }
+
+            let running = 0;
+            let totalCopies = 0;
+            tbody.innerHTML = '';
+
+            rows.forEach((row, i) => {
+                const orderTotal = row.qty * row.price;
+                running += orderTotal;
+                totalCopies += row.qty;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="stock-num">${i + 1}</td>
+                    <td class="stock-title">${row.title}</td>
+                    <td class="stock-author">${row.author || '—'}</td>
+                    <td class="stock-center">${row.qty}</td>
+                    <td class="stock-center">$${row.price.toFixed(2)}</td>
+                    <td class="stock-center">$${orderTotal.toFixed(2)}</td>
+                    <td class="stock-running">$${running.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-titles').textContent = rows.length;
+            document.getElementById('total-copies').textContent = totalCopies;
+            document.getElementById('total-value').textContent = `$${running.toFixed(2)}`;
+        }
+
+        loadStock();
+    </script>
+</body>
+</html>

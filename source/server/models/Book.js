@@ -30,6 +30,11 @@ const bookSchema = new mongoose.Schema({
   dueDate: {
     type:Date,
     default:null
+  },
+
+  price: {
+    type: Number,
+    default: 0
   }
 });
 

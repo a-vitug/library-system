@@ -6,20 +6,59 @@
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/portals/librarian.css">
-    <title>Manager Portal</title>
+    <link rel="stylesheet" href="/css/portals/manager.css">
 </head>
 
 <body data-role="manager">
     <div id="nav-placeholder"></div>
 
     <main class="profile-container">
-        <div class="profile-header">
-            <div class="avatar" id="manager-avatar"></div>
-            <div class="profile-info">
-                <h1 id="display-name">Manager</h1>
-                <button onclick="logout()" class="btn-logout">Log Out</button>
+        <div class="manager-header">
+            <div>
+                <p class="manager-role-label">MANAGER</p>
+                <h1 id="manager-greeting" class="manager-greeting">Hello, Name</h1>
             </div>
+            <button onclick="logout()" class="btn-logout">LOGOUT</button>
             
+        </div>
+ <hr class="section-divider">
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-label">MEMBERS</span>
+                <span class="stat-number" id="count-members">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">LIBRARIANS</span>
+                <span class="stat-number" id="count-librarians">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">MANAGERS</span>
+                <span class="stat-number" id="count-managers">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">TOTAL ACCOUNTS</span>
+                <span class="stat-number" id="count-total">—</span>
+            </div>
+        </div>
+    
+
+        <div class="feature-grid">
+            <a href="/pages/static/profile.html" class="feature-card">
+                <img src="/images/profile.png">
+                <span>Profile</span>
+            </a>
+            <a href="/pages/portals/manager/manage-accounts.html" class="feature-card">
+                <img src="/images/users-group.svg">
+                <span>Manage Accounts</span>
+            </a>
+            <a href="/pages/portals/manager/serial-book-search.html" class="feature-card">
+                <img src="/images/magnify-glass.svg">
+                <span>Book Search</span>
+            </a>
+            <a href="/pages/portals/manager/stock.html" class="feature-card">
+                <img src="/images/bar-chart.svg">
+                <span>Stock</span>
+            </a>
         </div>
     </main>
 

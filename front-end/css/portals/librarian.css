@@ -32,11 +32,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding: 0;
+    min-height: unset;
 }
 
 .search-bar {
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     padding: 12px 16px;
     border: 1px solid rgb(255 255 255 / 15%);
     border-radius: 8px;
@@ -66,6 +68,10 @@ body {
 }
 
 .profile-container .bookContainer {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.profile-container .feature-grid {
     grid-template-columns: repeat(4, 1fr);
 }
 

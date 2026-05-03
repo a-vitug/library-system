@@ -14,13 +14,20 @@ async function loadDisplayName() {
     const token = localStorage.getItem('token');
     if (!token) return;
     try {
-        const res = await fetch('/user', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch('/api/user/me', { headers: { Authorization: `Bearer ${token}` } });
+        if (res.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/log-in';
+            return;
+        }
         if (res.ok) {
             const data = await res.json();
             const el = document.getElementById('display-name');
             if (el && data.name) el.textContent = data.name;
         }
-    } catch {}
+    } catch (err) {
+        console.error('loadDisplayName failed:', err);
+    }
 }
 
 function logout() {
