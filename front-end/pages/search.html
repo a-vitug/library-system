@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/front-end/static/style.css">
+    <style>
+        .container {
+            display: flex;             
+            justify-content: space-between; 
+            align-items: flex-start;      
+            padding: 20px;
+        }
+
+        .search {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .right {
+            flex: 1;
+            text-align: center;   
+            justify-content: top;      
+            flex-direction: column; 
+        }
+
+        .filter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 200px;
+        }
+
+        .filter button {
+            padding: 10px;
+            cursor: pointer;
+            text-align: left;     
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .filter button:hover {
+            background: #e2e6ea;
+        }
+
+        .bookContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px;           
+            padding: 20px;
+            width: 100%;         
+        }
+
+        .book-card {
+            width: 180px;            
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            text-align: left;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .book-cover img {
+            width: 100%;             
+            height: 250px;           
+            object-fit: cover;       
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .book-title {
+            font-size: 16px;
+            margin: 0;
+            color: #333;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-author {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+
+        .search-info {
+            text-align: left;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .book-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn {
+            padding: 5px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-favorite {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-favorite.favorited {
+            background: #c0392b;
+        }
+
+        .btn-checkout {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-checkout:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <div class="left">
+            <section class="leftSide">
+                <div class="filter">
+                    <button onclick="filterItems('all')">All</button>
+                    <button onclick="filterItems('action')">Action</button>
+                    <button onclick="filterItems('thriller')">Thriller</button>
+                    <button onclick="filterItems('mystery')">Mystery</button>
+                    <button onclick="filterItems('romance')">Romance</button>
+                    <button onclick="filterItems('fiction')">Fiction</button>
+                    <button onclick="filterItems('non-fiction')">Non-fiction</button>
+                </div>
+            </section>
+        </div>
+
+        <div class="right">
+            <section class="search">
+                <form class="search-container" action="/search" method="GET">
+                    <input type="text" name="q" placeholder="Book Title" aria-label="Search" value="">
+                    <button type="submit">Search</button>
+                </form>
+            </section>
+
+            <div id="search-info" class="search-info" style="display: none;">
+                <h3>Search Results</h3>
+                <p id="search-query"></p>
+                <p id="search-count"></p>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Loading search results...</p>
+            </div>
+
+            <div id="no-results" class="no-results" style="display: none;">
+                <h3>No results found</h3>
+                <p>Try searching with different keywords.</p>
+            </div>
+
+            <div id="bookContainer" class="bookContainer">
+                <!-- Search results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load navbar
+        fetch('/front-end/static/navbarloggedin.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        
+        // Set the search input value and perform search if query exists
+        if (query) {
+            document.querySelector('input[name="q"]').value = query;
+            fetchSearchResults(query);
+        }
+
+        // Handle form submission
+        document.querySelector('.search-container').addEventListener('submit', function(e) {
+            const searchInput = document.querySelector('input[name="q"]');
+            const searchQuery = searchInput.value.trim();
+            
+            if (searchQuery) {
+                fetchSearchResults(searchQuery);
+            }
+            e.preventDefault();
+        });
+
+        async function fetchSearchResults(searchQuery) {
+            const loading = document.getElementById('loading');
+            const noResults = document.getElementById('no-results');
+            const searchInfo = document.getElementById('search-info');
+            const bookContainer = document.getElementById('bookContainer');
+            
+            loading.style.display = 'block';
+            noResults.style.display = 'none';
+            searchInfo.style.display = 'none';
+            bookContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`/api/google-books/search?q=${encodeURIComponent(searchQuery)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                if (data.results && data.results.length > 0) {
+                    // Display search info
+                    document.getElementById('search-query').textContent = `Searching for: "${searchQuery}"`;
+                    document.getElementById('search-count').textContent = `Found ${data.totalItems} results (showing ${data.results.length})`;
+                    searchInfo.style.display = 'block';
+
+                    // Display results
+                    data.results.forEach(book => {
+                        const bookCard = createBookCard(book);
+                        bookContainer.appendChild(bookCard);
+                    });
+                } else {
+                    document.getElementById('search-query').textContent = `Searching for: "${searchQuery}"`;
+                    noResults.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+                loading.style.display = 'none';
+                noResults.innerHTML = '<h3>Error loading results</h3><p>Please try again later.</p>';
+                noResults.style.display = 'block';
+            }
+        }
+
+        function createBookCard(book) {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            
+            const imageUrl = book.thumbnail || 'https://via.placeholder.com/180x250?text=No+Cover';
+            const authors = Array.isArray(book.authors) ? book.authors.join(', ') : 'Unknown Author';
+            const title = book.title || 'Unknown Title';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            card.innerHTML = `
+                <div class="book-cover">
+                    <img src="${imageUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/180x250?text=No+Cover'">
+                </div>
+                <h3 class="book-title" title="${title}">${title}</h3>
+                <p class="book-author">${authors}</p>
+                ${book.publishedDate ? `<p class="book-published">${book.publishedDate}</p>` : ''}
+                ${currentUser ? `
+                    <div class="book-actions">
+                        <button class="btn btn-favorite" onclick="toggleFavorite('${book.googleId}', this)">❤️</button>
+                        <button class="btn btn-checkout" onclick="checkoutBook('${book.googleId}', this)">📚 Checkout</button>
+                    </div>
+                ` : '<p><a href="/log-in">Login to interact</a></p>'}
+            `;
+            
+            return card;
+        }
+        
+        async function toggleFavorite(bookId, button) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = '/log-in';
+                return;
+            }
+            
+            try {
+                const isFavorited = button.classList.contains('favorited');
+                const method = isFavorited ? 'DELETE' : 'POST';
+                const res = await fetch(`/api/users/${currentUser.id}/favorites/${bookId}`, {
+                    method: method
+                });
+                
+                if (res.ok) {
+                    button.classList.toggle('favorited');
+                    button.textContent = isFavorited ? '🤍' : '❤️';
+                } else {
+                    alert('Failed to update favorite');
+                }
+            } catch (err) {
+                alert('Error updating favorite');
+            }
+        }
+        
+        async function checkoutBook(bookId, button) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = '/log-in';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/users/${currentUser.id}/checkout/${bookId}`, {
+                    method: 'POST'
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`Book checked out successfully! Due date: ${new Date(data.dueDate).toLocaleDateString()}`);
+                    button.disabled = true;
+                    button.textContent = '📚 Checked Out';
+                } else {
+                    const errorData = await res.json();
+                    alert(errorData.error || 'Failed to checkout book');
+                }
+            } catch (err) {
+                alert('Error checking out book');
+            }
+        }
+
+        function filterItems(category) {
+            // This is a placeholder for filtering functionality
+            console.log('Filtering by:', category);
+        }
+    </script>
+</body>
+</html>

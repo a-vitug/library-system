@@ -45,8 +45,18 @@ const userSchema = new mongoose.Schema(
     ],
     checkedOutBooks: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
+        book: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Book",
+        },
+        dueDate: {
+          type: Date,
+          required: true,
+        },
+        checkedOutAt: {
+          type: Date,
+          default: Date.now,
+        }
       }
     ],
   },

@@ -47,17 +47,16 @@
                 body: JSON.stringify({ username, password, role: selectedRole })
             });
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.error);
-                return;
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+                window.location = '/dashboard';
+            } else {
+                const msg = document.getElementById('success-msg');
+                msg.style.color = 'red';
+                const errorData = await res.json();
+                msg.textContent = errorData.error || 'Login failed';
             }
-
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
-
-            window.location = "/home";
         });
     </script>
 </body>

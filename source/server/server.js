@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongodb = require("mongodb").MongoClient;
 const mongoose = require("mongoose");
 const User = require("./models/User");
+const Book = require("./models/Book");
 const axios = require("axios");
 const db = require("./config/connection");
 
@@ -73,6 +74,153 @@ app.post('/api/users', async (req, res) => {
     const newUser = new User(req.body);
     await newUser.save();
     res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/books', async (req, res) => {
+  try {
+    const book = new Book(req.body);
+    await book.save();
+    res.status(201).json(book);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/books', async (req, res) => {
+  try {
+    const books = await Book.find();
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/users/:userId/favorites/:bookId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    if (!user.favorites.includes(req.params.bookId)) {
+      user.favorites.push(req.params.bookId);
+      await user.save();
+    }
+    
+    res.json({ message: 'Book added to favorites' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/users/:userId/favorites/:bookId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    user.favorites = user.favorites.filter(fav => fav.toString() !== req.params.bookId);
+    await user.save();
+    
+    res.json({ message: 'Book removed from favorites' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/users/:userId/checkout/:bookId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const book = await Book.findById(req.params.bookId);
+    
+    if (!user || !book) {
+      return res.status(404).json({ error: 'User or book not found' });
+    }
+    
+    if (!book.available) {
+      return res.status(400).json({ error: 'Book is already checked out' });
+    }
+    
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14); // Due in 2 weeks
+    
+    book.available = false;
+    book.checkedOutBy = req.params.userId;
+    book.dueDate = dueDate;
+    await book.save();
+    
+    user.checkedOutBooks.push({
+      book: req.params.bookId,
+      dueDate: dueDate
+    });
+    await user.save();
+    
+    res.json({ message: 'Book checked out successfully', dueDate });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/users/:userId/checkin/:bookId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const book = await Book.findById(req.params.bookId);
+    
+    if (!user || !book) {
+      return res.status(404).json({ error: 'User or book not found' });
+    }
+    
+    book.available = true;
+    book.checkedOutBy = null;
+    book.dueDate = null;
+    await book.save();
+    
+    user.checkedOutBooks = user.checkedOutBooks.filter(
+      checkout => checkout.book.toString() !== req.params.bookId
+    );
+    await user.save();
+    
+    res.json({ message: 'Book checked in successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/users/:userId/favorites', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).populate('favorites');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user.favorites);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/users/:userId/checkedout', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).populate('checkedOutBooks.book');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user.checkedOutBooks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-info h1 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .user-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .book-card {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .book-cover {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .book-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .book-author {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .due-date {
+            font-size: 11px;
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+        
+        .overdue {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <h1 id="user-name">Loading...</h1>
+                <p id="user-email">Loading...</p>
+                <p id="user-role">Loading...</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="section">
+                <h2>My Favorites</h2>
+                <div id="favorites-container">
+                    <div class="empty-state">Loading favorites...</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Checked Out Books</h2>
+                <div id="checkedout-container">
+                    <div class="empty-state">Loading checked out books...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/navbar.js"></script>
+    <script>
+        let currentUser = null;
+        
+        async function loadUserData() {
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = '/log-in';
+                return;
+            }
+            
+            currentUser = JSON.parse(userData);
+            document.getElementById('user-name').textContent = currentUser.name;
+            document.getElementById('user-email').textContent = currentUser.email;
+            document.getElementById('user-role').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+            
+            await loadFavorites();
+            await loadCheckedOutBooks();
+        }
+        
+        async function loadFavorites() {
+            try {
+                const res = await fetch(`/api/users/${currentUser.id}/favorites`);
+                if (res.ok) {
+                    const favorites = await res.json();
+                    renderFavorites(favorites);
+                } else {
+                    document.getElementById('favorites-container').innerHTML = '<div class="empty-state">Failed to load favorites</div>';
+                }
+            } catch (err) {
+                document.getElementById('favorites-container').innerHTML = '<div class="empty-state">Error loading favorites</div>';
+            }
+        }
+        
+        async function loadCheckedOutBooks() {
+            try {
+                const res = await fetch(`/api/users/${currentUser.id}/checkedout`);
+                if (res.ok) {
+                    const checkedOut = await res.json();
+                    renderCheckedOutBooks(checkedOut);
+                } else {
+                    document.getElementById('checkedout-container').innerHTML = '<div class="empty-state">Failed to load checked out books</div>';
+                }
+            } catch (err) {
+                document.getElementById('checkedout-container').innerHTML = '<div class="empty-state">Error loading checked out books</div>';
+            }
+        }
+        
+        function renderFavorites(favorites) {
+            const container = document.getElementById('favorites-container');
+            
+            if (favorites.length === 0) {
+                container.innerHTML = '<div class="empty-state">No favorite books yet</div>';
+                return;
+            }
+            
+            const booksHtml = favorites.map(book => `
+                <div class="book-card">
+                    ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title}" class="book-cover">` : '<div class="book-cover">No Cover</div>'}
+                    <div class="book-title">${book.title || 'Unknown Title'}</div>
+                    <div class="book-author">${book.authors ? book.authors.join(', ') : 'Unknown Author'}</div>
+                    <button class="btn btn-danger" onclick="removeFavorite('${book._id}')">Remove</button>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `<div class="book-grid">${booksHtml}</div>`;
+        }
+        
+        function renderCheckedOutBooks(checkedOut) {
+            const container = document.getElementById('checkedout-container');
+            
+            if (checkedOut.length === 0) {
+                container.innerHTML = '<div class="empty-state">No books checked out</div>';
+                return;
+            }
+            
+            const booksHtml = checkedOut.map(item => {
+                const book = item.book;
+                const dueDate = new Date(item.dueDate);
+                const today = new Date();
+                const isOverdue = dueDate < today;
+                const dueDateStr = dueDate.toLocaleDateString();
+                
+                return `
+                    <div class="book-card">
+                        ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title}" class="book-cover">` : '<div class="book-cover">No Cover</div>'}
+                        <div class="book-title">${book.title || 'Unknown Title'}</div>
+                        <div class="book-author">${book.authors ? book.authors.join(', ') : 'Unknown Author'}</div>
+                        <div class="due-date ${isOverdue ? 'overdue' : ''}">Due: ${dueDateStr}</div>
+                        <button class="btn" onclick="checkInBook('${book._id}')">Check In</button>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `<div class="book-grid">${booksHtml}</div>`;
+        }
+        
+        async function removeFavorite(bookId) {
+            try {
+                const res = await fetch(`/api/users/${currentUser.id}/favorites/${bookId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (res.ok) {
+                    await loadFavorites();
+                } else {
+                    alert('Failed to remove favorite');
+                }
+            } catch (err) {
+                alert('Error removing favorite');
+            }
+        }
+        
+        async function checkInBook(bookId) {
+            try {
+                const res = await fetch(`/api/users/${currentUser.id}/checkin/${bookId}`, {
+                    method: 'POST'
+                });
+                
+                if (res.ok) {
+                    await loadCheckedOutBooks();
+                } else {
+                    alert('Failed to check in book');
+                }
+            } catch (err) {
+                alert('Error checking in book');
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '/log-in';
+        }
+        
+        loadUserData();
+    </script>
+</body>
+</html>
