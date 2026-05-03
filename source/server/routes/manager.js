@@ -5,11 +5,13 @@ const { requireAuth, requireRole } = require('../middleware/authMid');
 const bcrypt = require('bcrypt');
 
 // Create employee
-router.post('/create-employee', async(req, res) => {
+router.post('/create-employee', requireAuth, requireRole("manager"), async(req, res) => {
   const { name, username, email, password, phone, role } = req.body;
 
   try {
     const exists = await User.findOne({ username });
+    const hashed = await bcrypt.hash(password, 10);
+
     if (exists) return res.status(400).send("User already exists");
 
     const employee = new User({
@@ -32,12 +34,22 @@ router.post('/create-employee', async(req, res) => {
 });
 
 // Get all users
-router.get('/users', async (req, res) => {
+router.get('/api/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/api/users', requireAuth, requireRole("manager"), async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

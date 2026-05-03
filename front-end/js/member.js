@@ -7,11 +7,17 @@ async function loadProfile() {
         }
     });
 
+    if (!res.ok) {
+        alert("User is not logged in");
+        return;
+    }
+
     const user = await res.json();
 
     document.getElementById("display-name").textContent = user.name;
-    document.getElementById("[name=username]").value = username;
-    document.querySelector("[name = email]").value = user.email;
-}
+    document.getElementById("username").value = user.username;
+    document.querySelector("email").value = user.email;
+    document.querySelector("phone").value = user.phone || "";
+};
 
 loadProfile();

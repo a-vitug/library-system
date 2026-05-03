@@ -6,7 +6,15 @@ const Book = require('../models/Book');
 // Checkout
 router.post('/checkout/:id', requireAuth, async (req, res) => {
   try {
+    const token = localStorage.getItem("item");
     const book = await Book.findById(req.params.id);
+
+    await fetch(`/books/checkout/${book._id}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
     if (!book) return res.status(404).send("Book not found");
 
