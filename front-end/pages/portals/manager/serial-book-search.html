@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/pages/genre-base.css">
     <link rel="stylesheet" href="/css/portals/librarian.css">
-    <title>Book Search — Librarian Portal</title>
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <title>Book Search — Manager Portal</title>
 </head>
 
-<body data-role="librarian">
+<body data-role="manager">
     <div id="nav-placeholder"></div>
 
     <main class="profile-container">
-        <h1 class="greeting">Book Search</h1>
+        <div class="manager-header">
+            <div>
+                <h1 class="manager-greeting">Book Search</h1>
+            </div>
+        </div>
+        <hr class="section-divider">
 
         <form class="search-container" onsubmit="handleSearch(event)">
             <input type="text" id="searchInput" placeholder="Search by title, author, or ISBN..." aria-label="Search">

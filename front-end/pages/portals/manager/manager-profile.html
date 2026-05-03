@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/portals/librarian.css">
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <title>Manager Profile</title>
+</head>
+
+<body data-role="manager">
+    <div id="nav-placeholder"></div>
+
+    <main class="profile-container">
+        <div class="manager-header">
+            <div>
+                <h1 class="manager-greeting">Profile</h1>
+            </div>
+        </div>
+        <hr class="section-divider">
+        <div class="mgr-profile-card">
+            <div class="mgr-avatar" id="mgr-avatar">?</div>
+            <div class="mgr-profile-info">
+                <h2 class="mgr-profile-name" id="mgr-name">—</h2>
+                <span class="manager-role-label">MANAGER</span>
+            </div>
+        </div>
+
+       
+
+        <div class="mgr-fields">
+            <div class="mgr-field">
+                <label class="mgr-field-label">Full Name</label>
+                <input class="mgr-field-input" id="field-name" type="text" readonly>
+            </div>
+
+            <div class="mgr-field">
+                <label class="mgr-field-label">Username</label>
+                <input class="mgr-field-input" id="field-username" type="text" readonly>
+            </div>
+
+            <div class="mgr-field">
+                <label class="mgr-field-label">Email Address</label>
+                <input class="mgr-field-input" id="field-email" type="text" readonly>
+            </div>
+
+            <div class="mgr-field">
+                <label class="mgr-field-label">Phone Number</label>
+                <input class="mgr-field-input" id="field-phone" type="text" readonly>
+            </div>
+
+            <div class="mgr-field">
+                <label class="mgr-field-label">Role</label>
+                <input class="mgr-field-input" id="field-role" type="text" readonly>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/manager-navbar.js"></script>
+    <script>
+        async function loadManagerProfile() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/log-in'; return; }
+
+            const res = await fetch('/api/user/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/log-in';
+                return;
+            }
+
+            if (!res.ok) return;
+
+            const user = await res.json();
+
+            const initials = user.name
+                ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+                : '?';
+
+            document.getElementById('mgr-avatar').textContent = initials;
+            document.getElementById('mgr-name').textContent = user.name || '—';
+            document.getElementById('field-name').value = user.name || '';
+            document.getElementById('field-username').value = user.username || '';
+            document.getElementById('field-email').value = user.email || '';
+            document.getElementById('field-phone').value = user.phone || '';
+            document.getElementById('field-role').value = user.role || '';
+        }
+
+        loadManagerProfile();
+    </script>
+</body>
+</html>

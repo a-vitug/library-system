@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Book = require('../models/Book');
 const { requireAuth, requireRole } = require('../middleware/authMid');
 const bcrypt = require('bcrypt');
 
@@ -74,5 +75,6 @@ router.delete('/delete-book/:id', requireAuth, requireRole('manager'), async (re
   await Book.findByIdAndDelete(req.params.id);
   res.json({ message: "Book deleted" });
 });
+
 
 module.exports = router;

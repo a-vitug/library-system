@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/base.css">
-    <link rel="stylesheet" href="../../css/components.css">
-    <link rel="stylesheet" href="../../css/portals/librarian.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <link rel="stylesheet" href="/css/portals/librarian.css">
     <title>Member Search</title>
 </head>
 
 <body data-role="librarian">
 <div id="nav-placeholder"></div>
     <main class="profile-container">
-        <h1 class="greeting">Member Search</h1>
+        <div class="manager-header">
+            <div>
+                <h1 class="manager-greeting">Member Search</h1>
+            </div>
+        </div>
+        <hr class="section-divider">
 
         <section class="member-search-section">
             <input
@@ -27,7 +33,7 @@
         <button onclick="logout()" class="btn-logout">Log Out</button>
     </main>
 
-    <script src="/js/navbar-loader.js"></script>
+    <script src="/js/librarian-navbar.js"></script>
     <script src="/js/member-search.js"></script>
 </body>
 </html>

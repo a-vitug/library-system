@@ -1,77 +1,167 @@
-
-    .profile-container {
-    padding: 20px;
+.manager-header {
     display: flex;
-    flex-direction: column; 
-    align-items: center;   
-    min-height: 80vh;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
 }
 
-.profile-header {
+.manager-role-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 25px;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+}
+
+.manager-greeting {
+    font-family: 'Inter', sans-serif;
+    font-size: 60px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    margin: 0;
+    line-height: 1.1;
+}
+
+/* Stats row */
+
+.stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    flex: 1;
+    background: rgb(255 255 255 / 7%);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    font-weight: 100;
+    letter-spacing: 0.1em;
+    color: rgb(255 255 255 / 50%);
+    text-transform: uppercase;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Feature cards */
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.feature-card {
+    background: var(--color-primary);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-height: 160px;
+    transition: background 0.2s;
+    border: 1px solid var(--color-cream);
+}
+
+.feature-card img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.feature-card:hover {
+    background: var(--color-secondary);
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid var(--color-cream);
+    margin: 16px 0;
+}
+
+/* Manager Profile HTML*/
+
+.mgr-profile-card {
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 24px;
+    margin-bottom: 40px;
 }
 
-.avatar {
-    width: 150px;
-    height:  150px;
-    background: #007bff;
-    color: white;
+.mgr-avatar {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-surface);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 1.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
 }
 
-.btn-logout {
-    margin-top: 30px;
-    background: transparent;
-    border: 1px solid #ff4d4d;
-    color: #ff4d4d;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+.mgr-profile-name {
+
+    font-family: 'Inter', sans-serif;
+    font-size: 50px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 4px;
 }
 
-.divider {
-    border: 0;
-    border-top: 1px solid #000;
-    width:40%;
-    display: block;
-    margin: 5px 0;
+.mgr-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 480px;
 }
 
-.btn-logout:hover {
-    background: #ff4d4d;
-    color: white;
+.mgr-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.info-group label {
-    display: block;     
-    margin-top: 15px;    
-    margin-bottom: 5px;  
-    font-weight: bold;
-    color: #555;
+.mgr-field-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 100;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 50%);
 }
 
-.info-group input {
-    display: block;     
-    width: 100%;         
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
+.mgr-field-input {
+    background: rgb(255 255 255 / 7%);
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: default;
 }
 
-.notEditable {
-    color: gray;
-    background-color: #f5f5f5; 
-    cursor: not-allowed;       
-    pointer-events: none;      
-    user-select: none;         
-    border: 1px solid #ddd;
-}
