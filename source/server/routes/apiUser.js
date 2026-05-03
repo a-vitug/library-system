@@ -23,9 +23,9 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       return res.status(404).json({ error: "Book not found" });
     };
 
-    if (!user.favorites.includes(book._id)) {
+    if (!user.favorites.some(id => id.toString() === book._id.toString())) {
       user.favorites.push(book._id);
-    };
+    }
 
     if (book.genre) {
       book.genre.forEach(g => {
@@ -35,9 +35,13 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       });
     };
 
-    if (book.author && !user.interestAuthors.includes(book.author)) {
-      user.interestAuthors.push(book.author);
-    };
+    if (book.authors) {
+      book.authors.forEach(a => {
+        if (!user.interestAuthors.includes(a)) {
+          user.interestAuthors.push(a);
+        }
+      });
+    }
 
     await user.save();
 
@@ -71,17 +75,7 @@ router.delete('/favorites/:bookId', requireAuth, async(req, res) => {
 router.get('/favorites', requireAuth, async(req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
-
     const genres = user.favorites.flatMap(book => book.genre);
-
-    const topGenre = mostCommon(genres);
-
-    const recs = await Book.find({
-      genre: topGenre,
-      _id:{
-        $nin:user.favorites
-      }
-    }).limit(8);
 
     res.json(user.favorites);
 
@@ -164,14 +158,14 @@ router.get('/recommendations', requireAuth, async (req, res) => {
       results = results.concat(mapped);
     }
 
-    const trendingRes = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+    const trendingResult = await axios.get('https://www.googleapis.com/books/v1/volumes', {
       params: {
         q: 'bestseller',
         maxResults: 5
       }
     });
 
-    const trending = (trendingRes.data.items || []).map(item => ({
+    const trending = (trendingResult.data.items || []).map(item => ({
       title: item.volumeInfo.title,
       authors: item.volumeInfo.authors || [],
       thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,

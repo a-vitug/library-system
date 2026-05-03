@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     role: {
       type: String,
-      enum: ['manager', 'employee', 'member'],
+      enum: ['manager', 'librarian', 'member'],
       default: 'member',
     },
     name: {
@@ -72,6 +72,38 @@ userSchema.pre('save', async function () {
 
 userSchema.methods.isCorrectPassword = async function (password) {
   return bcrypt.compare(password, this.password);
+};
+
+userSchema.set('toObject', { virtuals: true });
+
+userSchema.virtual('checkedOutCount').get(function () {
+  return this.checkedOutBooks.length;
+});
+
+userSchema.virtual('hasOverdueBooks').get(function () {
+  if (!this.checkedOutBooks) return false;
+
+  return this.checkedOutBooks.some(book =>
+    book.dueDate && book.dueDate < new Date()
+  );
+});
+
+userSchema.pre('save', function () {
+  if (this.interestGenres) {
+    this.interestGenres = this.interestGenres.map(g => g.toLowerCase());
+  }
+});
+
+userSchema.methods.addFavorite = function (bookId) {
+  if (!this.favorites.includes(bookId)) {
+    this.favorites.push(bookId);
+  }
+};
+
+userSchema.methods.addCheckedOutBook = function (bookId) {
+  if (!this.checkedOutBooks.includes(bookId)) {
+    this.checkedOutBooks.push(bookId);
+  }
 };
 
 const User = mongoose.model("User", userSchema);

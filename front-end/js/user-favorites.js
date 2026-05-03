@@ -72,7 +72,17 @@ function renderFavorites() {
                     </div>
                     <div class="favorite-card-body">
                         <h3 class="favorite-title">${book.title || 'Unknown Title'}</h3>
-                        <p class="favorite-author">${book.author || 'Unknown Author'}</p>
+                        <p class="favorite-author">
+                            ${
+                                book.authors?.length
+                                    ? book.authors.join(', ')
+                                    : book.author || 'Unknown Author'
+                            }
+                        </p>
+                        ${!book.available 
+                            ? '<span class="status-badge status-checked-out">Checked Out</span>'
+                            : '<span class="status-badge status-available">Available</span>'
+                        }
                         ${book.genre && book.genre.length 
                             ? `<span class="favorite-genre">${book.genre[0]}</span>`
                             : ''
@@ -81,9 +91,12 @@ function renderFavorites() {
                             <button class="action-btn remove-btn" onclick="removeFavoriteFromCard(event, '${book._id}')">
                                 Remove
                             </button>
-                            <button class="action-btn borrow-btn" onclick="addToCart(event, '${book._id}')">
-                                Add to Cart
-                            </button>
+                        ${!book.available 
+                            ? '<button class="action-btn borrow-btn" disabled>Unavailable</button>'
+                            : `<button class="action-btn borrow-btn" onclick="addToCart(event, '${book._id}')">
+                                    Add to Cart
+                            </button>`
+                        }
                         </div>
                     </div>
                 </div>
@@ -99,7 +112,10 @@ function openBookModal(index) {
     currentBook = book;
 
     document.getElementById('modalTitle').textContent = book.title || 'Unknown Title';
-    document.getElementById('modalAuthor').textContent = book.author || 'Unknown Author';
+    document.getElementById('modalAuthor').textContent =
+        book.authors?.length
+            ? book.authors.join(', ')
+            : book.author || 'Unknown Author';
     document.getElementById('modalGenre').textContent = (book.genre || []).join(', ') || 'No genre specified';
     document.getElementById('modalDescription').textContent = book.description || 'No description available.';
 
@@ -112,12 +128,12 @@ function openBookModal(index) {
     }
 
     const availabilityDiv = document.getElementById('modalAvailability');
-    if (book.available !== undefined) {
-        availabilityDiv.innerHTML = book.available
-            ? '<span class="status-badge status-available">Available</span>'
-            : '<span class="status-badge status-checked-out">Checked Out</span>';
+    if (!book.available) {
+        availabilityDiv.innerHTML = '<span class="status-badge status-checked-out">Checked Out</span>';
+        document.getElementById('borrowBtn').disabled = true;
     } else {
-        availabilityDiv.innerHTML = '';
+        availabilityDiv.innerHTML = '<span class="status-badge status-available">Available</span>';
+        document.getElementById('borrowBtn').disabled = false;
     }
 
     const previewBtn = document.getElementById('modalPreview');
@@ -209,7 +225,7 @@ async function removeFavoriteFromCard(event, bookId) {
 }
 
 async function addToCart(event, bookId) {
-    event.stopPropagation(); // Prevent opening the modal
+    event.stopPropagation();
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -221,19 +237,42 @@ async function addToCart(event, bookId) {
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
         const book = favoriteBooks.find(b => b._id === bookId);
+
+        if (!book.available) {
+            alert("This book is already checked out");
+            return;
+        }
+
         if (!book) {
             alert('Book not found');
             return;
         }
 
-        if (!cart.find(b => b._id === bookId)) {
-            cart.push(book);
+        if (!cart.some(b => b._id === bookId)) {
+            let created = await fetch('/api/books/add-from-api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title: book.title,
+                    authors: book.authors,
+                    genre: book.genre,
+                    isbn: book.isbn,
+                    thumbnail: book.thumbnail,
+                    description: book.description
+                })
+            });
+
+            const apiBook = await created.json();
+            cart.push(apiBook);
             localStorage.setItem("checkoutCart", JSON.stringify(cart));
             
             const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
             
             if (goCheckout) {
-                window.location.href = "/pages/user-checkout.html";
+                window.location.href = "/cart";
             }
         } else {
             alert('This book is already in your cart');
@@ -257,17 +296,35 @@ async function borrowBook() {
     try {
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
         
-        if (!cart.find(b => b._id === currentBook._id)) {
-            cart.push(currentBook);
-            localStorage.setItem("checkoutCart", JSON.stringify(cart));
-            
-            const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
-            
-            if (goCheckout) {
-                window.location.href = "/pages/user-checkout.html";
-            } else {
-                closeModal();
-            }
+        if (!cart.some(b => b._id === currentBook._id)) {
+            let created = await fetch('/api/books/add-from-api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                title: currentBook.title,
+                authors: currentBook.authors,
+                genre: currentBook.genre,
+                isbn: currentBook.isbn,
+                thumbnail: currentBook.thumbnail,
+                description: currentBook.description
+            })
+        });
+
+        const apiBook = await created.json();
+
+        cart.push(apiBook);
+        localStorage.setItem("checkoutCart", JSON.stringify(cart));
+        
+        const goCheckout = confirm("Book added to cart.\n\nPress OK to go to checkout.\nPress Cancel to keep browsing.");
+        
+        if (goCheckout) {
+            window.location.href = "/cart";
+        } else {
+            closeModal();
+        }
         } else {
             alert('This book is already in your cart');
         }

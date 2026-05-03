@@ -8,22 +8,27 @@ const User = require('../models/User');
 router.post('/checkout/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-
     if (!book) return res.status(404).send("Book not found");
 
     if (!book.available) {
       return res.status(400).send("Book already checked out");
     }
 
-    book.available = false;
-    book.checkedOutBy = req.user.id;
+    const isStaff = req.user.role === 'manager' || req.user.role === 'librarian';
 
-    // due in 14 days
+    const targetUserId = (isStaff && req.body.targetUserId)
+      ? req.body.targetUserId
+      : req.user.id;
+
+    const user = await User.findById(targetUserId);
+    if (!user) return res.status(404).send("User not found");
+
+    book.available = false;
+    book.checkedOutBy = targetUserId;
+
     const due = new Date();
     due.setDate(due.getDate() + 14);
     book.dueDate = due;
-
-    const user = await User.findById(req.user.id);
 
     if (!user.checkedOutBooks.includes(book._id)) {
       user.checkedOutBooks.push(book._id);
@@ -32,7 +37,11 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
 
     await book.save();
 
-    res.json({ message: "Book checked out", dueDate: book.dueDate });
+    res.json({
+      message: "Book checked out",
+      dueDate: book.dueDate,
+      user: user.username
+    });
 
   } catch (err) {
     res.status(500).send(err.message);
