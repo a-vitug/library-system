@@ -23,9 +23,9 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       return res.status(404).json({ error: "Book not found" });
     };
 
-    if (!user.favorites.includes(book._id)) {
+    if (!user.favorites.some(id => id.toString() === book._id.toString())) {
       user.favorites.push(book._id);
-    };
+    }
 
     if (book.genre) {
       book.genre.forEach(g => {
@@ -35,9 +35,13 @@ router.post('/favorites/:bookId', requireAuth, async(req, res) => {
       });
     };
 
-    if (book.author && !user.interestAuthors.includes(book.author)) {
-      user.interestAuthors.push(book.author);
-    };
+    if (book.authors) {
+      book.authors.forEach(a => {
+        if (!user.interestAuthors.includes(a)) {
+          user.interestAuthors.push(a);
+        }
+      });
+    }
 
     await user.save();
 
@@ -71,17 +75,7 @@ router.delete('/favorites/:bookId', requireAuth, async(req, res) => {
 router.get('/favorites', requireAuth, async(req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
-
     const genres = user.favorites.flatMap(book => book.genre);
-
-    const topGenre = mostCommon(genres);
-
-    const recs = await Book.find({
-      genre: topGenre,
-      _id:{
-        $nin:user.favorites
-      }
-    }).limit(8);
 
     res.json(user.favorites);
 
@@ -112,54 +106,85 @@ router.get('/my-books', requireAuth, async(req, res) => {
 });
 
 // Recommendations
-router.get('/recommendations', requireAuth, async(req, res) => {
+router.get('/recommendations', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favorites');
 
-    const allowedGenres = [
-      "romance",
-      "mystery",
-      "fiction",
-      "thriller",
-      "action",
-      "non-fiction"
-    ];
+    if (!user || !user.favorites.length) {
+      return res.json([]);
+    }
 
-    const favoriteGenres = user.favorites
-      .flatMap(book => book.genre || [])
-      .map(userGenre => userGenre.toLowerCase())
-      .filter(userGenre => allowedGenres.includes(userGenre))
-    ;
+    const favoriteTitles = new Set(
+      user.favorites.map(b => (b.title || "").toLowerCase())
+    );
 
-    const genre = favoriteGenres.length
-      ? favoriteGenres[Math.floor(Math.random() * favoriteGenres.length)]
-      : "fiction"
-    ;
+    const genreScore = {};
 
-    const response = await axios.get("https://www.googleapis.com/books/v1/volumes", {
+    user.favorites.forEach((book, index) => {
+      const genres = book.genre || book.categories || [];
+
+      const weight = index + 1;
+
+      genres.forEach(g => {
+        const key = g.toLowerCase();
+        genreScore[key] = (genreScore[key] || 0) + weight;
+      });
+    });
+
+    const topGenres = Object.entries(genreScore)
+      .sort((a, b) => b[1] - a[1])
+      .map(g => g[0])
+      .slice(0, 3);
+
+    let results = [];
+
+    for (let genre of topGenres) {
+      const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+        params: {
+          q: `subject:${genre}`,
+          maxResults: 5
+        }
+      });
+
+      const items = response.data.items || [];
+
+      const mapped = items.map(item => ({
+        title: item.volumeInfo.title,
+        authors: item.volumeInfo.authors || [],
+        thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+        genre: item.volumeInfo.categories || []
+      }));
+
+      results = results.concat(mapped);
+    }
+
+    const trendingResult = await axios.get('https://www.googleapis.com/books/v1/volumes', {
       params: {
-        q: `subject: ${genre}`,
-        maxResults: 6,
-        startIndex: Math.floor(Math.random() * 30)
+        q: 'bestseller',
+        maxResults: 5
       }
     });
 
-    const books = (response.data.items || []).map(item => {
-      const info = item.volumeInfo || {};
+    const trending = (trendingResult.data.items || []).map(item => ({
+      title: item.volumeInfo.title,
+      authors: item.volumeInfo.authors || [],
+      thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+      genre: item.volumeInfo.categories || []
+    }));
 
-      return {
-        title: info.title,
-        authors: info.authors || [],
-        thumbnail: info.imageLinks?.thumbnail || null,
-        genre: info.categories || [genre],
-        available: true,
-      };
-    });
+    results = results.concat(trending);
 
-    res.json(books);
+    results = results.filter(book =>
+      !favoriteTitles.has((book.title || "").toLowerCase())
+    );
+
+    results = results.sort(() => 0.5 - Math.random());
+
+    res.json(results.slice(0, 12));
 
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error(err);
+    res.status(500).send("Error generating recommendations");
   }
 });
 

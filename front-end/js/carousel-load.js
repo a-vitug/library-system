@@ -1,5 +1,6 @@
 let currentSlide = 0;
 let autoplayTimer = null;
+let borrowedBookIds = [];
 
 async function fetchWithTimeout(url, ms = 8000) {
     const controller = new AbortController();
@@ -10,6 +11,20 @@ async function fetchWithTimeout(url, ms = 8000) {
     } finally {
         clearTimeout(timer);
     }
+}
+
+async function loadBorrowedBooks() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const res = await fetch('/api/user/my-books', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    const books = await res.json();
+    borrowedBookIds = books.map(b => b._id);
 }
 
 async function loadFeatured() {
@@ -62,6 +77,7 @@ async function loadRecommendations() {
                 const books = await res.json();
 
                 if (books.length >= 6) {
+                    await loadBorrowedBooks();
                     renderRecommendations( books, true );
                     return;
                 };
@@ -71,6 +87,7 @@ async function loadRecommendations() {
         const res = await fetchWithTimeout('/api/google-books/search?q=popular+fiction&maxResults=6');
         const data = await res.json();
 
+        await loadBorrowedBooks();
         renderRecommendations(data.results || [], false);
     } catch (err) {
         console.error('loadRecommendations error:', err);
@@ -91,19 +108,28 @@ function renderRecommendations( books, personalized ) {
                 : '<div class="reco-no-cover"></div>'}
         
             <h3>${book.title}</h3>
-            <p>${book.authors || (book.authors || []).join(', ')}</p>
+            <p>${(book.authors || []).join(', ')}</p>
             ${book.genre
                 ? `<small>${book.genre.join(', ')}`
                 : ''
             }
-            ${book.available !== undefined
-                ? book.available
-                    ? '<span class="status-badge status-available">Available</span>'
-                    : '<span class="status-badge status-checked-out">Checked Out</span>'
-                : ''
+            ${
+                borrowedBookIds.includes(book._id)
+                    ? '<span class="status-badge status-checked-out">Already Borrowed</span>'
+                    : book.available !== undefined
+                        ? book.available
+                            ? '<span class="status-badge status-available">Available</span>'
+                            : '<span class="status-badge status-checked-out">Checked Out</span>'
+                        : ''
             }
         </div>
     `).join('');
+
+    const cards = grid.querySelectorAll('.reco-card');
+
+    cards.forEach((card, index) => {
+        card.onclick = () => openBook(books[index]);
+    });
 }
 
 function renderDots(count) {

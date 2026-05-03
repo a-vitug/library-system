@@ -12,24 +12,41 @@ async function fetchBooks(query, maxResults = 100) {
 };
 
 async function loadGenre(genre) {
+    const container = document.getElementById('bookContainer');
+
     document.querySelectorAll('.filter button').forEach(btn => {
         const isAll = genre === 'all' && btn.textContent === 'All Genres';
         const isMatch = btn.textContent.toLowerCase() === genre.toLowerCase();
         btn.classList.toggle('active', isAll || isMatch);
     });
+
     currentGenre = genre;
-    document.getElementById('bookContainer').innerHTML = '<p>Loading...</p>';
+    container.innerHTML = '<p>Loading...</p>';
+
     const query = genre === 'all' ? 'fiction' : genre;
+
     try {
         const books = await fetchBooks(`subject:${query}`, 100);
+
+        if (!Array.isArray(books)) {
+            throw new Error("Invalid books data");
+        }
+
         bookCache = books;
-        await loadBorrowedBooks();
+
+        try {
+            await loadBorrowedBooks();
+        } catch (err) {
+            console.warn("Borrowed books failed:", err);
+        }
+
         renderCards(books);
+
     } catch (err) {
         console.error('loadGenre error:', err);
-        document.getElementById('bookContainer').innerHTML = '<p>Failed to load books. Please try again.</p>';
+        container.innerHTML = '<p>Failed to load books. Please try again.</p>';
     }
-};
+}
 
 function renderCards(books) {
     bookCache = books;
@@ -216,17 +233,13 @@ async function borrowBook() {
         let apiBook = await created.json();
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
 
-        if(!cart.find(b => b._id === apiBook._id)) {
-            cart.push(apiBook);
-            localStorage.setItem("checkoutCart", JSON.stringify(cart));
-        }
-
-        let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
-
         if (cart.find(b => b._id === currentBook._id)) {
             alert("This book is already in your cart.");
             return;
         }
+
+        cart.push(apiBook);
+        localStorage.setItem("checkoutCart", JSON.stringify(cart));
 
         const goCheckout = confirm("Book added to cart.\n\nPress OK to go to check out.\nPress Cancel to keep browsing for more books.");
 
