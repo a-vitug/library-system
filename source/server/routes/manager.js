@@ -34,7 +34,7 @@ router.post('/create-employee', requireAuth, requireRole("manager"), async(req, 
 });
 
 // Get all users
-router.get('/api/users', requireAuth, requireRole("manager"), async (req, res) => {
+router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -43,7 +43,7 @@ router.get('/api/users', requireAuth, requireRole("manager"), async (req, res) =
   }
 });
 
-router.post('/api/users', requireAuth, requireRole("manager"), async (req, res) => {
+router.post('/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
     const newUser = new User(req.body);
     await newUser.save();
@@ -55,6 +55,10 @@ router.post('/api/users', requireAuth, requireRole("manager"), async (req, res) 
 
 // Delete a user
 router.delete('/api/users/:id', requireAuth, requireRole('manager'), async (req,res) => {
+  if (req.user.id === req.params.id) {
+    return res.status(400).send("You cannot delete your own account");
+  };
+
   await User.findByIdAndDelete(req.params.id);
   res.json({message:"User deleted."});
 });

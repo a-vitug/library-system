@@ -130,7 +130,9 @@ async function saveFavorite(){
             title: book.title,
             authors: book.authors,
             categories: book.categories,
-            isbn: book.isbn13
+            isbn: book.isbn13 || book.isbn10 || book.googleId,
+            thumbnail: book.thumbnail,
+            description: book.description,
         })
     });
 
