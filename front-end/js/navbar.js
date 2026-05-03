@@ -7,15 +7,34 @@ fetch(navFile)
     .then(data => {
         document.getElementById("nav-placeholder").innerHTML = data;
 
+        const usernameEl = document.getElementById('nav-username');
+        if (usernameEl) {
+            const dropDown = usernameEl.closest('.dropDown');
+            if (dropDown) {
+                dropDown.addEventListener('mouseenter', () => {
+                    usernameEl.style.maxWidth = '160px';
+                    usernameEl.style.opacity = '1';
+                });
+                dropDown.addEventListener('mouseleave', () => {
+                    usernameEl.style.maxWidth = '0';
+                    usernameEl.style.opacity = '0';
+                });
+            }
+        }
+
         const token = localStorage.getItem("token");
         if (token) {
-            fetch('/user', { headers: { Authorization: `Bearer ${token}` } })
+            fetch('/api/user/me', { 
+                headers: { 
+                    Authorization: `Bearer ${token}` 
+                }
+            })
                 .then(r => r.ok ? r.json() : null)
                 .then(user => {
-                    if (!user?.name) return;
+                    if (!user || !user.name) return;
                     const avatar = document.getElementById('nav-icon');
-                    if (avatar) avatar.textContent = user.name.charAt(0).toUpperCase();
                     const usernameEl = document.getElementById('nav-username');
+                    if (avatar) avatar.textContent = user.name.charAt(0).toUpperCase();
                     if (usernameEl) usernameEl.textContent = user.name;
                 })
                 .catch(() => {});

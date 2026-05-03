@@ -16,9 +16,28 @@
     <main class="profile-container">
         <h1 class="greeting">Hello, <span id="display-name">Name</span>
             <button onclick="logout()" class="btn-logout">Log Out</button>
-        </h1> 
-        
+        </h1>
+
     </main>
+
+    <div class="containers">
+        <div class="container">
+            <h2>Books</h2>
+            <a href="/portals/librarian/books" class="btn">Go to Books</a>
+        </div>
+
+        <div class="container">
+            <h2>Members Search</h2>
+            <p>View and manage library members, their borrowing history, and contact information.</p>
+            <a href="/portals/librarian/members" class="btn">Go to Members</a>
+        </div>
+
+        <div class="container">
+            <h2>Borrowing</h2>
+            <p>Track borrowed books, due dates, and manage returns efficiently.</p>
+            <a href="/portals/librarian/borrowing" class="btn">Go to Borrowing</a>
+        </div>
+    </div>
 
     <script src="/js/librarian-navbar.js"></script>
 </body>

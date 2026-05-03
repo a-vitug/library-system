@@ -3,7 +3,7 @@
 /* User Navbar */
 
 #nav-placeholder {
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -27,7 +27,7 @@ nav {
     justify-content: space-between;
     gap: 70px;
     min-width: 280px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 20px rgb(0 0 0 / 25%);
     transition: padding 0.3s ease, gap 0.3s ease, min-width 0.3s ease;
 }
 
@@ -85,7 +85,7 @@ nav.scrolled .avatar {
 }
 
 .nav-item:hover {
-    background-color: #283553;
+    background-color: var(--color-secondary);
 }
 
 .nav-icon {
@@ -103,7 +103,7 @@ nav.scrolled .avatar {
 }
 
 .nav-label {
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--color-cream);
@@ -122,8 +122,8 @@ nav.scrolled .avatar {
 }
 
 .avatar {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background-color: #c8cdd6;
     flex-shrink: 0;
@@ -142,17 +142,17 @@ nav.scrolled .avatar {
 }
 
 .nav-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgb(255 255 255 / 10%);
 }
 
 .nav-btn.active {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: rgb(255 255 255 / 12%);
 }
 
 .nav-btn svg {
     width: 20px;
     height: 20px;
-    stroke: #ffffff;
+    stroke: #fff;
     fill: none;
     stroke-width: 1.5;
     stroke-linecap: round;
@@ -162,15 +162,15 @@ nav.scrolled .avatar {
 /* Logged-in navbar avatar & profile dropdown */
 
 .topRightAvatar {
-    width: 55px;
-    height: 55px;
+    width: 40px;
+    height: 40px;
     background: var(--color-accent);
     color: var(--color-surface);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 0.85rem;
     font-weight: bold;
     cursor: pointer;
 }
@@ -188,26 +188,33 @@ nav.scrolled .avatar {
 
 .dropDown:hover .profileDropDown {
     display: block;
+    transition: background-color 0.4s ease;
 }
 
 .dropdown-inner {
     background-color: var(--color-primary);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 20px rgb(0 0 0 / 25%);
     overflow: hidden;
 }
 
 .avatar-trigger {
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    transition: max-width 0.4s ease, opacity 0.3s ease, margin-left 0.4s ease;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background-color 0.4s ease;
+}
 
+.dropDown:hover .avatar-trigger {
+    background-color: #283553;
 }
 
 .nav-username {
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-cream);
@@ -222,7 +229,6 @@ nav.scrolled .avatar {
 .dropDown:hover .nav-username {
     max-width: 160px;
     opacity: 1;
-    margin-left: 6px;
 }
 
 .profileDropDown a {
@@ -238,15 +244,16 @@ nav.scrolled .avatar {
 
 .profileDropDown a:hover {
     background-color: var(--color-secondary);
+    transition: padding 0.3s ease, gap 0.3s ease, min-width 0.3s ease;
 }
 
 .dropdown-logout {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgb(255 255 255 / 10%);
     color: #f87171 !important;
 }
 
 .dropdown-logout:hover {
-    background-color: rgba(239, 68, 68, 0.15) !important;
+    background-color: rgb(239 68 68 / 15%) !important;
 }
 
 /* Librarian Nav Bar */
@@ -254,7 +261,6 @@ nav.scrolled .avatar {
     background-color: var(--color-cream);
     width: 260px;
     flex-shrink: 0;
-    
     display: flex;
     flex-direction: column;
     padding: 32px 16px;
@@ -276,7 +282,7 @@ nav.scrolled .avatar {
 }
 
 .lib-item:hover {
-    background: rgba(0, 0, 0, 0.08);
+    background: rgb(0 0 0 / 8%);
 }
 
 .nav-left:hover {
