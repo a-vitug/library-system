@@ -122,7 +122,7 @@
 }
 
 .h1 {
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-weight: 900;
     font-style: italic;
     font-size: 5rem;
@@ -145,7 +145,7 @@
 }
 
 .see-all {
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
     font-size: 0.95rem;
     color: var(--color-muted);
     text-decoration: none;
@@ -218,5 +218,5 @@
 }
 
 .reco-grid:hover .reco-card:hover img {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
 }
