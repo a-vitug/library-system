@@ -4,6 +4,13 @@
     display: flex;
     gap: 48px;
     align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.manage-accounts-layout section {
+    padding: 0;
+    min-height: unset;
 }
 
 .manage-accounts-layout .member-search-section {
@@ -107,3 +114,4 @@
     background: #ff4d4d;
     color: white;
 }
+

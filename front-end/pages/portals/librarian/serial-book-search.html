@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/base.css">
-    <link rel="stylesheet" href="../../css/components.css">
-    <link rel="stylesheet" href="../../css/pages/genre-base.css">
-    <link rel="stylesheet" href="../../css/portals/librarian.css">
-    <title>Book Search — Librarian Portal</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/genre-base.css">
+    <link rel="stylesheet" href="/css/portals/librarian.css">
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <title>Book Search — Manager Portal</title>
 </head>
 
-<body data-role="librarian">
+<body data-role="manager">
     <div id="nav-placeholder"></div>
 
     <main class="profile-container">
-        <h1 class="greeting">Book Search</h1>
+        <div class="manager-header">
+            <div>
+                <h1 class="manager-greeting">Book Search</h1>
+            </div>
+        </div>
+        <hr class="section-divider">
 
         <form class="search-container" onsubmit="handleSearch(event)">
             <input type="text" id="searchInput" placeholder="Search by title, author, or ISBN..." aria-label="Search">
-            <button type="submit">Search</button>
+            <button type="submit"><img src="/images/magnify-glass.svg"></button>
         </form>
 
         <div id="results"></div>
@@ -26,7 +32,7 @@
 
     <div id="bookModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-card">
-            <button class="modal-close" onclick="closeBook()">&#x2715;</button>
+            <button class="modal-close" onclick="closeBook()">X</button>
             <div class="modal-body">
                 <img id="modalCover" src="" alt="Cover" class="modal-cover">
                 <div class="modal-info">
@@ -41,7 +47,7 @@
         </div>
     </div>
 
-    <script src="/js/manager-navbar.js"></script>
+    <script src="/js/librarian-navbar.js"></script>
     <script src="/js/serial-book-search.js"></script>
 </body>
 </html>
