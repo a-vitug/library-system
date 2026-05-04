@@ -115,21 +115,45 @@ router.get('/users/:id/books', requireAuth, requireRole("librarian", "manager"),
 router.post('/books/return', requireAuth, requireRole("librarian", "manager"), async (req, res) => {
   const { userId, bookId } = req.body;
 
-  try {
-    await Book.findByIdAndUpdate(userId, {
-      $inc: { availableCopies: 1 }
-    });
+  const book = await Book.findById(bookId);
+  if (!book) return res.status(404).send("Book not found");
 
-    res.json({ message: "Book returned" });
+  book.available = true;
+  book.checkedOutBy = null;
+  book.dueDate = null;
+  await book.save();
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Return failed" });
-  }
+  await User.findByIdAndUpdate(userId, {
+    $pull: { checkedOutBooks: bookId }
+  });
+
+  res.json({ message: "Book returned" });
 });
 
 router.post('/books/renew', requireAuth, requireRole("librarian", "manager"), async (req, res) => {
-  res.json({ message: "Extended due date" });
+  const { bookId } = req.body;
+
+  try {
+    const book = await Book.findById(bookId);
+
+    if (!book) return res.status(404).send("Book not found");
+
+    if (!book.dueDate) {
+      return res.status(400).send("No due date to extend");
+    }
+
+    const newDue = new Date(book.dueDate);
+    newDue.setDate(newDue.getDate() + 14); // extend 2 weeks
+    book.dueDate = newDue;
+
+    await book.save();
+
+    res.json({ message: "Due date extended", dueDate: book.dueDate });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Renew failed");
+  }
 });
 
 // Delete book

@@ -105,6 +105,30 @@ function closeProfile() {
     document.getElementById("member-profile-panel").style.display = "none";
 };
 
+async function renewBook(userId, bookId) {
+    const token = localStorage.getItem('token');
+
+    try {
+        const res = await fetch('/manager/books/renew', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, bookId })
+        });
+
+        if (!res.ok) throw new Error("Renew failed");
+
+        alert("Book renewed!");
+        viewMember(userId); // refresh UI
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to renew book");
+    }
+};
+
 async function viewMember(id) {
     const token = localStorage.getItem("token");
 
