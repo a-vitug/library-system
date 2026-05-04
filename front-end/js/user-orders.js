@@ -12,6 +12,10 @@ function renderOrders(books) {
         const div = document.createElement("div");
         div.className = "book-item";
 
+        if (new Date(book.dueDate) < new Date()) {
+            div.classList.add("overdue");
+        }
+
         div.innerHTML = `
             <div class="book-item-cover book-item-placeholder"></div>
 
@@ -36,7 +40,7 @@ function renderOrders(books) {
 
         container.appendChild(div);
     });
-}
+};
 
 async function loadOrders() {
     const token = localStorage.getItem("token");
@@ -65,4 +69,29 @@ async function loadOrders() {
         console.error(err);
         document.getElementById("ordersContainer").innerHTML = "<p>Failed to load orders.</p>";
     }
-}
+};
+
+async function returnBook(id) {
+    const token = localStorage.getItem("token");
+
+    try {
+        const res = await fetch(`/books/return/${id}`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error("Return failed");
+        }
+
+        loadOrders();
+
+    } catch (err) {
+        console.error(err);
+        alert("Error returning book");
+    }
+};
+
+loadOrders();
