@@ -3,25 +3,24 @@ function updateDueDate() {
     const due = new Date();
     due.setDate(due.getDate() + days);
 
-    document.getElementById('dueDate').textContent =
-        due.toLocaleDateString('en-US', {
-            month:'short',
-            day:'numeric',
-            year:'numeric'
+    const formatted = due.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
     });
 
-    document.getElementById('toastDate').textContent = document.getElementById('dueDate').textContent;
+    document.getElementById('dueDate').textContent = formatted;
+    document.getElementById('toastDate').textContent = formatted;
 }
 
 function loadCartBooks() {
     const books = JSON.parse(localStorage.getItem("checkoutCart")) || [];
     const container = document.querySelector('.checkout-books');
     const emptyState = document.getElementById('emptyState');
-    const items = container.querySelectorAll('.book-item');
 
-    items.forEach(item => item.remove());
+    container.querySelectorAll('.book-item').forEach(el => el.remove());
 
-    if(!books.length) {
+    if (!books.length) {
         emptyState.style.display = 'block';
         document.getElementById('checkoutBtn').disabled = true;
         document.getElementById('bookCount').textContent = 0;
@@ -30,29 +29,32 @@ function loadCartBooks() {
 
     emptyState.style.display = 'none';
 
-    container.innerHTML = 
-        `<h2 class="section-heading">Selected Books</h2>
+    books.forEach((book, i) => {
+        container.insertAdjacentHTML('beforeend', `
+            <div class="book-item" id="bookItem${i}">
+                <div class="book-item-cover book-item-placeholder"></div>
+                <div class="book-item-info">
+                    <p class="book-item-title">${book.title}</p>
+                    <p class="book-item-author">
+                        ${book.authors?.join(', ') || book.author || "Unknown Author"}
+                    </p>
 
-        ${books.map((book,i) =>
-            `<div class = "book-item" id = "bookItem${i}">
-                <div class = "book-item-cover book-item-placeholder"></div>
-                <div class = "book-item-info">
-                    <p class = "book-item-title">${book.title}</p>
-                    <p class = "book-item-author">${book.author || "Unknown Author"}</p>
-                    ${book.available !== undefined
-                        ? book.available
-                            ? '<span class="status-badge status-available">Available</span>'
-                            : '<span class="status-badge status-checked-out">Checked Out</span>'
-                        : '<span class="book-item-badge">Available</span>'
+                    ${
+                        book.available === false
+                        ? '<span class="status-badge status-checked-out">Checked Out</span>'
+                        : '<span class="status-badge status-available">Available</span>'
                     }
                 </div>
-                <button class = "remove-btn" onclick = "removeItem('bookItem${i}', '${book._id}')"> ✕ </button>
-            </div>`
-        ).join('')}`
-    ;
+
+                <button class="remove-btn" onclick="removeItem('bookItem${i}', '${book._id}')">
+                    ✕
+                </button>
+            </div>
+        `);
+    });
 
     updateBookCount();
-};
+}
 
 function removeItem(id, bookId) {
     let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
@@ -74,10 +76,10 @@ function removeItem(id, bookId) {
 };
 
 function updateBookCount() {
-    const cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
-    const count = cart.length;
+    const count = document.querySelectorAll('.book-item').length;
+
     document.getElementById('bookCount').textContent = count;
-    document.getElementById('emptyState').style.display = count === 0 ? 'block':'none';
+    document.getElementById('emptyState').style.display = count === 0 ? 'block' : 'none';
     document.getElementById('checkoutBtn').disabled = count === 0;
 };
 
@@ -87,29 +89,31 @@ async function confirmCheckout() {
 
     if (!cart.length) return;
 
-    for (let book of cart) {
-        await fetch(`/books/checkout/${book._id}`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`
+    try {
+        for (let book of cart) {
+            const res = await fetch(`/books/checkout/${book._id}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error("Error checking out a book");
             }
-        });
-    }
+        }
 
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-    localStorage.removeItem("checkoutCart");
-    localStorage.setItem("justCheckedOut", "true");
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
 
-    updateDueDate();
+        localStorage.removeItem("checkoutCart");
 
-    const justCheckedOut = localStorage.getItem("justCheckedOut");
-
-    if (justCheckedOut === "true") {
-        loadBooks();
-    } else {
         loadCartBooks();
+
+    } catch (err) {
+        console.error(err);
+        alert("Error during checkout");
     }
 }
 

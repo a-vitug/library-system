@@ -3,7 +3,7 @@ const router = express.Router();
 const Book = require('../models/Book');
 const { requireAuth, requireRole } = require('../middleware/authMid');
 
-router.get('/search', requireAuth, requireRole('employee', 'manager'), async (req, res) => {
+router.get('/search', requireAuth, requireRole('librarian', 'manager'), async (req, res) => {
   try {
     const { isbn } = req.query;
     if (!isbn || !isbn.trim()) {

@@ -47,7 +47,7 @@ async function loadStats() {
         const users = await res.json();
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
         set('count-members',   users.filter(u => u.role === 'member').length);
-        set('count-librarians', users.filter(u => u.role === 'employee').length);
+        set('count-librarians', users.filter(u => u.role === 'librarian').length);
         set('count-managers',  users.filter(u => u.role === 'manager').length);
         set('count-total',     users.length);
     } catch (err) {

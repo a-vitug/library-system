@@ -15,7 +15,7 @@ async function loadFavorites() {
             <div class="empty-state">
                 <h2>Please log in</h2>
                 <p>You need to be logged in to view your favorites.</p>
-                <a href="/pages/authentication/log-in.html" class="browse-btn">Log In</a>
+                <a href="/log-in" class="browse-btn">Log In</a>
             </div>
         `;
         return;

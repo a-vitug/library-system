@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/portals/librarian.css">
-    <link rel="stylesheet" href="/css/portals/manager.css">
-    <link rel="stylesheet" href="/css/portals/manager/manage-accounts.css">
+    <link rel="stylesheet" href="../../../css/base.css">
+    <link rel="stylesheet" href="../../../css/components.css">
+    <link rel="stylesheet" href="../../../css/portals/librarian.css">
+    <link rel="stylesheet" href="../../../css/portals/manager.css">
+    <link rel="stylesheet" href="../../../css/portals/manager/manage-accounts.css">
 
     <title>Manage Accounts</title>
 </head>
@@ -35,6 +35,19 @@
                 <div id="search-results"></div>
             </section>
 
+            <div id="member-profile-panel" class="member-profile-panel" style="display:none;">
+                <h2>Member Profile</h2>
+
+                <p><strong>Name:</strong> <span id="profile-name"></span></p>
+                <p><strong>Username:</strong> <span id="profile-username"></span></p>
+                <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                <p><strong>Role:</strong> <span id="profile-role"></span></p>
+
+                <div id="profile-books"></div>
+
+                <button onclick="closeProfile()">Close</button>
+            </div>
+
             <section class="add-user">
                 <h2 class="section-title">Add User</h2>
                 <form id="add-user-form">
@@ -45,7 +58,7 @@
                     <input type="text" id="new-phone" placeholder="Phone (optional)">
                     <select id="new-role">
                         <option value="member">Member</option>
-                        <option value="employee">Employee</option>
+                        <option value="librarian">Librarian</option>
                         <option value="manager">Manager</option>
                     </select>
                     <button type="submit">Add User</button>

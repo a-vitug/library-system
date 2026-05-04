@@ -12,7 +12,7 @@ async function loadMembers() {
     }
     allMembers = await res.json();
     renderResults(allMembers);
-}
+};
 
 function renderResults(members) {
     const container = document.getElementById("search-results");
@@ -48,7 +48,7 @@ function renderResults(members) {
             <tbody>${rows}</tbody>
         </table>
     `;
-}
+};
 
 function searchMembers() {
     const query = document.getElementById("search-input").value.toLowerCase();
@@ -57,11 +57,62 @@ function searchMembers() {
         m.email.toLowerCase().includes(query)
     );
     renderResults(filtered);
-}
+};
 
-function viewMember(id) {
-    window.location.href = `/member-profile?id=${id}`;
-}
+function showMemberProfile(user) {
+    const panel = document.getElementById("member-profile-panel");
+
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-username").textContent = user.username;
+    document.getElementById("profile-email").textContent = user.email;
+    document.getElementById("profile-role").textContent = user.role;
+
+    const booksDiv = document.getElementById("profile-books");
+
+    if (!user.checkedOutBooks || !user.checkedOutBooks.length) {
+        booksDiv.innerHTML = "<p>No borrowed books.</p>";
+    } else {
+        booksDiv.innerHTML = `
+            <h3>Borrowed Books</h3>
+            ${user.checkedOutBooks.map(book => `
+                <div class="book-item">
+                    <p>${book.title}</p>
+                    <p>Due: ${book.dueDate ? new Date(book.dueDate).toLocaleDateString() : "N/A"}</p>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    panel.style.display = "block";
+};
+
+function closeProfile() {
+    document.getElementById("member-profile-panel").style.display = "none";
+};
+
+async function viewMember(id) {
+    const token = localStorage.getItem("token");
+
+    try {
+        const res = await fetch(`/manager/users/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to load member");
+        }
+
+        const user = await res.json();
+        showMemberProfile(user); 
+        console.log("USER:", user);
+
+    } catch (err) {
+        console.error(err);
+        alert("Error loading member profile");
+    }
+};
 
 async function deleteMember(id) {
     if (!confirm("Are you sure you want to delete this member?")) return;
@@ -76,7 +127,7 @@ async function deleteMember(id) {
     } else {
         alert("Failed to delete member.");
     }
-}
+};
 
 document.getElementById("search-input").addEventListener("input", searchMembers);
 

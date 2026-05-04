@@ -16,8 +16,8 @@ async function loadProfile() {
 
     document.getElementById("display-name").textContent = user.name;
     document.getElementById("username").value = user.username;
-    document.querySelector("email").value = user.email;
-    document.querySelector("phone").value = user.phone || "";
+    document.getElementById("email").value = user.email;
+    document.getElementById("phone").value = user.phone || "";
 };
 
 loadProfile();

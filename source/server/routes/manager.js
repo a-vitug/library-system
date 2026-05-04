@@ -35,6 +35,19 @@ router.post('/create-employee', requireAuth, requireRole("manager"), async(req, 
 });
 
 // Get all users
+router.get('/users/:id', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('checkedOutBooks');
+
+    if (!user) return res.status(404).send("User not found");
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
     const users = await User.find();

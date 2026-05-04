@@ -4,6 +4,8 @@ const axios = require('axios');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
+let cachedRecommendations = [];
+let lastFetchTime = 0;
 
 // Get user data
 router.get('/me', requireAuth, async(req, res) => {
@@ -105,9 +107,26 @@ router.get('/my-books', requireAuth, async(req, res) => {
   }
 });
 
+// Cart
+router.get('/user/orders', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate('checkedOutBooks');
+
+    res.json(user.checkedOutBooks || []);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading orders");
+  }
+});
+
 // Recommendations
 router.get('/recommendations', requireAuth, async (req, res) => {
   try {
+    if (Date.now() - lastFetchTime < 60000 && cachedRecommendations.length) {
+      return res.json(cachedRecommendations);
+    }
+
     const user = await User.findById(req.user.id).populate('favorites');
 
     if (!user || !user.favorites.length) {
@@ -139,38 +158,50 @@ router.get('/recommendations', requireAuth, async (req, res) => {
     let results = [];
 
     for (let genre of topGenres) {
-      const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+      try {
+        const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+          params: {
+            q: `subject:${genre}`,
+            maxResults: 5
+          }
+        });
+
+        const items = response.data.items || [];
+
+        const mapped = items.map(item => ({
+          title: item.volumeInfo.title,
+          authors: item.volumeInfo.authors || [],
+          thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+          genre: item.volumeInfo.categories || []
+        }));
+
+        results = results.concat(mapped);
+
+      } catch (err) {
+        console.warn("Google API rate limited (genre)", genre);
+      }
+    }
+
+    let trending = [];
+
+    try {
+      const trendingRes = await axios.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
-          q: `subject:${genre}`,
+          q: 'bestseller',
           maxResults: 5
         }
       });
 
-      const items = response.data.items || [];
-
-      const mapped = items.map(item => ({
+      trending = (trendingRes.data.items || []).map(item => ({
         title: item.volumeInfo.title,
         authors: item.volumeInfo.authors || [],
         thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
         genre: item.volumeInfo.categories || []
       }));
 
-      results = results.concat(mapped);
+    } catch (err) {
+      console.warn("Google API rate limited (trending)");
     }
-
-    const trendingResult = await axios.get('https://www.googleapis.com/books/v1/volumes', {
-      params: {
-        q: 'bestseller',
-        maxResults: 5
-      }
-    });
-
-    const trending = (trendingResult.data.items || []).map(item => ({
-      title: item.volumeInfo.title,
-      authors: item.volumeInfo.authors || [],
-      thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
-      genre: item.volumeInfo.categories || []
-    }));
 
     results = results.concat(trending);
 
@@ -180,7 +211,12 @@ router.get('/recommendations', requireAuth, async (req, res) => {
 
     results = results.sort(() => 0.5 - Math.random());
 
-    res.json(results.slice(0, 12));
+    const finalResults = results.slice(0, 12);
+
+    cachedRecommendations = finalResults;
+    lastFetchTime = Date.now();
+
+    res.json(finalResults);
 
   } catch (err) {
     console.error(err);
