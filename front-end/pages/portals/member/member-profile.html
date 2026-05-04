@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/portals/manager.css">
+    <link rel="stylesheet" href="/css/portals/member.css">
+</head>
+
+<body data-role="member">
+    <div id="nav-placeholder"></div>
+
+    <main class="profile-container">
+        <div class="manager-header">
+            <div>
+                <p class="manager-role-label">MEMBER PROFILE</p>
+                <h1 id="display-name" class="manager-greeting">John Doe</h1>
+            </div>
+            <button onclick="logout()" class="btn-logout">LOGOUT</button>
+        </div>
+        <hr class="section-divider">
+
+        <div class="mgr-profile-card">
+            <div class="mgr-avatar">JD</div>
+            <div class="mgr-fields">
+                <div class="mgr-field">
+                    <span class="mgr-field-label">Role</span>
+                    <input type="text" value="User" class="mgr-field-input" readonly>
+                </div>
+                <div class="mgr-field">
+                    <span class="mgr-field-label">Username</span>
+                    <input type="text" id="username" value="JohnDoe1" class="mgr-field-input" readonly>
+                </div>
+                <div class="mgr-field">
+                    <span class="mgr-field-label">Email Address</span>
+                    <input type="text" id="email" value="john.doe@example.com" class="mgr-field-input" readonly>
+                </div>
+                <div class="mgr-field">
+                    <span class="mgr-field-label">Phone Number</span>
+                    <input type="text" id="phone" value="(123)456-7890" class="mgr-field-input" readonly>
+                </div>
+                <div class="mgr-field">
+                    <span class="mgr-field-label">Book Dues</span>
+                    <input type="text" value="$0.00" class="mgr-field-input" readonly>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/member.js"></script>
+</body>
+</html>
