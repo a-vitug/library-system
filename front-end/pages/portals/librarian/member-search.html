@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../../css/components.css">
     <link rel="stylesheet" href="../../../css/portals/manager.css">
     <link rel="stylesheet" href="../../../css/portals/librarian.css">
+    <link rel="stylesheet" href="../../../css/portals/manager/manage-accounts.css">
     <title>Member Search</title>
 </head>
 
@@ -19,16 +20,30 @@
             </div>
         </div>
         <hr class="section-divider">
+        <div class="manage-accounts-layout">
+            <section class="member-search-section">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search by username or email..."
+                    class="search-bar"
+                >
+                <div id="search-results"></div>
+            </section>
+        </div>
 
-        <section class="member-search-section">
-            <input
-                type="text"
-                id="search-input"
-                placeholder="Search by username or email..."
-                class="search-bar"
-            >
-            <div id="search-results"></div>
-        </section>
+        <div id="member-profile-panel" class="member-profile-panel" style="display:none;">
+            <h2>Member Profile</h2>
+
+            <p><strong>Name:</strong> <span id="profile-name"></span></p>
+            <p><strong>Username:</strong> <span id="profile-username"></span></p>
+            <p><strong>Email:</strong> <span id="profile-email"></span></p>
+            <p><strong>Role:</strong> <span id="profile-role"></span></p>
+
+            <div id="profile-books"></div>
+
+            <button onclick="closeProfile()">Close</button>
+        </div>
 
         <button onclick="logout()" class="btn-logout">Log Out</button>
     </main>

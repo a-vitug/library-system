@@ -12,83 +12,99 @@
     <div id="nav-placeholder"></div>
 
     <main class="profile-container">
-        <div class="manager-header">
+        <div class="librarian-header">
             <div>
-                <h1 class="manager-greeting">Profile</h1>
+                <h1 class="librarian-greeting">Profile</h1>
             </div>
         </div>
         <hr class="section-divider">
-        <div class="mgr-profile-card">
-            <div class="mgr-avatar" id="mgr-avatar">?</div>
-            <div class="mgr-profile-info">
-                <h2 class="mgr-profile-name" id="mgr-name">—</h2>
-                <span class="manager-role-label">MANAGER</span>
+        <div class="librarian-profile-card">
+            <div class="librarian-avatar" id="librarian-avatar">?</div>
+            <div class="librarian-profile-info">
+                <h2 class="librarian-profile-name" id="librarian-name">—</h2>
+                <span class="librarian-role-label">LIBRARIAN</span>
             </div>
         </div>
 
-       
-
-        <div class="mgr-fields">
-            <div class="mgr-field">
-                <label class="mgr-field-label">Full Name</label>
-                <input class="mgr-field-input" id="field-name" type="text" readonly>
+        <div class="librarian-fields">
+            <div class="librarian-field">
+                <label class="librarian-field-label">Full Name</label>
+                <input class="librarian-field-input" id="field-name" type="text" readonly>
             </div>
 
-            <div class="mgr-field">
-                <label class="mgr-field-label">Username</label>
-                <input class="mgr-field-input" id="field-username" type="text" readonly>
+            <div class="librarian-field">
+                <label class="librarian-field-label">Username</label>
+                <input class="librarian-field-input" id="field-username" type="text" readonly>
             </div>
 
-            <div class="mgr-field">
-                <label class="mgr-field-label">Email Address</label>
-                <input class="mgr-field-input" id="field-email" type="text" readonly>
+            <div class="librarian-field">
+                <label class="librarian-field-label">Email Address</label>
+                <input class="librarian-field-input" id="field-email" type="text" readonly>
             </div>
 
-            <div class="mgr-field">
-                <label class="mgr-field-label">Phone Number</label>
-                <input class="mgr-field-input" id="field-phone" type="text" readonly>
+            <div class="librarian-field">
+                <label class="librarian-field-label">Phone Number</label>
+                <input class="librarian-field-input" id="field-phone" type="text" readonly>
             </div>
 
-            <div class="mgr-field">
-                <label class="mgr-field-label">Role</label>
-                <input class="mgr-field-input" id="field-role" type="text" readonly>
+            <div class="librarian-field">
+                <label class="librarian-field-label">Role</label>
+                <input class="librarian-field-input" id="field-role" type="text" readonly>
             </div>
         </div>
     </main>
 
-    <script src="../../../js/librarian-navbar.js">
-        async function loadManagerProfile() {
+    <script src="../../../js/librarian-navbar.js"></script>
+    <script>
+        async function loadLibrarianProfile() {
             const token = localStorage.getItem('token');
-            if (!token) { window.location.href = '/log-in'; return; }
 
-            const res = await fetch('/api/user/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (res.status === 401) {
-                localStorage.removeItem('token');
+            if (!token) {
                 window.location.href = '/log-in';
                 return;
             }
 
-            if (!res.ok) return;
+            try {
+                const res = await fetch('/api/user/me', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
-            const user = await res.json();
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/log-in';
+                    return;
+                }
 
-            const initials = user.name
-                ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-                : '?';
+                const user = await res.json();
 
-            document.getElementById('mgr-avatar').textContent = initials;
-            document.getElementById('mgr-name').textContent = user.name || '—';
-            document.getElementById('field-name').value = user.name || '';
-            document.getElementById('field-username').value = user.username || '';
-            document.getElementById('field-email').value = user.email || '';
-            document.getElementById('field-phone').value = user.phone || '';
-            document.getElementById('field-role').value = user.role || '';
+                console.log("USER DATA:", user);
+
+                document.getElementById('librarian-name').textContent = user.name || '—';
+
+                document.getElementById('field-name').value = user.name || '';
+                document.getElementById('field-username').value = user.username || '';
+                document.getElementById('field-email').value = user.email || '';
+                document.getElementById('field-phone').value = user.phone || '';
+                document.getElementById('field-role').value = user.role || '';
+
+                const avatar = document.getElementById('librarian-avatar');
+                if (avatar && user.name) {
+                    avatar.textContent = user.name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2);
+                }
+
+            } catch (err) {
+                console.error("Failed to load librarian profile:", err);
+            }
         }
 
-        loadManagerProfile();
+        document.addEventListener("DOMContentLoaded", loadLibrarianProfile);
     </script>
 </body>
 </html>
