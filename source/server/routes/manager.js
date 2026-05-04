@@ -46,7 +46,7 @@ router.get('/users/:id', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
+router.get('/users', requireAuth, requireRole("manager", "librarian"), async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -55,7 +55,7 @@ router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
   }
 });
 
-router.post('/users', requireAuth, requireRole("manager"), async (req, res) => {
+router.post('/users', requireAuth, requireRole("manager", "librarian"), async (req, res) => {
   try {
     const { name, username, email, password, phone, role } = req.body;
 
@@ -92,7 +92,7 @@ router.delete('/users/:id', requireAuth, requireRole('manager'), async (req,res)
 });
 
 // Get all books
-router.get('/all-books', requireAuth, requireRole('manager'), async (req, res) => {
+router.get('/all-books', requireAuth, requireRole("manager", "librarian"), async (req, res) => {
   const books = await Book.find().populate('checkedOutBy', 'name username');
   res.json(books);
 });

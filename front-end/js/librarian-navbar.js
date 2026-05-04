@@ -35,5 +35,7 @@ function logout() {
     window.location.href = '/log-in';
 }
 
-loadNavbar();
-loadDisplayName();
+document.addEventListener("DOMContentLoaded", () => {
+    loadNavbar();
+    loadDisplayName();
+});
