@@ -107,17 +107,64 @@ router.get('/my-books', requireAuth, async(req, res) => {
   }
 });
 
-// Cart
-router.get('/user/orders', requireAuth, async (req, res) => {
+// Orders
+router.get('/orders', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
       .populate('checkedOutBooks');
 
-    res.json(user.checkedOutBooks || []);
+    const orders = user.checkedOutBooks.map(book => ({
+      _id: book._id,
+      book: book,
+      dueDate: book.dueDate,
+      checkoutDate: book.updatedAt || new Date(),
+      renewalCount: book.renewalCount || 0
+    }));
+
+    res.json(orders);
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading orders");
   }
+});
+
+router.post('/orders/:id/renew', requireAuth, async (req, res) => {
+  const order = await Book.findById(req.params.id);
+
+  if (!order) return res.status(404).send("Not found");
+
+  if (order.renewalCount >= 2) {
+    return res.status(400).send("Max renewals reached");
+  }
+
+  order.renewalCount = (order.renewalCount || 0) + 1;
+
+  const newDue = new Date(order.dueDate);
+  newDue.setDate(newDue.getDate() + 14);
+  order.dueDate = newDue;
+
+  await order.save();
+
+  res.json(order);
+});
+
+router.post('/orders/:id/return', requireAuth, async (req, res) => {
+  const book = await Book.findById(req.params.id);
+
+  if (!book) return res.status(404).send("Not found");
+
+  book.available = true;
+  book.checkedOutBy = null;
+  book.dueDate = null;
+
+  await book.save();
+
+  await User.findByIdAndUpdate(req.user.id, {
+    $pull: { checkedOutBooks: book._id }
+  });
+
+  res.json({ message: "Returned" });
 });
 
 // Recommendations

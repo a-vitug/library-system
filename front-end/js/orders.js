@@ -22,6 +22,7 @@ async function loadOrders() {
     }
 
     try {
+        console.log("TOKEN SENT:", `Bearer ${token}`);
         const response = await fetch('/api/user/orders', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -32,7 +33,10 @@ async function loadOrders() {
             throw new Error('Failed to load orders');
         }
 
-        orderBooks = await response.json();
+        const data = await response.json();
+        console.log("DATA:", data);
+
+        orderBooks = data;
         renderOrders();
 
     } catch (error) {
@@ -62,51 +66,66 @@ function renderOrders() {
 
     content.innerHTML = `
         <div class="orders-grid">
-            ${orderBooks.map((order, index) => `
-                <div class="order-card" onclick="openBookModal(${index})">
-                    <div class="order-card-header">
-                        ${order.book?.thumbnail 
-                            ? `<img src="${order.book.thumbnail}" alt="${order.book.title}" class="order-cover">`
-                            : '<div class="order-no-cover">📚</div>'
-                        }
-                        <div class="due-date-badge ${getDueDateClass(order.dueDate)}">
-                            ${formatDueDate(order.dueDate)}
-                        </div>
-                    </div>
-                    <div class="order-card-body">
-                        <h3 class="order-title">${order.book?.title || 'Unknown Title'}</h3>
-                        <p class="order-author">
-                            ${
-                                order.book?.authors?.length
-                                    ? order.book.authors.join(', ')
-                                    : order.book?.author || 'Unknown Author'
+            ${orderBooks.map((order, index) => {
+                const book = order.book || order;
+
+                return `
+                    <div class="order-card" onclick="openBookModal(${index})">
+                        <div class="order-card-header">
+                            ${book.thumbnail 
+                                ? `<img src="${book.thumbnail}" alt="${book.title}" class="order-cover">`
+                                : '<div class="order-no-cover">📚</div>'
                             }
-                        </p>
-                        ${order.book?.genre && order.book.genre.length 
-                            ? `<span class="order-genre">${order.book.genre[0]}</span>`
-                            : ''
-                        }
-                        <div class="order-dates">
-                            <div class="order-date-item">
-                                <span class="order-date-label">Checked Out:</span>
-                                <span class="order-date-value">${formatDate(order.checkoutDate)}</span>
-                            </div>
-                            <div class="order-date-item">
-                                <span class="order-date-label">Due Date:</span>
-                                <span class="order-date-value">${formatDate(order.dueDate)}</span>
+
+                            <div class="due-date-badge ${getDueDateClass(order.dueDate)}">
+                                ${formatDueDate(order.dueDate)}
                             </div>
                         </div>
-                        <div class="order-actions">
-                            <button class="action-btn renew-btn" onclick="renewBookFromCard(event, '${order._id}')" ${canRenew(order) ? '' : 'disabled'}>
-                                ${canRenew(order) ? 'Renew' : 'Max Renewals'}
-                            </button>
-                            <button class="action-btn return-btn" onclick="returnBookFromCard(event, '${order._id}')">
-                                Return
-                            </button>
+
+                        <div class="order-card-body">
+                            <h3 class="order-title">${book.title || 'Unknown Title'}</h3>
+
+                            <p class="order-author">
+                                ${
+                                    book.authors?.length
+                                        ? book.authors.join(', ')
+                                        : book.author || 'Unknown Author'
+                                }
+                            </p>
+
+                            ${
+                                book.genre?.length
+                                ? `<span class="order-genre">${book.genre[0]}</span>`
+                                : ''
+                            }
+
+                            <div class="order-dates">
+                                <div class="order-date-item">
+                                    <span class="order-date-label">Checked Out:</span>
+                                    <span class="order-date-value">${formatDate(order.checkoutDate)}</span>
+                                </div>
+                                <div class="order-date-item">
+                                    <span class="order-date-label">Due Date:</span>
+                                    <span class="order-date-value">${formatDate(order.dueDate)}</span>
+                                </div>
+                            </div>
+
+                            <div class="order-actions">
+                                <button class="action-btn renew-btn"
+                                    onclick="renewBookFromCard(event, '${order._id}')"
+                                    ${canRenew(order) ? '' : 'disabled'}>
+                                    ${canRenew(order) ? 'Renew' : 'Max Renewals'}
+                                </button>
+
+                                <button class="action-btn return-btn"
+                                    onclick="returnBookFromCard(event, '${order._id}')">
+                                    Return
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('')}
+                `;
+            }).join('')}
         </div>
     `;
 }
@@ -245,13 +264,14 @@ async function renewBook() {
     if (!currentBook) return;
 
     const token = localStorage.getItem('token');
+
     if (!token) {
         alert('Please log in to renew books');
         return;
     }
 
     try {
-        const response = await fetch(`/api/user/orders/${currentBook._id}/renew`, {
+        const response = await fetch(`/api/user/orders/${orderId}/renew`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -286,39 +306,27 @@ async function renewBookFromCard(event, orderId) {
     event.stopPropagation();
 
     const token = localStorage.getItem('token');
-    if (!token) {
-        alert('Please log in to renew books');
-        return;
-    }
 
     try {
-        const response = await fetch(`/api/user/orders/${orderId}/renew`, {
+        const res = await fetch(`/api/user/orders/${orderId}/renew`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             }
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to renew book');
-        }
+        if (!res.ok) throw new Error("Renew failed");
 
-        const updatedOrder = await response.json();
-        
-        // Update the order in the array
-        const index = orderBooks.findIndex(order => order._id === orderId);
-        if (index !== -1) {
-            orderBooks[index] = updatedOrder;
-        }
-        
+        const updatedOrder = await res.json();
+
+        const index = orderBooks.findIndex(o => o._id === orderId);
+        if (index !== -1) orderBooks[index] = updatedOrder;
+
         renderOrders();
-        
-        alert('Book renewed successfully! New due date: ' + formatDate(updatedOrder.dueDate));
 
-    } catch (error) {
-        console.error('Error renewing book:', error);
-        alert(error.message || 'Failed to renew book. Please try again.');
+    } catch (err) {
+        console.error(err);
+        alert("Failed to renew book");
     }
 }
 
@@ -330,13 +338,14 @@ async function returnBook() {
     }
 
     const token = localStorage.getItem('token');
+    
     if (!token) {
         alert('Please log in to return books');
         return;
     }
 
     try {
-        const response = await fetch(`/api/user/orders/${currentBook._id}/return`, {
+        const response = await fetch(`/api/user/orders/${orderId}/return`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -364,11 +373,10 @@ async function returnBook() {
 async function returnBookFromCard(event, orderId) {
     event.stopPropagation();
 
-    if (!confirm('Are you sure you want to return this book?')) {
-        return;
-    }
+    if (!confirm('Are you sure you want to return this book?')) return;
 
     const token = localStorage.getItem('token');
+
     if (!token) {
         alert('Please log in to return books');
         return;
@@ -397,4 +405,4 @@ async function returnBookFromCard(event, orderId) {
         console.error('Error returning book:', error);
         alert('Failed to return book. Please try again.');
     }
-}
+};
