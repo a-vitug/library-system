@@ -97,6 +97,41 @@ router.get('/all-books', requireAuth, requireRole("manager", "librarian"), async
   res.json(books);
 });
 
+// Get all user's books
+router.get('/users/:id/books', requireAuth, requireRole("librarian", "manager"), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('checkedOutBooks');
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json(user.checkedOutBooks);
+
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post('/books/return', requireAuth, requireRole("librarian", "manager"), async (req, res) => {
+  const { userId, bookId } = req.body;
+
+  try {
+    await Book.findByIdAndUpdate(userId, {
+      $inc: { availableCopies: 1 }
+    });
+
+    res.json({ message: "Book returned" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Return failed" });
+  }
+});
+
+router.post('/books/renew', requireAuth, requireRole("librarian", "manager"), async (req, res) => {
+  res.json({ message: "Extended due date" });
+});
+
 // Delete book
 router.delete('/delete-book/:id', requireAuth, requireRole('manager'), async (req, res) => {
   await Book.findByIdAndDelete(req.params.id);
