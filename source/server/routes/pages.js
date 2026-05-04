@@ -24,6 +24,10 @@ router.get('/cart', (req, res) => {
   res.sendFile(path.join(PAGES_DIR, '../../front-end/pages/portals/member/user-checkout.html'));
 });
 
+router.get('/member-profile', (req, res) => {
+  res.sendFile(path.join(process.cwd(), '../../front-end/pages/portals/member/member-profile.html'));
+});
+
 // Home for logged in users
 router.get('/logged-in', requireAuth, async (req, res) => {
   try {

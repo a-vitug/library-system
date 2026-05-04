@@ -4,6 +4,8 @@ const axios = require('axios');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
+const bcrypt = require('bcrypt');
+
 let cachedRecommendations = [];
 let lastFetchTime = 0;
 
@@ -12,6 +14,55 @@ router.get('/me', requireAuth, async(req, res) => {
   const user = await User.findById(req.user.id).populate('favorites');
 
   res.json(user);
+});
+
+// Update their profile
+router.patch('/update-profile', requireAuth, async (req, res) => {
+  try {
+    const { username, phone, password } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).send("User not found");
+
+    // Update username
+    if (username) {
+      const exists = await User.findOne({ username });
+      if (exists && exists._id.toString() !== user._id.toString()) {
+        return res.status(400).send("Username already taken");
+      }
+      user.username = username;
+    }
+
+    // Update phone
+    if (phone !== undefined) {
+      user.phone = phone;
+    }
+
+    if (password) {
+      if (password.length < 8) {
+        return res.status(400).send("Password must be at least 8 characters");
+      }
+
+      const hashed = await bcrypt.hash(password, 10);
+      user.password = hashed;
+    }
+
+    await user.save();
+
+    res.json({
+      message: "Profile updated",
+      user: {
+        username: user.username,
+        phone: user.phone,
+        role: user.role
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating profile");
+  }
 });
 
 // Add to favorites

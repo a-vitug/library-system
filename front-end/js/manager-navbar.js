@@ -3,7 +3,7 @@ async function loadNavbar() {
     const html = await res.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const nav = doc.querySelector('.lib-nav'); // Issues
+    const nav = doc.querySelector('.lib-nav');
     const placeholder = document.getElementById('nav-placeholder');
     if (nav && placeholder) {
         placeholder.replaceWith(nav);

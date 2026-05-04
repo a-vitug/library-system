@@ -58,39 +58,40 @@
         </div>
     </main>
 
-    <script src="../../../js/manager-navbar.js">
-        async function loadManagerProfile() {
-            const token = localStorage.getItem('token');
-            if (!token) { window.location.href = '/log-in'; return; }
+    <script src="../../../js/manager-navbar.js"></script>
+<script>
+    async function loadManagerProfile() {
+        const token = localStorage.getItem('token');
+        if (!token) { window.location.href = '/log-in'; return; }
 
-            const res = await fetch('/api/user/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+        const res = await fetch('/api/user/me', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-            if (res.status === 401) {
-                localStorage.removeItem('token');
-                window.location.href = '/log-in';
-                return;
-            }
-
-            if (!res.ok) return;
-
-            const user = await res.json();
-
-            const initials = user.name
-                ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-                : '?';
-
-            document.getElementById('mgr-avatar').textContent = initials;
-            document.getElementById('mgr-name').textContent = user.name || '—';
-            document.getElementById('field-name').value = user.name || '';
-            document.getElementById('field-username').value = user.username || '';
-            document.getElementById('field-email').value = user.email || '';
-            document.getElementById('field-phone').value = user.phone || '';
-            document.getElementById('field-role').value = user.role || '';
+        if (res.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/log-in';
+            return;
         }
 
-        loadManagerProfile();
-    </script>
+        if (!res.ok) return;
+
+        const user = await res.json();
+
+        const initials = user.name
+            ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+            : '?';
+
+        document.getElementById('mgr-avatar').textContent = initials;
+        document.getElementById('mgr-name').textContent = user.name || '—';
+        document.getElementById('field-name').value = user.name || '';
+        document.getElementById('field-username').value = user.username || '';
+        document.getElementById('field-email').value = user.email || '';
+        document.getElementById('field-phone').value = user.phone || '';
+        document.getElementById('field-role').value = user.role || '';
+    }
+
+    document.addEventListener("DOMContentLoaded", loadManagerProfile);
+</script>
 </body>
 </html>

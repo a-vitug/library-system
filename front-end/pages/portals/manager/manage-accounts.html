@@ -68,8 +68,8 @@
         </div>
     </main>
 
-    <script src="/js/manager-navbar.js"></script>
-    <script src="/js/member-search.js"></script>
+    <script src="../../../js/manager-navbar.js"></script>
+    <script src="../../../js/member-search.js"></script>
     <script>
         document.getElementById('add-user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -83,7 +83,7 @@
                 role: document.getElementById('new-role').value
             };
             const token = localStorage.getItem('token');
-            const res = await fetch('/manager/users', {
+            const res = await fetch('/manager/create-employee', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
