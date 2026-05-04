@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/pages/log-in.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/pages/log-in.css">
     <title>Log In - Library</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
         <form id="loginForm">
             <select name="role" id="role">
                 <option value="manager">Manager</option>
-                <option value="employee">Employee</option>
+                <option value="librarian">Librarian</option>
                 <option value="member">Member</option>
             </select>
             <input type="text" name="username" placeholder="Username" required>
@@ -58,7 +58,14 @@
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
 
-            window.location = "/home";
+            if (data.role === "member") {
+                window.location = "/home";
+            } else if (data.role === "librarian") {
+                window.location = "/librarian";
+            } else if (data.role === "manager") {
+                window.location = "/admin";
+            }
+            
         });
     </script>
 </body>

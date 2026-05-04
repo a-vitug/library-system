@@ -66,7 +66,7 @@ function renderCards(books) {
             <p class="book-title">${book.title || 'Unknown Title'}</p>
             <p class="book-author">${(book.authors || []).join(', ') || 'Unknown Author'}</p>
             ${
-                borrowedBookIds.includes(book._id)
+                borrowedBookIds.includes(book._id?.toString())
                     ? '<span class="status-badge status-checked-out">Already Borrowed</span>'
                     : book.available !== undefined
                         ? book.available
@@ -110,7 +110,7 @@ function openBook(index) {
 
     const borrowBtn = document.querySelector('.book-actions button:nth-child(2)');
 
-    if (borrowedBookIds.includes(book._id)) {
+    if (borrowedBookIds.includes(book._id?.toString())) {
         borrowBtn.textContent = "Already Borrowed";
         borrowBtn.disabled = true;
     } else if (book.available === false) {
@@ -195,7 +195,7 @@ async function borrowBook() {
     try {
         if (!currentBook) return;
 
-        if (borrowedBookIds.includes(currentBook._id)) {
+        if (borrowedBookIds.includes(currentBook._id?.toString())) {
             alert("You already borrowed this book.");
             return;
         }
@@ -233,7 +233,7 @@ async function borrowBook() {
         let apiBook = await created.json();
         let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
 
-        if (cart.find(b => b._id === currentBook._id)) {
+        if (cart.find(b => b._id === apiBook._id)) {
             alert("This book is already in your cart.");
             return;
         }
@@ -267,7 +267,7 @@ async function loadBorrowedBooks() {
         });
 
         const books = await res.json();
-        borrowedBookIds = books.map(b => b._id);
+        borrowedBookIds = books.map(b => b._id?.toString());
 
     } catch (err) {
         console.error("Failed to load borrowed books", err);

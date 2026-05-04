@@ -11,15 +11,13 @@ router.post('/create-employee', requireAuth, requireRole("manager"), async(req, 
 
   try {
     const exists = await User.findOne({ username });
-    const hashed = await bcrypt.hash(password, 10);
-
-    if (exists) return res.status(400).send("User already exists");
+    if (exists) return res.status(400).json({ error: "User already exists" });
 
     const employee = new User({
       name,
       username,
       email,
-      password: hashed,
+      password,
       phone,
       role
     });
@@ -30,11 +28,24 @@ router.post('/create-employee', requireAuth, requireRole("manager"), async(req, 
 
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).json({ error: "Server error" });
   }
 });
 
 // Get all users
+router.get('/users/:id', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('checkedOutBooks');
+
+    if (!user) return res.status(404).send("User not found");
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 router.get('/users', requireAuth, requireRole("manager"), async (req, res) => {
   try {
     const users = await User.find();

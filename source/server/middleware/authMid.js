@@ -7,13 +7,14 @@ function requireAuth(req, res, next) {
     return res.status(401).send("Authentication invalid");
   }
 
-  const token = header.split(' ')[1];
+  const token = header.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
+    console.error("JWT ERROR:", err);
     return res.status(401).send("Invalid token");
   }
 }

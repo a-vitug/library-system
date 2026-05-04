@@ -77,7 +77,7 @@ userSchema.methods.isCorrectPassword = async function (password) {
 userSchema.set('toObject', { virtuals: true });
 
 userSchema.virtual('checkedOutCount').get(function () {
-  return this.checkedOutBooks.length;
+  return this.checkedOutBooks ? this.checkedOutBooks.length : 0;
 });
 
 userSchema.virtual('hasOverdueBooks').get(function () {

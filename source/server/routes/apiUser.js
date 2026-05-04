@@ -4,12 +4,65 @@ const axios = require('axios');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const { requireAuth } = require('../middleware/authMid');
+const bcrypt = require('bcrypt');
+
+let cachedRecommendations = [];
+let lastFetchTime = 0;
 
 // Get user data
 router.get('/me', requireAuth, async(req, res) => {
   const user = await User.findById(req.user.id).populate('favorites');
 
   res.json(user);
+});
+
+// Update their profile
+router.patch('/update-profile', requireAuth, async (req, res) => {
+  try {
+    const { username, phone, password } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).send("User not found");
+
+    // Update username
+    if (username) {
+      const exists = await User.findOne({ username });
+      if (exists && exists._id.toString() !== user._id.toString()) {
+        return res.status(400).send("Username already taken");
+      }
+      user.username = username;
+    }
+
+    // Update phone
+    if (phone !== undefined) {
+      user.phone = phone;
+    }
+
+    if (password) {
+      if (password.length < 8) {
+        return res.status(400).send("Password must be at least 8 characters");
+      }
+
+      const hashed = await bcrypt.hash(password, 10);
+      user.password = hashed;
+    }
+
+    await user.save();
+
+    res.json({
+      message: "Profile updated",
+      user: {
+        username: user.username,
+        phone: user.phone,
+        role: user.role
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating profile");
+  }
 });
 
 // Add to favorites
@@ -105,9 +158,73 @@ router.get('/my-books', requireAuth, async(req, res) => {
   }
 });
 
+// Orders
+router.get('/orders', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate('checkedOutBooks');
+
+    const orders = user.checkedOutBooks.map(book => ({
+      _id: book._id,
+      book: book,
+      dueDate: book.dueDate,
+      checkoutDate: book.updatedAt || new Date(),
+      renewalCount: book.renewalCount || 0
+    }));
+
+    res.json(orders);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading orders");
+  }
+});
+
+router.post('/orders/:id/renew', requireAuth, async (req, res) => {
+  const order = await Book.findById(req.params.id);
+
+  if (!order) return res.status(404).send("Not found");
+
+  if (order.renewalCount >= 2) {
+    return res.status(400).send("Max renewals reached");
+  }
+
+  order.renewalCount = (order.renewalCount || 0) + 1;
+
+  const newDue = new Date(order.dueDate);
+  newDue.setDate(newDue.getDate() + 14);
+  order.dueDate = newDue;
+
+  await order.save();
+
+  res.json(order);
+});
+
+router.post('/orders/:id/return', requireAuth, async (req, res) => {
+  const book = await Book.findById(req.params.id);
+
+  if (!book) return res.status(404).send("Not found");
+
+  book.available = true;
+  book.checkedOutBy = null;
+  book.dueDate = null;
+
+  await book.save();
+
+  await User.findByIdAndUpdate(req.user.id, {
+    $pull: { checkedOutBooks: book._id }
+  });
+
+  res.json({ message: "Returned" });
+});
+
 // Recommendations
 router.get('/recommendations', requireAuth, async (req, res) => {
   try {
+    if (Date.now() - lastFetchTime < 60000 && cachedRecommendations.length) {
+      return res.json(cachedRecommendations);
+    }
+
     const user = await User.findById(req.user.id).populate('favorites');
 
     if (!user || !user.favorites.length) {
@@ -139,38 +256,50 @@ router.get('/recommendations', requireAuth, async (req, res) => {
     let results = [];
 
     for (let genre of topGenres) {
-      const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+      try {
+        const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
+          params: {
+            q: `subject:${genre}`,
+            maxResults: 5
+          }
+        });
+
+        const items = response.data.items || [];
+
+        const mapped = items.map(item => ({
+          title: item.volumeInfo.title,
+          authors: item.volumeInfo.authors || [],
+          thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
+          genre: item.volumeInfo.categories || []
+        }));
+
+        results = results.concat(mapped);
+
+      } catch (err) {
+        console.warn("Google API rate limited (genre)", genre);
+      }
+    }
+
+    let trending = [];
+
+    try {
+      const trendingRes = await axios.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
-          q: `subject:${genre}`,
+          q: 'bestseller',
           maxResults: 5
         }
       });
 
-      const items = response.data.items || [];
-
-      const mapped = items.map(item => ({
+      trending = (trendingRes.data.items || []).map(item => ({
         title: item.volumeInfo.title,
         authors: item.volumeInfo.authors || [],
         thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
         genre: item.volumeInfo.categories || []
       }));
 
-      results = results.concat(mapped);
+    } catch (err) {
+      console.warn("Google API rate limited (trending)");
     }
-
-    const trendingResult = await axios.get('https://www.googleapis.com/books/v1/volumes', {
-      params: {
-        q: 'bestseller',
-        maxResults: 5
-      }
-    });
-
-    const trending = (trendingResult.data.items || []).map(item => ({
-      title: item.volumeInfo.title,
-      authors: item.volumeInfo.authors || [],
-      thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
-      genre: item.volumeInfo.categories || []
-    }));
 
     results = results.concat(trending);
 
@@ -180,7 +309,12 @@ router.get('/recommendations', requireAuth, async (req, res) => {
 
     results = results.sort(() => 0.5 - Math.random());
 
-    res.json(results.slice(0, 12));
+    const finalResults = results.slice(0, 12);
+
+    cachedRecommendations = finalResults;
+    lastFetchTime = Date.now();
+
+    res.json(finalResults);
 
   } catch (err) {
     console.error(err);

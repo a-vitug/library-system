@@ -13,17 +13,23 @@ router.get('/log-in', (req, res) => {
 });
 
 router.post('/log-in', async (req, res) => {
-  const { username, password, role: selectedRole } = req.body;
+  const { username, password, role } = req.body;
+  const selectedRole = role?.toLowerCase();
 
   try {
     const user = await User.findOne({ username }).select('+password');
-    if (!user) return res.status(401).send("Invalid credentials");
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
     const valid = await user.isCorrectPassword(password);
-    if (!valid) return res.status(401).send("Invalid credentials");
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
-    if (user.role !== selectedRole) return res.status(403).json({ error: `This account is a ${ user.role } and does not have authority to access ${ selectedRole } page`});
+    if (!selectedRole) return res.status(400).json({ error: "Role is required" });
 
+    if (user.role.toLowerCase() !== selectedRole) {
+      return res.status(403).json({
+        error: `This account is a ${user.role} account, not ${selectedRole}`
+      });
+    }
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -34,7 +40,7 @@ router.post('/log-in', async (req, res) => {
 
   } catch (err) {
       console.error(err);
-      return res.status(500).send("Server error");
+      return res.status(500).json({ error: "Server error" });
   }
 });
 

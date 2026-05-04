@@ -1,5 +1,5 @@
 const isLoggedIn = !!localStorage.getItem("token");
 const authLinks = isLoggedIn
-  ? `<a href="/pages/portals/member-portal.html">My Account</a>
+  ? `<a href="/member">My Account</a>
      <button onclick="logout()">Logout</button>`
-  : `<a href="/pages/auth/login.html">Login</a>`;
+  : `<a href="/log-in">Login</a>`;

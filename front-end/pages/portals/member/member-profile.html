@@ -3,53 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/portals/manager.css">
-    <link rel="stylesheet" href="/css/portals/member.css">
+    <link rel="stylesheet" href="../../../css/base.css">
+    <link rel="stylesheet" href="../../../css/components.css">
+    <link rel="stylesheet" href="../../../css/portals/member.css">
 </head>
 
 <body data-role="member">
     <div id="nav-placeholder"></div>
 
     <main class="profile-container">
-        <div class="manager-header">
+        <div class="member-header">
             <div>
-                <p class="manager-role-label">MEMBER PROFILE</p>
-                <h1 id="display-name" class="manager-greeting">John Doe</h1>
+                <p class="member-role-label">MEMBER PROFILE</p>
+                <h1 id="display-name" class="member-greeting">John Doe</h1>
             </div>
             <button onclick="logout()" class="btn-logout">LOGOUT</button>
         </div>
         <hr class="section-divider">
 
-        <div class="mgr-profile-card">
-            <div class="mgr-avatar">JD</div>
-            <div class="mgr-fields">
-                <div class="mgr-field">
-                    <span class="mgr-field-label">Role</span>
-                    <input type="text" value="User" class="mgr-field-input" readonly>
+        <div class="member-profile-card">
+            <div class="member-avatar">JD</div>
+            <div class="member-fields">
+                <div class="member-field">
+                    <span class="member-field-label">Role</span>
+                    <input type="text" id="role" value="User" class="member-field-input" readonly>
                 </div>
-                <div class="mgr-field">
-                    <span class="mgr-field-label">Username</span>
-                    <input type="text" id="username" value="JohnDoe1" class="mgr-field-input" readonly>
+                <div class="member-field">
+                    <span class="member-field-label">Username</span>
+                    <input type="text" id="username" value="JohnDoe1" class="member-field-input" readonly>
                 </div>
-                <div class="mgr-field">
-                    <span class="mgr-field-label">Email Address</span>
-                    <input type="text" id="email" value="john.doe@example.com" class="mgr-field-input" readonly>
+                <div class="member-field">
+                    <span class="member-field-label">Email Address</span>
+                    <input type="text" id="email" value="john.doe@example.com" class="member-field-input" readonly>
                 </div>
-                <div class="mgr-field">
-                    <span class="mgr-field-label">Phone Number</span>
-                    <input type="text" id="phone" value="(123)456-7890" class="mgr-field-input" readonly>
+                <div class="member-field">
+                    <span class="member-field-label">Phone Number</span>
+                    <input type="text" id="phone" value="(123)456-7890" class="member-field-input" readonly>
                 </div>
-                <div class="mgr-field">
-                    <span class="mgr-field-label">Book Dues</span>
-                    <input type="text" value="$0.00" class="mgr-field-input" readonly>
+                <div class="member-field">
+                    <span class="member-field-label">Book Dues</span>
+                    <input type="text" value="$0.00" class="member-field-input" readonly>
                 </div>
+            </div>
+
+            <div class="profile-card">
+                <h2>Update Profile</h2>
+
+                <label>Username</label>
+                <input id="update-username" type="text" placeholder="Username">
+
+                <label>Phone</label>
+                <input id="update-phone" type="text" placeholder="Phone">
+
+                <label>New Password</label>
+                <input id="update-password" type="password" placeholder="Create new Password">
+
+                <button onclick="updateProfile()">Save Changes</button>
+
+                <p id="update-msg"></p>
             </div>
         </div>
     </main>
 
-    <script src="/js/navbar.js"></script>
-    <script src="/js/member.js"></script>
+    <script src="../../../js/navbar.js"></script>
+    <script src="../../../js/member.js"></script>
 </body>
 </html>

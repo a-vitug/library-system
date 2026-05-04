@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/portals/librarian.css">
-    <link rel="stylesheet" href="/css/portals/manager.css">
-    <link rel="stylesheet" href="/css/portals/manager/stock.css">
+    <link rel="stylesheet" href="../../../css/base.css">
+    <link rel="stylesheet" href="../../../css/components.css">
+    <link rel="stylesheet" href="../../../css/portals/librarian.css">
+    <link rel="stylesheet" href="../../../css/portals/manager.css">
+    <link rel="stylesheet" href="../../../css/portals/manager/stock.css">
     <title>Stock — Manager</title>
 </head>
 
@@ -21,7 +21,7 @@
                 
             </div>
         </div>
-<hr class="section-divider">
+        <hr class="section-divider">
         <div class="stock-summary">
             <div class="stat-card">
                 <span class="stat-label">Titles Checked Out</span>
@@ -44,24 +44,25 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>User</th>
                         <th>Book Title</th>
                         <th>Author</th>
                         <th>Qty Checked Out</th>
                         <th>Unit Cost</th>
-                        <th>Order Total</th>
-                        <th>Running Total</th>
+                        <th>Value</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="stock-tbody">
                     <tr>
-                        <td colspan="7" class="stock-empty">Loading…</td>
+                        <td colspan="8" class="stock-empty">Loading…</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </main>
 
-    <script src="/js/manager-navbar.js"></script>
+    <script src="../../../js/manager-navbar.js"></script>
     <script>
         async function loadStock() {
             const token = localStorage.getItem('token');
@@ -87,10 +88,20 @@
             // Group by title (multiple copies of same title count as qty)
             const grouped = {};
             for (const book of checkedOut) {
-                const key = book.title;
+                const userId = book.checkedOutBy?._id || "unknown";
+                const key = `${book.title}_${userId}`;
+
                 if (!grouped[key]) {
-                    grouped[key] = { title: book.title, author: book.author, price: book.price || 0, qty: 0 };
+                    grouped[key] = {
+                        title: book.title,
+                        author: book.authors?.join(', ') || 'Unknown Author',
+                        price: book.price || 0,
+                        qty: 0,
+                        user: book.checkedOutBy || { name: "Unknown User" },
+                        bookId: book._id
+                    };
                 }
+
                 grouped[key].qty++;
             }
 
@@ -106,24 +117,27 @@
                 return;
             }
 
-            let running = 0;
             let totalCopies = 0;
             tbody.innerHTML = '';
 
             rows.forEach((row, i) => {
                 const orderTotal = row.qty * row.price;
-                running += orderTotal;
                 totalCopies += row.qty;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="stock-num">${i + 1}</td>
+                    <td class="stock-user">${row.user.name || '-'}</td>
                     <td class="stock-title">${row.title}</td>
-                    <td class="stock-author">${row.author || '—'}</td>
-                    <td class="stock-center">${row.qty}</td>
-                    <td class="stock-center">$${row.price.toFixed(2)}</td>
+                    <td class="stock-author">${row.author}</td>
+                    <td class="stock-qty">${row.qty}</td>
+                    <td class="stock-value">${(row.price * row.qty).toFixed(2)}</td>
                     <td class="stock-center">$${orderTotal.toFixed(2)}</td>
-                    <td class="stock-running">$${running.toFixed(2)}</td>
+                    <td>
+                        <button onclick="returnBookFromStock('${row.bookId}')">
+                            Return
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -131,6 +145,33 @@
             document.getElementById('total-titles').textContent = rows.length;
             document.getElementById('total-copies').textContent = totalCopies;
             document.getElementById('total-value').textContent = `$${running.toFixed(2)}`;
+        }
+
+        async function returnBookFromStock(bookId) {
+            const token = localStorage.getItem("token");
+
+            if (!confirm("Return this book?")) return;
+
+            try {
+                const res = await fetch(`/books/return/${bookId}`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to return book");
+                }
+
+                alert("Book returned successfully");
+
+                loadStock();
+
+            } catch (err) {
+                console.error(err);
+                alert("Error returning book");
+            }
         }
 
         loadStock();

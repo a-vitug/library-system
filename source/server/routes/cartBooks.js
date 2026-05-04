@@ -30,7 +30,7 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
     due.setDate(due.getDate() + 14);
     book.dueDate = due;
 
-    if (!user.checkedOutBooks.includes(book._id)) {
+    if (!user.checkedOutBooks.some(id => id.toString() === book._id.toString())) {
       user.checkedOutBooks.push(book._id);
       await user.save();
     }
@@ -52,11 +52,12 @@ router.post('/checkout/:id', requireAuth, async (req, res) => {
 router.post('/return/:id', requireAuth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
+
+    if (!book) return res.status(404).send("Book not found");
+
     const user = await User.findById(book.checkedOutBy);
     const isMember = book.checkedOutBy.toString() === req.user.id;
     const isStaff = req.user.role === 'manager' || req.user.role === 'librarian';
-
-    if (!book) return res.status(404).send("Book not found");
 
     if (book.available) {
       return res.status(400).send("Book is already available");
