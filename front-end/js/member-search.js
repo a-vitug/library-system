@@ -76,8 +76,23 @@ function showMemberProfile(user) {
             <h3>Borrowed Books</h3>
             ${user.checkedOutBooks.map(book => `
                 <div class="book-item">
-                    <p>${book.title}</p>
-                    <p>Due: ${book.dueDate ? new Date(book.dueDate).toLocaleDateString() : "N/A"}</p>
+                    <p><strong>${book.title}</strong></p>
+                    <p>Due: ${
+                        book.dueDate 
+                            ? new Date(book.dueDate).toLocaleDateString() 
+                            : "N/A"
+                    }</p>
+
+                    ${role === "librarian" ? `
+                        <div class="actions">
+                            <button onclick="returnBook('${user._id}', '${book._id}')">
+                                Return
+                            </button>
+                            <button onclick="renewBook('${user._id}', '${book._id}')">
+                                Renew
+                            </button>
+                        </div>
+                    ` : ""}
                 </div>
             `).join('')}
         `;
