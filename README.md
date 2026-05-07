@@ -15,6 +15,7 @@ Install dependencies in source/server using:
 npm install
 
 ## Create a .env file in source/server. Insert your keys into all these variables:
+PORT=3000
 MONGODB_URI=your_mongodb_atlas_uri
 GOOGLE_BOOKS_API_KEY=your_google_books_key
 JWT_SECRET=your_secret_key
